@@ -1,0 +1,9 @@
+[main]
+host = https://www.transifex.com
+lang_map = ja_JP: ja
+
+[owncloud.user_management]
+file_filter = <lang>/user_management.po
+source_file = templates/user_management.pot
+source_lang = en
+type = PO
