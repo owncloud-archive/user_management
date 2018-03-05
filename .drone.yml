@@ -98,7 +98,7 @@ pipeline:
     pull: true
     files:
       - apps/user_management/tests/unit/clover.xml
-    token: 5cbb8f63-f748-48a7-b28c-d71ca069e823
+    token: af884a52-14ff-4e5c-91f9-ce4f79469623
     when:
       matrix:
         TEST_SUITE: phpunit
