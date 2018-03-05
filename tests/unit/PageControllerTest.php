@@ -27,6 +27,7 @@ use OCP\AppFramework\Http\TemplateResponse;
 use OCP\IConfig;
 use OCP\IGroupManager;
 use OCP\IRequest;
+use OCP\ISubAdminManager;
 use OCP\IUser;
 use OCP\IUserSession;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -53,6 +54,10 @@ class PageControllerTest extends \PHPUnit_Framework_TestCase {
 
 		$groupManager->method('isAdmin')->willReturn(true);
 		$groupManager->method('search')->willReturn([]);
+		$subAdmin = $this->createMock(ISubAdminManager::class);
+		$subAdmin->method('getAllSubAdmins')->willReturn([]);
+		$groupManager->method('getSubAdmin')->willReturn($subAdmin);
+
 		$controller = new PageController('user_management',
 			$request,
 			$groupManager,

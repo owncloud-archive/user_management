@@ -21,7 +21,19 @@
 //	->actionInclude('user_management/lib/Controller/users.php');
 
 return [
+	'resources' => [
+		'groups' => ['url' => '/groups'],
+		'users' => ['url' => '/users'],
+	],
 	'routes' => [
 		// page
-		['name' => 'page#index', 'url' => '/', 'verb' => 'GET']]
+		['name' => 'page#index', 'url' => '/', 'verb' => 'GET'],
+		// users controller
+
+		['name' => 'Users#setDisplayName', 'url' => '/users/{username}/displayName', 'verb' => 'POST'],
+		['name' => 'Users#setMailAddress', 'url' => '/users/{id}/mailAddress', 'verb' => 'PUT'],
+		['name' => 'Users#setEmailAddress', 'url' => '/settings/admin/{id}/mailAddress', 'verb' => 'PUT'],
+		['name' => 'Users#setEnabled', 'url' => '/users/{id}/enabled', 'verb' => 'POST'],
+		['name' => 'Users#stats', 'url' => '/users/stats', 'verb' => 'GET'],
+	]
 ];

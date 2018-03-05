@@ -90,7 +90,7 @@ class PageController extends Controller {
 			$this->config->getAppValue( 'encryption', 'recoveryAdminEnabled', null );
 
 		if($isAdmin) {
-			$subAdmins = \OC::$server->getGroupManager()->getSubAdmin()->getAllSubAdmins();
+			$subAdmins = $this->groupManager->getSubAdmin()->getAllSubAdmins();
 			// New class returns IUser[] so convert back
 			$result = [];
 			foreach ($subAdmins as $subAdmin) {

@@ -363,7 +363,7 @@ var UserList = {
 	},
 	initDeleteHandling: function() {
 		//set up handler
-		UserDeleteHandler = new DeleteHandler('/settings/users/users', 'username',
+		UserDeleteHandler = new DeleteHandler('/apps/user_management/users', 'username',
 											UserList.markRemove, UserList.remove);
 
 		//configure undo
@@ -400,7 +400,7 @@ var UserList = {
 		UserList.currentGid = gid;
 		var pattern = this.filter;
 		$.get(
-			OC.generateUrl('/settings/users/users'),
+			OC.generateUrl('/apps/user_management/users'),
 			{ offset: UserList.offset, limit: limit, gid: gid, pattern: pattern },
 			function (result) {
 				var loadedUsers = 0;
@@ -600,7 +600,7 @@ var UserList = {
          */
         _updateEnabled: function(uid, enabled, ready) {
                $.post(
-                        OC.generateUrl('/settings/users/{id}/enabled', {id: uid}),
+                        OC.generateUrl('/apps/user_management/{id}/enabled', {id: uid}),
                         {username: uid, enabled: enabled},
                         function (result) {
                                	if(result.status == 'success') {
@@ -780,7 +780,7 @@ $(document).ready(function () {
 							$div.imageplaceholder(uid, displayName);
 						}
 						$.post(
-							OC.generateUrl('/settings/users/{id}/displayName', {id: uid}),
+							OC.generateUrl('/apps/user_management/users/{id}/displayName', {id: uid}),
 							{username: uid, displayName: $(this).val()},
 							function (result) {
 								if (result && result.status==='success' && $div.length){
@@ -909,7 +909,7 @@ $(document).ready(function () {
 		promise.then(function() {
 			var groups = $('#newuser .groups').data('groups') || [];
 			$.post(
-				OC.generateUrl('/settings/users/users'),
+				OC.generateUrl('/apps/user_management/users'),
 				{
 					username: username,
 					password: password,
