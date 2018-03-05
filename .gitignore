@@ -1,2 +1,4 @@
 
-/tests/unit/clover.xml
+tests/unit/clover.xml
+build
+vendor

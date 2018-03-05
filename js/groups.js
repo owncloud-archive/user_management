@@ -128,7 +128,7 @@ GroupList = {
 
 	createGroup: function (groupname) {
 		$.post(
-			OC.generateUrl('/settings/users/groups'),
+			OC.generateUrl('/apps/user_management/groups'),
 			{
 				id: groupname
 			},
@@ -150,7 +150,7 @@ GroupList = {
 		}
 		GroupList.updating = true;
 		$.get(
-			OC.generateUrl('/settings/users/groups'),
+			OC.generateUrl('/apps/user_management/groups'),
 			{
 				pattern: this.filter,
 				filterGroups: this.filterGroups ? 1 : 0,
@@ -266,7 +266,7 @@ GroupList = {
 	},
 	initDeleteHandling: function () {
 		//set up handler
-		GroupDeleteHandler = new DeleteHandler('/settings/users/groups', 'groupname',
+		GroupDeleteHandler = new DeleteHandler('/apps/user_management/groups', 'groupname',
 			GroupList.hide, GroupList.remove);
 
 		//configure undo
@@ -301,7 +301,7 @@ GroupList = {
 		$.ajax({
 			type: "GET",
 			dataType: "json",
-			url: OC.generateUrl('/settings/users/stats')
+			url: OC.generateUrl('/apps/user_management/users/stats')
 		}).success(function (data) {
 			$('#everyonegroup').data('usercount', data.totalUsers);
 			$('#everyonecount').text(data.totalUsers);
