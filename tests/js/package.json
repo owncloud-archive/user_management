@@ -1,0 +1,23 @@
+{
+	"name": "owncloud-activity",
+	"description": "ownCloud Activity App",
+	"version": "0.0.1",
+	"private": true,
+	"homepage": "https://github.com/owncloud/activity",
+	"repository": {
+		"type": "git",
+		"url": "git@github.com:owncloud/activity.git"
+	},
+	"bugs": "https://github.com/owncloud/activity/issues",
+	"contributors": [],
+	"dependencies": {},
+	"devDependencies": {
+		"jasmine-core": "^2.5.2",
+		"jasmine-sinon": "^0.4.0",
+		"karma": "^1.5.0",
+		"karma-jasmine": "^1.1.0",
+		"karma-jasmine-sinon": "^1.0.4",
+		"karma-phantomjs-launcher": "*"
+	},
+	"engine": "node >= 0.8"
+}

@@ -93,6 +93,17 @@ pipeline:
       matrix:
         TEST_SUITE: phpunit
 
+  js-tests:
+    image: owncloudci/php:${PHP_VERSION}
+    pull: true
+    commands:
+      - cd /var/www/owncloud/apps/user_management/tests/js
+      - npm install --deps
+      - node_modules/karma/bin/karma start karma.config.js --single-run
+    when:
+      matrix:
+        TEST_SUITE: javascript
+
   codecov:
     image: robertstettner/drone-codecov
     pull: true
@@ -141,10 +152,16 @@ services:
       - MYSQL_ROOT_PASSWORD=owncloud
     when:
       matrix:
-        TEST_SUITE: phpunit
+        TEST_SUITE: [ phpunit, javascript ]
 
 matrix:
   include:
+   - TEST_SUITE: javascript
+     PHP_VERSION: 7.1
+     OC_VERSION: move-user-mgmt-to-own-app
+     NEED_SERVER: true
+     NEED_INSTALL_APP: true
+
 #syntax lint check
    - TEST_SUITE: lint
      PHP_VERSION: 7.1
