@@ -54,7 +54,9 @@ module.exports = function(config) {
 		return ownCloudPath + 'core/js/' + path;
 	}));
 
-	var files = [].concat(coreLibs, srcFiles, testFiles);
+	var files = [].concat(coreLibs, srcFiles, testFiles, [
+		ownCloudPath + 'core/js/singleselect.js'
+	]);
 
 	config.set({
 
