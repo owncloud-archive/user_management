@@ -434,10 +434,10 @@ class UsersController extends Controller {
 					'url' => $this->urlGenerator->getAbsoluteURL('/')
 				];
 
-				$mail = new TemplateResponse('settings', 'email.new_user', $mailData, 'blank');
+				$mail = new TemplateResponse('user_management', 'new_user/email-html', $mailData, 'blank');
 				$mailContent = $mail->render();
 
-				$mail = new TemplateResponse('settings', 'email.new_user_plain_text', $mailData, 'blank');
+				$mail = new TemplateResponse('user_management', 'new_user/email-plain_text', $mailData, 'blank');
 				$plainTextMailContent = $mail->render();
 
 				$subject = $this->l10n->t('Your %s account was created', [$this->defaults->getName()]);
@@ -767,7 +767,7 @@ class UsersController extends Controller {
 
 		$link = $this->urlGenerator->linkToRouteAbsolute('settings.Users.changeMail', ['userId' => $userId, 'token' => $token]);
 
-		$tmpl = new \OC_Template('settings', 'changemail/email');
+		$tmpl = new \OC_Template('user_management', 'changemail/email');
 		$tmpl->assign('link', $link);
 		$msg = $tmpl->fetchPage();
 
@@ -847,7 +847,7 @@ class UsersController extends Controller {
 		$this->setEmailAddress($userId, $mailAddress);
 
 		if ($oldEmailAddress !== null && $oldEmailAddress !== '') {
-			$tmpl = new \OC_Template('settings', 'changemail/notify');
+			$tmpl = new \OC_Template('user_management', 'changemail/notify');
 			$tmpl->assign('mailAddress', $mailAddress);
 			$msg = $tmpl->fetchPage();
 

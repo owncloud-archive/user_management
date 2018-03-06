@@ -1699,8 +1699,8 @@ class UsersControllerTest extends TestCase {
 			->method('setSubject')
 			->with('Your  account was created');
 		$htmlBody = new Http\TemplateResponse(
-			'settings',
-			'email.new_user',
+			'user_management',
+			'new_user/email-html',
 			[
 				'username' => 'foo',
 				'url' => '',
@@ -1712,8 +1712,8 @@ class UsersControllerTest extends TestCase {
 			->method('setHtmlBody')
 			->with($htmlBody->render());
 		$plainBody = new Http\TemplateResponse(
-			'settings',
-			'email.new_user_plain_text',
+			'user_management',
+			'new_user/email-plain_text',
 			[
 				'username' => 'foo',
 				'url' => '',
