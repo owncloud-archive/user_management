@@ -1,14 +1,14 @@
 {
-	"name": "owncloud-activity",
-	"description": "ownCloud Activity App",
+	"name": "owncloud-user_management",
+	"description": "ownCloud user_management App",
 	"version": "0.0.1",
 	"private": true,
-	"homepage": "https://github.com/owncloud/activity",
+	"homepage": "https://github.com/owncloud/user_management",
 	"repository": {
 		"type": "git",
-		"url": "git@github.com:owncloud/activity.git"
+		"url": "git@github.com:owncloud/user_management.git"
 	},
-	"bugs": "https://github.com/owncloud/activity/issues",
+	"bugs": "https://github.com/owncloud/user_management/issues",
 	"contributors": [],
 	"dependencies": {},
 	"devDependencies": {

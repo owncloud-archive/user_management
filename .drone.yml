@@ -97,9 +97,7 @@ pipeline:
     image: owncloudci/php:${PHP_VERSION}
     pull: true
     commands:
-      - cd /var/www/owncloud/apps/user_management/tests/js
-      - npm install --deps
-      - node_modules/karma/bin/karma start karma.config.js --single-run
+      - make test-js
     when:
       matrix:
         TEST_SUITE: javascript

@@ -76,9 +76,16 @@ update-composer: $(COMPOSER_BIN)
 	php $(COMPOSER_BIN) install --prefer-dist
 
 #
+# testing
+#
+.PHONY: test-js
+test-js:
+	cd tests/js && npm install --deps
+	cd tests/js && node_modules/karma/bin/karma start karma.config.js --single-run
+
+#
 # dist
 #
-
 $(dist_dir)/user_management: $(composer_deps)
 	rm -Rf $@; mkdir -p $@
 	cp -R $(user_management_all_src) $@
