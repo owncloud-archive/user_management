@@ -546,7 +546,7 @@ var UserList = {
 		) {
 			// the select component has added the bogus value, delete it again
 			$select.find('option[selected]').remove();
-			OC.Notification.showTemporary(t('core', 'Invalid quota value "{val}"', {val: quota}));
+			OC.Notification.showTemporary(t('user_management', 'Invalid quota value "{val}"', {val: quota}));
 			return;
 		}
 		UserList._updateQuota(uid, quota, function(returnedQuota){
@@ -563,15 +563,26 @@ var UserList = {
 	 * @param {Function} ready callback after save
 	 */
 	_updateQuota: function(uid, quota, ready) {
-		$.post(
-			OC.filePath('settings', 'ajax', 'setquota.php'),
-			{username: uid, quota: quota},
-			function (result) {
+		$.ajax({
+			url: OC.linkToOCS('cloud', 2) + 'users/' + encodeURIComponent(uid) + '?format=json',
+			/* jshint camelcase: false */
+			data: {
+				key: 'quota',
+				value: quota
+			},
+			type: 'PUT',
+			beforeSend: function(xhr) {
+				xhr.setRequestHeader('OCS-APIREQUEST', 'true');
+			},
+			success: function() {
 				if (ready) {
-					ready(result.data.quota);
+					ready(quota);
 				}
+			},
+			error: function() {
+				OC.Notification.showTemporary(t('user_management', 'Error while setting quota.'));
 			}
-		);
+		});
 	},
 
 	/**
