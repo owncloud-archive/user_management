@@ -25,7 +25,7 @@
 namespace OCA\UserManagement\Controller;
 
 use OC\AppFramework\Http;
-use OC\Group\MetaData;
+use OCA\UserManagement\MetaData;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\IGroupManager;

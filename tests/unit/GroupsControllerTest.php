@@ -10,8 +10,8 @@
 
 namespace OCA\UserManagement\Test\Unit;
 
-use OC\Group\MetaData;
 use OCA\UserManagement\Controller\GroupsController;
+use OCA\UserManagement\MetaData;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\IGroupManager;
