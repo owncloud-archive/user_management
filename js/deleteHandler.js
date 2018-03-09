@@ -202,7 +202,7 @@ DeleteHandler.prototype.deleteEntry = function(keepNotification) {
 			dh.canceled = true;
 		},
 		error: function (jqXHR) {
-			OC.dialogs.alert(jqXHR.responseJSON.data.message, t('settings', 'Unable to delete {objName}', {objName: dh.oidToDelete}));
+			OC.dialogs.alert(jqXHR.responseJSON.data.message, t('user_management', 'Unable to delete {objName}', {objName: dh.oidToDelete}));
 			dh.undoCallback(dh.oidToDelete);
 
 		}

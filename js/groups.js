@@ -140,7 +140,7 @@ GroupList = {
 				}
 				GroupList.toggleAddGroup();
 			}).fail(function(result) {
-				OC.Notification.showTemporary(t('settings', 'Error creating group: {message}', {message: result.responseJSON.message}));
+				OC.Notification.showTemporary(t('user_management', 'Error creating group: {message}', {message: result.responseJSON.message}));
 			});
 	},
 
@@ -242,8 +242,8 @@ GroupList = {
 
 	isGroupNameValid: function (groupname) {
 		if ($.trim(groupname) === '') {
-			OC.Notification.showTemporary(t('settings', 'Error creating group: {message}', {
-				message: t('settings', 'A valid group name must be provided')
+			OC.Notification.showTemporary(t('user_management', 'Error creating group: {message}', {
+				message: t('user_management', 'A valid group name must be provided')
 			}));
 			return false;
 		}
@@ -271,8 +271,8 @@ GroupList = {
 
 		//configure undo
 		OC.Notification.hide();
-		var msg = escapeHTML(t('settings', 'deleted {groupName}', {groupName: '%oid'})) + '<span class="undo">' +
-			escapeHTML(t('settings', 'undo')) + '</span>';
+		var msg = escapeHTML(t('user_management', 'deleted {groupName}', {groupName: '%oid'})) + '<span class="undo">' +
+			escapeHTML(t('user_management', 'undo')) + '</span>';
 		GroupDeleteHandler.setNotification(OC.Notification, 'deletegroup', msg,
 			GroupList.show);
 
