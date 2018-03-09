@@ -745,7 +745,7 @@ $(document).ready(function () {
 					if ($(this).val().length > 0) {
 						var recoveryPasswordVal = $('input:password[id="recoveryPassword"]').val();
 						$.post(
-							OC.generateUrl('/settings/users/changepassword'),
+							OC.generateUrl('/apps/user_management/users/changepassword'),
 							{username: uid, password: $(this).val(), recoveryPassword: recoveryPasswordVal},
 							function (result) {
 								if(result.status == 'success') {
@@ -835,7 +835,7 @@ $(document).ready(function () {
 					$input.attr('disabled', 'disabled');
 					$.ajax({
 						type: 'PUT',
-						url: OC.generateUrl('/settings/admin/{id}/mailAddress', {id: uid}),
+						url: OC.generateUrl('/apps/user_management/admin/{id}/mailAddress', {id: uid}),
 						data: {
 							mailAddress: $(this).val()
 						}
