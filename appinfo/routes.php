@@ -17,8 +17,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
 
-//$this->create('user_management.page.index', '/')
-//	->actionInclude('user_management/lib/Controller/users.php');
+$this->create('settings_ajax_togglegroups', '/ajax/togglegroups.php')
+	->actionInclude('user_management/ajax/togglegroups.php');
+$this->create('settings_ajax_togglesubadmins', '/ajax/togglesubadmins.php')
+	->actionInclude('user_management/ajax/togglesubadmins.php');
+
 
 return [
 	'resources' => [
@@ -35,5 +38,6 @@ return [
 		['name' => 'Users#setEmailAddress', 'url' => '/settings/admin/{id}/mailAddress', 'verb' => 'PUT'],
 		['name' => 'Users#setEnabled', 'url' => '/users/{id}/enabled', 'verb' => 'POST'],
 		['name' => 'Users#stats', 'url' => '/users/stats', 'verb' => 'GET'],
+
 	]
 ];

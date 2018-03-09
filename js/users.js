@@ -445,7 +445,7 @@ var UserList = {
 					return false;
 				}
 				$.post(
-					OC.filePath('settings', 'ajax', 'togglegroups.php'),
+					OC.filePath('user_management', 'ajax', 'togglegroups.php'),
 					{
 						username: user,
 						group: group
@@ -501,7 +501,7 @@ var UserList = {
 				return false;
 			}
 			$.post(
-				OC.filePath('settings', 'ajax', 'togglesubadmins.php'),
+				OC.filePath('user_management', 'ajax', 'togglesubadmins.php'),
 				{
 					username: user,
 					group: group
