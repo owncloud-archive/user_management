@@ -67,5 +67,7 @@ class PageControllerTest extends \PHPUnit_Framework_TestCase {
 			$eventDispatcher);
 		$response = $controller->index();
 		$this->assertInstanceOf(TemplateResponse::class, $response);
+		$html = $response->render();
+		$this->assertContains('<span>Add Group</span>', $html);
 	}
 }
