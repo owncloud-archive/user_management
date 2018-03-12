@@ -32,40 +32,84 @@
  */
 namespace OCA\UserManagement\Controller;
 
-class ChangePasswordController {
+use OCP\AppFramework\Controller;
+use OCP\AppFramework\Http\JSONResponse;
+use OCP\IGroupManager;
+use OCP\IL10N;
+use OCP\IRequest;
+use OCP\IUserManager;
+use OCP\IUserSession;
+use OCP\Mail\IMailer;
 
-	public static function changeUserPassword($args) {
-		// Check if we are an user
-		\OC_JSON::callCheck();
-		\OC_JSON::checkLoggedIn();
+class ChangePasswordController extends Controller {
 
-		$l = \OC::$server->getL10NFactory()->get('settings');
-		if (isset($_POST['username'])) {
-			$username = $_POST['username'];
-		} else {
-			\OC_JSON::error(['data' => ['message' => $l->t('No user supplied')]]);
-			exit();
+	/** @var IL10N */
+	private $l10n;
+	/** @var IUserSession */
+	private $userSession;
+	/** @var IUserManager */
+	private $userManager;
+	/** @var IGroupManager */
+	private $groupManager;
+	/** @var IMailer */
+	private $mailer;
+
+	/**
+	 * ChangePasswordController constructor.
+	 *
+	 * @param string $appName
+	 * @param IRequest $request
+	 * @param IL10N $l10n
+	 * @param IUserSession $userSession
+	 * @param IUserManager $userManager
+	 * @param IGroupManager $groupManager
+	 */
+	public function __construct($appName,
+								IRequest $request,
+								IL10N $l10n,
+								IUserSession $userSession,
+								IUserManager $userManager,
+								IGroupManager $groupManager,
+								IMailer $mailer
+	) {
+		parent::__construct($appName, $request);
+		$this->l10n = $l10n;
+		$this->userSession = $userSession;
+		$this->userManager = $userManager;
+		$this->groupManager = $groupManager;
+		$this->mailer = $mailer;
+	}
+
+	/**
+	 * @param string $username
+	 * @param string $password
+	 * @param string $recoveryPassword
+	 * @return JSONResponse
+	 * @throws \Exception
+	 */
+	public function changePassword($username, $password = null, $recoveryPassword = null) {
+
+		if ($username === null) {
+			return new JSONResponse([
+				'status' => 'error',
+				'data' => ['message' => $this->l10n->t('No user supplied')]]);
 		}
-
-		$password = isset($_POST['password']) ? $_POST['password'] : null;
-		$recoveryPassword = isset($_POST['recoveryPassword']) ? $_POST['recoveryPassword'] : null;
 
 		$isUserAccessible = false;
-		$currentUserObject = \OC::$server->getUserSession()->getUser();
-		$targetUserObject = \OC::$server->getUserManager()->get($username);
+		$currentUserObject = $this->userSession->getUser();
+		$targetUserObject = $this->userManager->get($username);
 		if($currentUserObject !== null && $targetUserObject !== null) {
-			$isUserAccessible = \OC::$server->getGroupManager()->getSubAdmin()->isUserAccessible($currentUserObject, $targetUserObject);
+			$isUserAccessible = $this->groupManager->getSubAdmin()->isUserAccessible($currentUserObject, $targetUserObject);
 		}
 
-		if (\OC_User::isAdminUser(\OC_User::getUser())) {
-			$userstatus = 'admin';
-		} elseif ($isUserAccessible) {
-			$userstatus = 'subadmin';
-		} else {
-			\OC_JSON::error(['data' => ['message' => $l->t('Authentication error')]]);
-			exit();
+		if (!$this->groupManager->isAdmin($currentUserObject->getUID()) &&
+			!$isUserAccessible ) {
+			return new JSONResponse([
+				'status' => 'error',
+				'data' => ['message' => $this->l10n->t('Authentication error')]]);
 		}
 
+		// @codeCoverageIgnoreStart
 		if (\OC_App::isEnabled('encryption')) {
 			//handle the recovery case
 			$crypt = new \OCA\Encryption\Crypto\Crypt(
@@ -108,64 +152,76 @@ class ChangePasswordController {
 			}
 
 			if ($recoveryEnabledForUser && $recoveryPassword === '') {
-				\OC_JSON::error(['data' => [
-					'message' => $l->t('Please provide an admin recovery password; otherwise, all user data will be lost.')
-				]]);
-			} elseif ($recoveryEnabledForUser && ! $validRecoveryPassword) {
-				\OC_JSON::error(['data' => [
-					'message' => $l->t('Wrong admin recovery password. Please check the password and try again.')
-				]]);
-			} else { // now we know that everything is fine regarding the recovery password, let's try to change the password
-				$result = \OC_User::setPassword($username, $password, $recoveryPassword);
-				if (!$result && $recoveryEnabledForUser) {
-					\OC_JSON::error([
-						"data" => [
-							"message" => $l->t("Backend doesn't support password change, but the user's encryption key was successfully updated.")
-						]
-					]);
-				} elseif (!$result && !$recoveryEnabledForUser) {
-					\OC_JSON::error(["data" => ["message" => $l->t("Unable to change password" )]]);
-				} else {
-					self::sendNotificationMail($username);
-					\OC_JSON::success(["data" => ["username" => $username]]);
-				}
+				return new JSONResponse([
+					'status' => 'error',
+					'data' => ['message' => $this->l10n->t('Please provide an admin recovery password; otherwise, all user data will be lost.')]]);
+			}
 
+			if ($recoveryEnabledForUser && ! $validRecoveryPassword) {
+				return new JSONResponse([
+					'status' => 'error',
+					'data' => ['message' => $this->l10n->t('Wrong admin recovery password. Please check the password and try again.')]]);
 			}
-		} else { // if encryption is disabled, proceed
-			try {
-				if (!is_null($password) && \OC_User::setPassword($username, $password)) {
-					self::sendNotificationMail($username);
-					\OC_JSON::success(['data' => ['username' => $username]]);
-				} else {
-					\OC_JSON::error(['data' => ['message' => $l->t('Unable to change password')]]);
-				}
-			} catch (\Exception $e) {
-				\OC_JSON::error(['data' => ['message' => $e->getMessage()]]);
+
+			// now we know that everything is fine regarding the recovery password, let's try to change the password
+			$result = $targetUserObject->setPassword($password, $recoveryPassword);
+			if (!$result && $recoveryEnabledForUser) {
+				return new JSONResponse([
+					'status' => 'error',
+					'data' => ['message' => $this->l10n->t('Backend doesn\'t support password change, but the user\'s encryption key was successfully updated.')]]);
 			}
+
+			if (!$result && !$recoveryEnabledForUser) {
+				return new JSONResponse([
+					'status' => 'error',
+					'data' => ['message' => $this->l10n->t('Unable to change password')]]);
+			}
+
+			$this->sendNotificationMail($username);
+			return new JSONResponse([
+				'status' => 'success',
+				'data' => ['username' => $username]]);
+		}
+		// @codeCoverageIgnoreEnd
+
+		// if encryption is disabled, proceed
+		try {
+			if ($password !== null && $targetUserObject->setPassword($password)) {
+				$this->sendNotificationMail($username);
+				return new JSONResponse([
+					'status' => 'success',
+					'data' => ['username' => $username]]);
+			}
+
+			return new JSONResponse([
+				'status' => 'error',
+				'data' => ['message' => $this->l10n->t('Unable to change password')]]);
+		} catch (\Exception $e) {
+			return new JSONResponse([
+				'status' => 'error',
+				'data' => ['message' => $e->getMessage()]]);
 		}
 	}
 
-	private static function sendNotificationMail($username) {
-		$userObject = \OC::$server->getUserManager()->get($username);
+	private function sendNotificationMail($username) {
+		$userObject = $this->userManager->get($username);
 		$email = $userObject->getEMailAddress();
 		$defaults = new \OC_Defaults();
 		$from = \OCP\Util::getDefaultEmailAddress('lostpassword-noreply');
-		$mailer = \OC::$server->getMailer();
-		$lion = \OC::$server->getL10N('lib');
 
 		if ($email !== null && $email !== '') {
 			$tmpl = new \OC_Template('core', 'lostpassword/notify');
 			$msg = $tmpl->fetchPage();
 
 			try {
-				$message = $mailer->createMessage();
+				$message = $this->mailer->createMessage();
 				$message->setTo([$email => $username]);
-				$message->setSubject($lion->t('%s password changed successfully', [$defaults->getName()]));
+				$message->setSubject($this->l10n->t('%s password changed successfully', [$defaults->getName()]));
 				$message->setPlainBody($msg);
 				$message->setFrom([$from => $defaults->getName()]);
-				$mailer->send($message);
+				$this->mailer->send($message);
 			} catch (\Exception $e) {
-				throw new \Exception($lion->t(
+				throw new \Exception($this->l10n->t(
 					'Couldn\'t send reset email. Please contact your administrator.'
 				));
 			}

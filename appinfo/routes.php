@@ -23,10 +23,6 @@ $this->create('settings_ajax_togglegroups', '/ajax/togglegroups.php')
 $this->create('settings_ajax_togglesubadmins', '/ajax/togglesubadmins.php')
 	->post()
 	->actionInclude('user_management/ajax/togglesubadmins.php');
-$this->create('settings_users_changepassword', '/users/changepassword')
-	->post()
-	->action(\OCA\UserManagement\Controller\ChangePasswordController::class, 'changeUserPassword');
-
 
 return [
 	'resources' => [
@@ -37,12 +33,11 @@ return [
 		// page
 		['name' => 'page#index', 'url' => '/', 'verb' => 'GET'],
 		// users controller
-
 		['name' => 'Users#setDisplayName', 'url' => '/users/{username}/displayName', 'verb' => 'POST'],
 		['name' => 'Users#setMailAddress', 'url' => '/users/{id}/mailAddress', 'verb' => 'PUT'],
 		['name' => 'Users#setEmailAddress', 'url' => '/admin/{id}/mailAddress', 'verb' => 'PUT'],
 		['name' => 'Users#setEnabled', 'url' => '/users/{id}/enabled', 'verb' => 'POST'],
 		['name' => 'Users#stats', 'url' => '/users/stats', 'verb' => 'GET'],
-
+		['name' => 'ChangePassword#changePassword', 'url' => '/users/changepassword', 'verb' => 'POST']
 	]
 ];
