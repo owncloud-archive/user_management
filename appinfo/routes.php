@@ -17,8 +17,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
 
-//$this->create('user_management.page.index', '/')
-//	->actionInclude('user_management/lib/Controller/users.php');
+$this->create('settings_ajax_togglegroups', '/ajax/togglegroups.php')
+	->post()
+	->actionInclude('user_management/ajax/togglegroups.php');
+$this->create('settings_ajax_togglesubadmins', '/ajax/togglesubadmins.php')
+	->post()
+	->actionInclude('user_management/ajax/togglesubadmins.php');
 
 return [
 	'resources' => [
@@ -29,11 +33,11 @@ return [
 		// page
 		['name' => 'page#index', 'url' => '/', 'verb' => 'GET'],
 		// users controller
-
 		['name' => 'Users#setDisplayName', 'url' => '/users/{username}/displayName', 'verb' => 'POST'],
 		['name' => 'Users#setMailAddress', 'url' => '/users/{id}/mailAddress', 'verb' => 'PUT'],
-		['name' => 'Users#setEmailAddress', 'url' => '/settings/admin/{id}/mailAddress', 'verb' => 'PUT'],
+		['name' => 'Users#setEmailAddress', 'url' => '/admin/{id}/mailAddress', 'verb' => 'PUT'],
 		['name' => 'Users#setEnabled', 'url' => '/users/{id}/enabled', 'verb' => 'POST'],
 		['name' => 'Users#stats', 'url' => '/users/stats', 'verb' => 'GET'],
+		['name' => 'ChangePassword#changePassword', 'url' => '/users/changepassword', 'verb' => 'POST']
 	]
 ];

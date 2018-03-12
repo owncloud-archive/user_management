@@ -19,6 +19,7 @@
 
 namespace OCA\UserManagement\Controller;
 
+use OCA\UserManagement\MetaData;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\TemplateResponse;
@@ -63,7 +64,7 @@ class PageController extends Controller {
 	public function index() {
 
 		// Set the sort option: SORT_USERCOUNT or SORT_GROUPNAME
-		$sortGroupsBy = \OC\Group\MetaData::SORT_USERCOUNT;
+		$sortGroupsBy = MetaData::SORT_USERCOUNT;
 
 		if (\OC_App::isEnabled('user_ldap')) {
 			$isLDAPUsed =
@@ -71,13 +72,13 @@ class PageController extends Controller {
 				|| $this->groupManager->isBackendUsed('\OCA\User_LDAP\Group_Proxy');
 			if ($isLDAPUsed) {
 				// LDAP user count can be slow, so we sort by group name here
-				$sortGroupsBy = \OC\Group\MetaData::SORT_GROUPNAME;
+				$sortGroupsBy = MetaData::SORT_GROUPNAME;
 			}
 		}
 
 		$isAdmin = $this->groupManager->isAdmin($this->userSession->getUser()->getUID());
 
-		$groupsInfo = new \OC\Group\MetaData(
+		$groupsInfo = new MetaData(
 			$this->userSession->getUser()->getUID(),
 			$isAdmin,
 			$this->groupManager,

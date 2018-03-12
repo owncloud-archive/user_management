@@ -120,7 +120,7 @@ var UserList = {
 				src: OC.imagePath('core', 'actions/delete')
 			});
 			var deleteLink = $('<a class="action delete">')
-				.attr({ href: '#', 'original-title': t('settings', 'Delete')})
+				.attr({ href: '#', 'original-title': t('user_management', 'Delete')})
 				.append(deleteImage);
 			$tr.find('td.remove').append(deleteLink);
 		} else if (OC.currentUser === user.name) {
@@ -160,7 +160,7 @@ var UserList = {
 		/**
 		 * last login
 		 */
-		var lastLoginRel = t('settings', 'never');
+		var lastLoginRel = t('user_management', 'never');
 		var lastLoginAbs = lastLoginRel;
 		if(user.lastLogin !== 0) {
 			lastLoginRel = OC.Util.relativeModifiedDate(user.lastLogin);
@@ -368,8 +368,8 @@ var UserList = {
 
 		//configure undo
 		OC.Notification.hide();
-		var msg = escapeHTML(t('settings', 'deleted {userName}', {userName: '%oid'})) + '<span class="undo">' +
-			escapeHTML(t('settings', 'undo')) + '</span>';
+		var msg = escapeHTML(t('user_management', 'deleted {userName}', {userName: '%oid'})) + '<span class="undo">' +
+			escapeHTML(t('user_management', 'undo')) + '</span>';
 		UserDeleteHandler.setNotification(OC.Notification, 'deleteuser', msg,
 										UserList.undoRemove);
 
@@ -445,7 +445,7 @@ var UserList = {
 					return false;
 				}
 				$.post(
-					OC.filePath('settings', 'ajax', 'togglegroups.php'),
+					OC.filePath('user_management', 'ajax', 'togglegroups.php'),
 					{
 						username: user,
 						group: group
@@ -478,7 +478,7 @@ var UserList = {
 		};
 		var label;
 		if (oc_isadmin) {
-			label = t('settings', 'add group');
+			label = t('user_management', 'add group');
 		}
 		else {
 			label = null;
@@ -501,7 +501,7 @@ var UserList = {
 				return false;
 			}
 			$.post(
-				OC.filePath('settings', 'ajax', 'togglesubadmins.php'),
+				OC.filePath('user_management', 'ajax', 'togglesubadmins.php'),
 				{
 					username: user,
 					group: group
@@ -546,7 +546,7 @@ var UserList = {
 		) {
 			// the select component has added the bogus value, delete it again
 			$select.find('option[selected]').remove();
-			OC.Notification.showTemporary(t('core', 'Invalid quota value "{val}"', {val: quota}));
+			OC.Notification.showTemporary(t('user_management', 'Invalid quota value "{val}"', {val: quota}));
 			return;
 		}
 		UserList._updateQuota(uid, quota, function(returnedQuota){
@@ -563,15 +563,26 @@ var UserList = {
 	 * @param {Function} ready callback after save
 	 */
 	_updateQuota: function(uid, quota, ready) {
-		$.post(
-			OC.filePath('settings', 'ajax', 'setquota.php'),
-			{username: uid, quota: quota},
-			function (result) {
+		$.ajax({
+			url: OC.linkToOCS('cloud', 2) + 'users/' + encodeURIComponent(uid) + '?format=json',
+			/* jshint camelcase: false */
+			data: {
+				key: 'quota',
+				value: quota
+			},
+			type: 'PUT',
+			beforeSend: function(xhr) {
+				xhr.setRequestHeader('OCS-APIREQUEST', 'true');
+			},
+			success: function() {
 				if (ready) {
-					ready(result.data.quota);
+					ready(quota);
 				}
+			},
+			error: function() {
+				OC.Notification.showTemporary(t('user_management', 'Error while setting quota.'));
 			}
-		);
+		});
 	},
 
 	/**
@@ -623,7 +634,7 @@ var UserList = {
 	 */
 	_triggerGroupEdit: function($td, isSubadminSelect) {
 		var $groupsListContainer = $td.find('.groupsListContainer');
-		var placeholder = $groupsListContainer.attr('data-placeholder') || t('settings', 'no group');
+		var placeholder = $groupsListContainer.attr('data-placeholder') || t('user_management', 'no group');
 		var user = UserList.getUID($td);
 		var checked = $td.data('groups') || [];
 		var extraGroups = [].concat(checked);
@@ -684,7 +695,7 @@ var UserList = {
 	_updateGroupListLabel: function($td, groups) {
 		var placeholder = $td.find('.groupsListContainer').attr('data-placeholder');
 		var $groupsEl = $td.find('.groupsList');
-		$groupsEl.text(groups.join(', ') || placeholder || t('settings', 'no group'));
+		$groupsEl.text(groups.join(', ') || placeholder || t('user_management', 'no group'));
 		$td.data('groups', groups);
 	}
 };
@@ -723,7 +734,7 @@ $(document).ready(function () {
 			$tr.addClass('row-warning');
 			// add tipsy if the password change could cause data loss - no recovery enabled
 			$input.tipsy({gravity:'s'});
-			$input.attr('title', t('settings', 'Changing the password will result in data loss, because data recovery is not available for this user'));
+			$input.attr('title', t('user_management', 'Changing the password will result in data loss, because data recovery is not available for this user'));
 		}
 		$td.find('img').hide();
 		$td.children('span').replaceWith($input);
@@ -734,7 +745,7 @@ $(document).ready(function () {
 					if ($(this).val().length > 0) {
 						var recoveryPasswordVal = $('input:password[id="recoveryPassword"]').val();
 						$.post(
-							OC.generateUrl('/settings/users/changepassword'),
+							OC.generateUrl('/apps/user_management/users/changepassword'),
 							{username: uid, password: $(this).val(), recoveryPassword: recoveryPasswordVal},
 							function (result) {
 								if(result.status == 'success') {
@@ -824,7 +835,7 @@ $(document).ready(function () {
 					$input.attr('disabled', 'disabled');
 					$.ajax({
 						type: 'PUT',
-						url: OC.generateUrl('/settings/admin/{id}/mailAddress', {id: uid}),
+						url: OC.generateUrl('/apps/user_management/admin/{id}/mailAddress', {id: uid}),
 						data: {
 							mailAddress: $(this).val()
 						}
@@ -878,14 +889,14 @@ $(document).ready(function () {
 		var password = $('#newuserpassword').val();
 		var email = $('#newemail').val();
 		if ($.trim(username) === '') {
-			OC.Notification.showTemporary(t('settings', 'Error creating user: {message}', {
-				message: t('settings', 'A valid username must be provided')
+			OC.Notification.showTemporary(t('user_management', 'Error creating user: {message}', {
+				message: t('user_management', 'A valid username must be provided')
 			}));
 			return false;
 		}
 		if ($.trim(password) === '') {
-			OC.Notification.showTemporary(t('settings', 'Error creating user: {message}', {
-				message: t('settings', 'A valid password must be provided')
+			OC.Notification.showTemporary(t('user_management', 'Error creating user: {message}', {
+				message: t('user_management', 'A valid password must be provided')
 			}));
 			return false;
 		}
@@ -893,8 +904,8 @@ $(document).ready(function () {
 			email = '';
 		}
 		if ($('#CheckboxMailOnUserCreate').is(':checked') && $.trim(email) === '') {
-			OC.Notification.showTemporary( t('settings', 'Error creating user: {message}', {
-				message: t('settings', 'A valid email must be provided')
+			OC.Notification.showTemporary( t('user_management', 'Error creating user: {message}', {
+				message: t('user_management', 'A valid email must be provided')
 			}));
 			return false;
 		}
@@ -934,7 +945,7 @@ $(document).ready(function () {
 					$('#newusername').focus();
 					GroupList.incEveryoneCount();
 				}).fail(function(result) {
-					OC.Notification.showTemporary(t('settings', 'Error creating user: {message}', {
+					OC.Notification.showTemporary(t('user_management', 'Error creating user: {message}', {
 						message: result.responseJSON.message
 					}, undefined, {escape: false}));
 				}).success(function(){
