@@ -1,6 +1,7 @@
 OC.L10N.register(
     "user_management",
     {
+    "Authentication error" : "Villa við auðkenningu",
     "Unable to delete {objName}" : "Get ekki eytt {objName}",
     "Error creating group: {message}" : "Villa við að búa til hóp: {message}",
     "A valid group name must be provided" : "Skráðu inn gilt heiti á hópi",
@@ -31,7 +32,6 @@ OC.L10N.register(
     "Unable to create user." : "Gat ekki búið til notanda.",
     "Your %s account was created" : "%s notandaaðgangurinn þinn var búinn til",
     "Unable to delete user." : "Get ekki eytt notanda.",
-    "Authentication error" : "Villa við auðkenningu",
     "Forbidden" : "Bannað",
     "Invalid user" : "Ógildur notandi",
     "Unable to change mail address" : "Get ekki breytt tölvupóstfangi",

@@ -1,6 +1,7 @@
 OC.L10N.register(
     "user_management",
     {
+    "Authentication error" : "เกิดข้อผิดพลาดในสิทธิ์การเข้าใช้งาน",
     "Unable to delete {objName}" : "ไม่สามารถลบ {objName}",
     "Error creating group: {message}" : "ข้อผิดพลาดการสร้างกลุ่ม: {message}",
     "A valid group name must be provided" : "จะต้องระบุชื่อกลุ่มที่ถูกต้อง",
@@ -31,7 +32,6 @@ OC.L10N.register(
     "Unable to create user." : "ไม่สามารถสร้างผู้ใช้",
     "Your %s account was created" : "บัญชี %s ของคุณถูกสร้างขึ้น",
     "Unable to delete user." : "ไม่สามารถลบผู้ใช้",
-    "Authentication error" : "เกิดข้อผิดพลาดในสิทธิ์การเข้าใช้งาน",
     "Forbidden" : "เขตหวงห้าม",
     "Invalid user" : "ผู้ใช้ไม่ถูกต้อง",
     "Unable to change mail address" : "ไม่สามารถที่จะเปลี่ยนที่อยู่อีเมล",

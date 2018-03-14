@@ -1,6 +1,7 @@
 OC.L10N.register(
     "user_management",
     {
+    "Authentication error" : "Σφάλμα πιστοποίησης",
     "Unable to delete {objName}" : "Αδυναμία διαγραφής του {objName}",
     "Error creating group: {message}" : "Σφάλμα δημιουργίας ομάδας: {message}",
     "A valid group name must be provided" : "Πρέπει να δοθεί ένα έγκυρο όνομα ομάδας",
@@ -31,7 +32,6 @@ OC.L10N.register(
     "Unable to create user." : "Αδυναμία δημιουργίας χρήστη.",
     "Your %s account was created" : "Ο λογαριασμός %s δημιουργήθηκε",
     "Unable to delete user." : "Αδυναμία διαγραφής χρήστη.",
-    "Authentication error" : "Σφάλμα πιστοποίησης",
     "Forbidden" : "Δεν επιτρέπεται",
     "Invalid user" : "Μη έγκυρος χρήστης",
     "Unable to change mail address" : "Αδυναμία αλλαγής διεύθυνσης αλληλογραφίας",

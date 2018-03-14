@@ -1,6 +1,7 @@
 OC.L10N.register(
     "user_management",
     {
+    "Authentication error" : "Azonosítási hiba",
     "Unable to delete {objName}" : "Ezt nem sikerült törölni: {objName}",
     "Error creating group: {message}" : "Hiba történt a csoport létrehozásakor: {message}",
     "A valid group name must be provided" : "Érvényes csoportnevet kell megadni",
@@ -31,7 +32,6 @@ OC.L10N.register(
     "Unable to create user." : "Nem lehet létrehozni a felhasználót.",
     "Your %s account was created" : "%s fiók létrehozva",
     "Unable to delete user." : "Nem lehet törölni a felhasználót.",
-    "Authentication error" : "Azonosítási hiba",
     "Forbidden" : "Tiltott",
     "Invalid user" : "Érvénytelen felhasználó",
     "Unable to change mail address" : "Nem lehet megváltoztatni az e-mail címet",

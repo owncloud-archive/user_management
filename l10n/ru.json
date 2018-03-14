@@ -1,4 +1,5 @@
 { "translations": {
+    "Authentication error" : "Ошибка аутентификации",
     "Unable to delete {objName}" : "Невозможно удалить {objName}",
     "Error creating group: {message}" : "Ошибка создания группы: {message}",
     "A valid group name must be provided" : "Введите правильное имя группы",
@@ -29,7 +30,6 @@
     "Unable to create user." : "Невозможно создать пользователя.",
     "Your %s account was created" : "Учетная запись %s создана",
     "Unable to delete user." : "Невозможно удалить пользователя.",
-    "Authentication error" : "Ошибка аутентификации",
     "Forbidden" : "Запрещено",
     "Invalid user" : "Неверный пользователь",
     "Unable to change mail address" : "Невозможно изменить адрес электронной почты",

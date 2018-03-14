@@ -1,6 +1,7 @@
 OC.L10N.register(
     "user_management",
     {
+    "Authentication error" : "Chyba přihlášení",
     "Unable to delete {objName}" : "Nelze smazat {objName}",
     "Error creating group: {message}" : "Chyba vytvoření skupiny: {message}",
     "A valid group name must be provided" : "Musíte zadat platný název skupiny",
@@ -31,7 +32,6 @@ OC.L10N.register(
     "Unable to create user." : "Nelze vytvořit uživatele.",
     "Your %s account was created" : "Účet %s byl vytvořen",
     "Unable to delete user." : "Nelze smazat uživatele.",
-    "Authentication error" : "Chyba přihlášení",
     "Forbidden" : "Zakázáno",
     "Invalid user" : "Neplatný uživatel",
     "Unable to change mail address" : "Nelze změnit emailovou adresu",

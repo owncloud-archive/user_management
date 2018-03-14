@@ -1,6 +1,7 @@
 OC.L10N.register(
     "user_management",
     {
+    "Authentication error" : "Authentifizierungsfehler",
     "Unable to delete {objName}" : "Löschen von {objName} nicht möglich",
     "Error creating group: {message}" : "Fehler beim Erstellen einer Gruppe: {message}",
     "A valid group name must be provided" : "Ein gültiger Gruppenname muss angegeben werden",
@@ -31,7 +32,6 @@ OC.L10N.register(
     "Unable to create user." : "Benutzer konnte nicht erstellt werden.",
     "Your %s account was created" : "Ihr %s-Konto wurde erstellt",
     "Unable to delete user." : "Benutzer konnte nicht gelöscht werden.",
-    "Authentication error" : "Authentifizierungsfehler",
     "Forbidden" : "Verboten",
     "Invalid user" : "Ungültiger Benutzer",
     "Unable to change mail address" : "E-Mail-Adresse konnte nicht geändert werden",

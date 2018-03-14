@@ -1,6 +1,7 @@
 OC.L10N.register(
     "user_management",
     {
+    "Authentication error" : "خطا در اعتبار سنجی",
     "Unable to delete {objName}" : "امکان حذف {objName} وجود ندارد",
     "Error creating group: {message}" : "خطا در ساخت گروه: {message}",
     "A valid group name must be provided" : "نام کاربری معتبر می بایست وارد شود",
@@ -27,7 +28,6 @@ OC.L10N.register(
     "Unable to create user." : "ایجاد کاربر امکان‌پذیر نیست.",
     "Your %s account was created" : "حساب کاربری شما  %s ایجاد شد",
     "Unable to delete user." : "حذف کاربر امکان پذیر نیست.",
-    "Authentication error" : "خطا در اعتبار سنجی",
     "Forbidden" : "ممنوعه",
     "Invalid user" : "کاربر نامعتبر",
     "Unable to change mail address" : "تغییر آدرس ایمیل امکان‌پذیر نیست",
