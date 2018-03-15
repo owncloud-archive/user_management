@@ -1,6 +1,7 @@
 OC.L10N.register(
     "user_management",
     {
+    "Admins can't remove themself from the admin group" : "Los administradores no se pueden quitar a si mismos del grupo administrador. ",
     "Authentication error" : "Error al autenticar",
     "Unable to delete {objName}" : "Imposible eliminar {objName}",
     "Error creating group: {message}" : "Error al crear el grupo: {message}",
@@ -21,6 +22,9 @@ OC.L10N.register(
     "Error creating user: {message}" : "Error al crear el usuario: {message}",
     "A valid password must be provided" : "Debe ingresar una contraseña válida",
     "A valid email must be provided" : "Debes colocar un e-mail válido",
+    "No user supplied" : "No se ha indicado el usuario",
+    "Wrong admin recovery password. Please check the password and try again." : "Contraseña de recuperación administrativa incorrecta. Por favor, chequee la clave e intente de nuevo",
+    "Unable to change password" : "Imposible cambiar la contraseña",
     "Group already exists." : "Ese grupo ya existe.",
     "Unable to add group." : "No se puede añadir el grupo.",
     "Unable to delete group." : "No se puede eliminar el grupo.",
@@ -51,6 +55,7 @@ OC.L10N.register(
     "Show user backend" : "Mostrar usuario de back-end",
     "Send email to new user" : "Enviar correo al nuevo usuario",
     "Show email address" : "Mostrar dirección de correo",
+    "Cheers!" : "¡Saludos!",
     "Username" : "Nombre de usuario",
     "Password" : "Contraseña",
     "E-Mail" : "E-mail",
