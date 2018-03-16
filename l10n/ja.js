@@ -42,6 +42,8 @@ OC.L10N.register(
     "Unable to change mail address" : "メールアドレスを変更できません",
     "Your full name has been changed." : "名前を変更しました。",
     "Unable to change full name" : "名前を変更できません",
+    "%s email address confirm" : "%s確認用のメールアドレス",
+    "%s email address changed successfully" : "%sメールアドレスを変更しました",
     "Users" : "ユーザー",
     "Show enabled/disabled option" : "有効/無効オプションを表示",
     "Show storage location" : "データの保存場所を表示",

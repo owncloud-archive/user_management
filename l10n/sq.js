@@ -14,6 +14,7 @@ OC.L10N.register(
     "deleted {userName}" : "u fshi {userName}",
     "add group" : "shto grup",
     "Invalid quota value \"{val}\"" : "Vlerë kuotash e pavlefshme \"{val}\"",
+    "Error while setting quota." : "Gabim gjatë caktimi kuotash.",
     "enabled" : "e aktivizuar",
     "disabled" : "e çaktivizuar",
     "User {uid} has been {state}!" : "Përdoruesi {uid} është {state}!",
