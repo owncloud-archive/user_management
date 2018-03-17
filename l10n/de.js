@@ -14,6 +14,7 @@ OC.L10N.register(
     "deleted {userName}" : "{userName} gelöscht",
     "add group" : "Gruppe hinzufügen",
     "Invalid quota value \"{val}\"" : "Ungültiger Wert \"{val}\" für das Kontigent",
+    "Error while setting quota." : "Fehler beim Festlegen des Speicherkontingentes.",
     "enabled" : "aktiviert",
     "disabled" : "deaktiviert",
     "User {uid} has been {state}!" : "Benutzer {uid} wurde {state}!",

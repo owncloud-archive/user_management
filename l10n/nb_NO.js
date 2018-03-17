@@ -14,6 +14,7 @@ OC.L10N.register(
     "deleted {userName}" : "slettet {userName}",
     "add group" : "legg til gruppe",
     "Invalid quota value \"{val}\"" : "Ugyldig kvoteverdi \"{val}\"",
+    "Error while setting quota." : "Feil skjedde under endring av kvote. ",
     "enabled" : "aktivert",
     "disabled" : "deaktivert",
     "User {uid} has been {state}!" : "Bruker {uid} er blitt {state}!",
