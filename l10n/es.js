@@ -14,6 +14,7 @@ OC.L10N.register(
     "deleted {userName}" : "borrado {userName}",
     "add group" : "añadir grupo",
     "Invalid quota value \"{val}\"" : "Valor de cupo «{val}» no válido",
+    "Error while setting quota." : "Error estableciendo la cuota.",
     "enabled" : "activado",
     "disabled" : "desactivado",
     "User {uid} has been {state}!" : "El usuario {uid} se ha {state}.",
