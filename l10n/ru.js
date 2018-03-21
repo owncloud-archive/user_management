@@ -14,6 +14,7 @@ OC.L10N.register(
     "deleted {userName}" : "удалён {userName}",
     "add group" : "добавить группу",
     "Invalid quota value \"{val}\"" : "Неверное значение квоты \"{val}\"",
+    "Error while setting quota." : "Ошибка при установке квоты.",
     "enabled" : "включен",
     "disabled" : "выключен",
     "User {uid} has been {state}!" : "Пользовтаель {uid} был {state}!",
