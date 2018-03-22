@@ -24,6 +24,9 @@ pipeline:
     pull: true
     commands:
       - tail -f /var/www/owncloud/data/owncloud.log
+    when:
+      matrix:
+        NEED_SERVER: true
 
   install-app:
     image: owncloudci/php:${PHP_VERSION}
