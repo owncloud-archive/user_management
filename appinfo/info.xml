@@ -12,7 +12,7 @@
 		<owncloud min-version="10.0" max-version="11.0" />
 	</dependencies>
 	<namespace>UserManagement</namespace>
-	<navigation role="admin">
+	<navigation role="admin,sub-admin">
 		<route>user_management.page.index</route>
 		<order>100</order>
 		<name>Users</name>
