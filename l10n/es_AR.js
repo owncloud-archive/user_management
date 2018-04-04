@@ -3,6 +3,7 @@ OC.L10N.register(
     {
     "Admins can't remove themself from the admin group" : "Los administradores no se pueden quitar a si mismos del grupo administrador. ",
     "Authentication error" : "Error al autenticar",
+    "Unknown user" : "Usuario desconocido",
     "Unable to delete {objName}" : "Imposible eliminar {objName}",
     "Error creating group: {message}" : "Error al crear el grupo: {message}",
     "A valid group name must be provided" : "Debe colocarse un nombre de grupo válido",

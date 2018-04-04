@@ -12,6 +12,7 @@
     "deleted {userName}" : "ลบผู้ใช้ {userName} เรียบร้อยแล้ว",
     "add group" : "เพิ่มกลุ่ม",
     "Invalid quota value \"{val}\"" : "ค่าอัญประกาศไม่ถูกต้อง \"{val}\"",
+    "Error while setting quota." : "เกิดข้อผิดพลาดขณะกำหนดโควต้า",
     "enabled" : "เปิดใช้งาน",
     "disabled" : "ปิดใช้งาน",
     "User {uid} has been {state}!" : "ผู้ใช้ {uid} ได้รับการ {state}!",
