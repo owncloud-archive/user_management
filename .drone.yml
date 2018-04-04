@@ -6,7 +6,7 @@ branches: [ master, release* ]
 
 pipeline:
   install-server:
-    image: owncloudci/core
+    image: patrickjahns/occore
     pull: true
     GIT_REFERENCE: ${OC_VERSION}
     db_type: mysql
