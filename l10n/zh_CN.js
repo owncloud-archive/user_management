@@ -14,6 +14,7 @@ OC.L10N.register(
     "deleted {userName}" : "已删除 {userName}",
     "add group" : "增加组",
     "Invalid quota value \"{val}\"" : "无效值 \"{val}\"",
+    "Error while setting quota." : "设置限额时出错。",
     "enabled" : "已启用",
     "disabled" : "已禁用",
     "User {uid} has been {state}!" : "用户 {uid} 已被 {state}!",
