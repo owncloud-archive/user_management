@@ -25,8 +25,9 @@ require_once 'bootstrap.php';
 use Behat\Behat\Context\Context;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
-use Behat\Mink\Exception\ExpectationException;
 use Behat\MinkExtension\Context\RawMinkContext;
+use Behat\Mink\Exception\ExpectationException;
+use Page\LoginPage;
 use Page\UsersPage;
 
 /**
@@ -35,6 +36,13 @@ use Page\UsersPage;
 class WebUIUsersContext extends RawMinkContext implements Context {
 
 	private $usersPage;
+	private $loginPage;
+
+	/**
+	 *
+	 * @var WebUIGeneralContext
+	 */
+	private $webUIGeneralContext;
 
 	/**
 	 *
@@ -47,8 +55,9 @@ class WebUIUsersContext extends RawMinkContext implements Context {
 	 *
 	 * @param UsersPage $usersPage
 	 */
-	public function __construct(UsersPage $usersPage) {
+	public function __construct(UsersPage $usersPage, LoginPage $loginPage) {
 		$this->usersPage = $usersPage;
+		$this->loginPage = $loginPage;
 	}
 
 	/**
@@ -204,6 +213,33 @@ class WebUIUsersContext extends RawMinkContext implements Context {
 	}
 
 	/**
+	 * @When the administrator deletes the user with the username :username using the webUI
+	 * 
+	 * @param string $username
+	 * 
+	 * @return void
+	 */
+	public function theAdministratorDeletesTheUser($username) {
+		$this->usersPage->deleteUser($username);
+		$this->featureContext->rememberThatUserIsNotExpectedToExist($username);
+	}
+
+	/**
+	 * 
+	 * @When the deleted user :username tries to login using the password :password using the webUI
+	 * 
+	 * @param string $username
+	 * 
+	 * @param string $password
+	 * 
+	 * @return void
+	 */
+	public function theDeletedUserTriesToLogin($username, $password) {
+		$this->webUIGeneralContext->theUserLogsOutOfTheWebUI();
+		$this->loginPage->loginAs($username, $password, 'LoginPage');
+	}
+
+	/**
 	 * @Then the quota of user :username should be set to :quota on the webUI
 	 *
 	 * @param string $username
@@ -236,6 +272,7 @@ class WebUIUsersContext extends RawMinkContext implements Context {
 		$environment = $scope->getEnvironment();
 		// Get all the contexts you need in this context
 		$this->featureContext = $environment->getContext('FeatureContext');
+		$this->webUIGeneralContext = $environment->getContext('WebUIGeneralContext');
 	}
 
 	/**

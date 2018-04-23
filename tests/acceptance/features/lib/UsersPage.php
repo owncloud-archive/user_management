@@ -62,6 +62,8 @@ class UsersPage extends OwncloudPage {
 	protected $newUserAddGroupBtnXpath = ".//*[@id='newuser']//ul[@class='multiselectoptions down']//li[@title='add group']";
 	protected $createGroupWithNewUserInputXpath = ".//*[@id='newuser']//ul[@class='multiselectoptions down']//input[@type='text']";
 	protected $groupListId = "usergrouplist";
+	protected $deleteUserBtnXpath = ".//td[@class='remove']/a[@class='action delete']";
+	
 	/**
 	 * @param string $username
 	 *
@@ -407,5 +409,24 @@ class UsersPage extends OwncloudPage {
 		$groupList = $this->getGroupListElement();
 		$groupList->addGroup($groupName);
 		$this->waitForAjaxCallsToStartAndFinish($session);
+	}
+
+	/**
+	 * 
+	 * @param string $username
+	 * 
+	 * @return void
+	 */
+	public function deleteUser($username) {
+		$userTr = $this->findUserInTable($username);
+		$deleteBtn = $userTr->find("xpath", $this->deleteUserBtnXpath);
+		if ($deleteBtn === null) {
+			throw new ElementNotFoundException(
+				__METHOD__ .
+				" xpath $this->deleteUserBtnXpath " .
+				"could not find delete user field "
+			);
+		}
+		$deleteBtn->click();
 	}
 }
