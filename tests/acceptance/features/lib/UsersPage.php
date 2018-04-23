@@ -40,11 +40,8 @@ class UsersPage extends OwncloudPage {
 	protected $path = '/index.php/apps/user_management';
 
 	protected $userTrXpath = ".//table[@id='userlist']/tbody/tr";
-
 	protected $quotaSelectXpath = ".//select[@class='quota-user']";
-
 	protected $quotaOptionXpath = "//option[contains(text(), '%s')]";
-
 	protected $manualQuotaInputXpath = "//input[contains(@data-original-title,'Please enter storage quota')]";
 	protected $settingsBtnXpath = ".//*[@id='app-settings-header']/button";
 	protected $settingContentId = "app-settings-content";
@@ -62,6 +59,7 @@ class UsersPage extends OwncloudPage {
 	protected $newUserAddGroupBtnXpath = ".//*[@id='newuser']//ul[@class='multiselectoptions down']//li[@title='add group']";
 	protected $createGroupWithNewUserInputXpath = ".//*[@id='newuser']//ul[@class='multiselectoptions down']//input[@type='text']";
 	protected $groupListId = "usergrouplist";
+	protected $disableUserCheckboxXpath            = "//input[@type='checkbox']";
 	/**
 	 * @param string $username
 	 *
@@ -394,6 +392,16 @@ class UsersPage extends OwncloudPage {
 		$groupList = $this->getGroupListElement();
 		$groupList->deleteGroup($name);
 		$this->waitForAjaxCallsToStartAndFinish($session);
+	}
+	/**
+	 * 
+	 * @param string $username
+	 * 
+	 * @return void
+	 */
+	public function disableUser($username) {
+		$userTr = $this->findUserInTable($username);
+		$userTr->find("xpath", $this->disableUserCheckboxXpath)->click();
 	}
 
 	/** 

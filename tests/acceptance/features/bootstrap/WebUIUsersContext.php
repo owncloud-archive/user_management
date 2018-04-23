@@ -28,6 +28,8 @@ use Behat\Gherkin\Node\TableNode;
 use Behat\Mink\Exception\ExpectationException;
 use Behat\MinkExtension\Context\RawMinkContext;
 use Page\UsersPage;
+use Page\LoginPage;
+use Page\DisabledUserPage;
 
 /**
  * WebUI Users context.
@@ -35,20 +37,34 @@ use Page\UsersPage;
 class WebUIUsersContext extends RawMinkContext implements Context {
 
 	private $usersPage;
+	private $loginPage;
 
 	/**
 	 *
 	 * @var FeatureContext
 	 */
 	private $featureContext;
+	
+	/**
+	 *
+	 * @var WebUILoginContext
+	 */
+	private $webUILoginContext;
+	
+	/**
+	 *
+	 * @var WebUIGeneralContext
+	 */
+	private $webUIGeneralContext;
 
 	/**
 	 * WebUIUsersContext constructor.
 	 *
 	 * @param UsersPage $usersPage
 	 */
-	public function __construct(UsersPage $usersPage) {
+	public function __construct(UsersPage $usersPage, LoginPage $loginPage) {
 		$this->usersPage = $usersPage;
+		$this->loginPage = $loginPage;
 	}
 
 	/**
@@ -204,6 +220,37 @@ class WebUIUsersContext extends RawMinkContext implements Context {
 	}
 
 	/**
+	 * @When the admin disables the user :username using the webUI
+	 * 
+	 * @param string $username
+	 * @return void
+	 */
+	public function theAdminDisablesTheUserUsingTheWebui($username) {
+		$this->usersPage->openSettingsMenu();
+		$this->usersPage->setSetting("Show enabled/disabled option");
+		$this->usersPage->disableUser($username);
+	}
+	
+	/**
+	 * @When the disabled user :username tries to login using the password :password from the webUI
+	 * 
+	 * @param string $username
+	 * 
+	 * @param string $password
+	 * 
+	 * @return void
+	 */
+	public function theDisabledUserTriesToLogin($username, $password) {
+		$this->webUIGeneralContext->theUserLogsOutOfTheWebUI();
+		/**
+		 * 
+		 * @var DisabledUserPage $disabledPage
+		 */
+		$disabledPage = $this->loginPage->loginAs($username, $password, 'DisabledUserPage');
+		$disabledPage->waitTillPageIsLoaded($this->getSession());
+	}
+
+	/**
 	 * @Then the quota of user :username should be set to :quota on the webUI
 	 *
 	 * @param string $username
@@ -236,6 +283,8 @@ class WebUIUsersContext extends RawMinkContext implements Context {
 		$environment = $scope->getEnvironment();
 		// Get all the contexts you need in this context
 		$this->featureContext = $environment->getContext('FeatureContext');
+		$this->webUILoginContext = $environment->getContext('WebUILoginContext');
+		$this->webUIGeneralContext = $environment->getContext('WebUIGeneralContext');
 	}
 
 	/**
