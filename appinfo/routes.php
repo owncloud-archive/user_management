@@ -33,10 +33,11 @@ return [
 		// page
 		['name' => 'page#index', 'url' => '/', 'verb' => 'GET'],
 		// users controller
-		['name' => 'Users#setDisplayName', 'url' => '/users/{username}/displayName', 'verb' => 'POST'],
-		['name' => 'Users#setMailAddress', 'url' => '/users/{id}/mailAddress', 'verb' => 'PUT'],
-		['name' => 'Users#setEmailAddress', 'url' => '/admin/{id}/mailAddress', 'verb' => 'PUT'],
-		['name' => 'Users#setEnabled', 'url' => '/users/{id}/enabled', 'verb' => 'POST'],
+		['name' => 'Users#setUserName', 'url' => '/users/{userId}/userName', 'verb' => 'POST'],
+		['name' => 'Users#setDisplayName', 'url' => '/users/{userId}/displayName', 'verb' => 'POST'],
+		['name' => 'Users#setMailAddress', 'url' => '/users/{userId}/mailAddress', 'verb' => 'PUT'],
+		['name' => 'Users#setEmailAddress', 'url' => '/admin/{userId}/mailAddress', 'verb' => 'PUT'],
+		['name' => 'Users#setEnabled', 'url' => '/users/{userId}/enabled', 'verb' => 'POST'],
 		['name' => 'Users#stats', 'url' => '/users/stats', 'verb' => 'GET'],
 		['name' => 'ChangePassword#changePassword', 'url' => '/users/changepassword', 'verb' => 'POST']
 	]

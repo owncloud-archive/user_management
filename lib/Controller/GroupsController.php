@@ -74,7 +74,7 @@ class GroupsController extends Controller {
 		$groupPattern = $filterGroups ? $pattern : '';
 
 		$groupsInfo = new MetaData(
-			$this->userSession->getUser()->getUID(),
+			$this->userSession->getUser()->getUserId(),
 			$this->isAdmin(),
 			$this->groupManager,
 			$this->userSession
@@ -162,7 +162,7 @@ class GroupsController extends Controller {
 		// Get current user (active and not in incognito mode)
 		$user = $this->userSession->getUser();
 		if(!is_null($user)) {
-			return $this->groupManager->isAdmin($user->getUID());
+			return $this->groupManager->isAdmin($user->getUserId());
 		}
 		return false;
 	}

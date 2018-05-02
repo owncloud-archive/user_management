@@ -23,11 +23,11 @@
 OC_JSON::checkAdminUser();
 OCP\JSON::callCheck();
 
-$username = (string)$_POST['username'];
+$userId = (string)$_POST['userId'];
 $group = (string)$_POST['group'];
 
 $subAdminManager = \OC::$server->getGroupManager()->getSubAdmin();
-$targetUserObject = \OC::$server->getUserManager()->get($username);
+$targetUserObject = \OC::$server->getUserManager()->getByUserId($userId);
 $targetGroupObject = \OC::$server->getGroupManager()->get($group);
 
 $isSubAdminOfGroup = false;

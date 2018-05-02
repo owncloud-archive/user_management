@@ -199,8 +199,9 @@ class UsersController extends Controller {
 		}
 
 		return [
-			'name' => $user->getUID(),
-			'displayname' => $user->getDisplayName(),
+			'userId' => $user->getUserId(),
+			'userName' => $user->getUserName(),
+			'displayName' => $user->getDisplayName(),
 			'groups' => (empty($userGroups)) ? $this->groupManager->getUserGroupIds($user, 'management') : $userGroups,
 			'subadmin' => $subAdminGroups,
 			'isEnabled' => $user->isEnabled(),
@@ -221,7 +222,7 @@ class UsersController extends Controller {
 	private function getUsersForUID(array $userIDs) {
 		$users = [];
 		foreach ($userIDs as $uid => $displayName) {
-			$users[$uid] = $this->userManager->get($uid);
+			$users[$uid] = $this->userManager->getByUserId($uid);
 		}
 		return $users;
 	}
@@ -232,7 +233,7 @@ class UsersController extends Controller {
 	 * @throws \Exception
 	 */
 	private function checkEmailChangeToken($token, $userId) {
-		$user = $this->userManager->get($userId);
+		$user = $this->userManager->getByUserId($userId);
 
 		if ($user === null) {
 			throw new \Exception($this->l10n->t('Couldn\'t change the email address because the user does not exist'));
@@ -343,13 +344,13 @@ class UsersController extends Controller {
 	/**
 	 * @NoAdminRequired
 	 *
-	 * @param string $username
+	 * @param string $userName
 	 * @param string $password
 	 * @param array $groups
 	 * @param string $email
 	 * @return DataResponse
 	 */
-	public function create($username, $password, array $groups= [], $email='') {
+	public function create($userName, $password, array $groups= [], $email='') {
 		if($email !== '' && !$this->mailer->validateMailAddress($email)) {
 			return new DataResponse(
 				[
@@ -387,7 +388,7 @@ class UsersController extends Controller {
 			}
 		}
 
-		if ($this->userManager->userExists($username)) {
+		if ($this->userManager->getByUserName($userName)) {
 			return new DataResponse(
 				[
 					'message' => (string)$this->l10n->t('A user with that name already exists.')
@@ -397,7 +398,7 @@ class UsersController extends Controller {
 		}
 
 		try {
-			$user = $this->userManager->createUser($username, $password);
+			$user = $this->userManager->createUser($userName, $password);
 		} catch (\Exception $exception) {
 			$message = $exception->getMessage();
 			if (!$message) {
@@ -430,7 +431,7 @@ class UsersController extends Controller {
 
 				// data for the mail template
 				$mailData = [
-					'username' => $username,
+					'username' => $userName,
 					'url' => $this->urlGenerator->getAbsoluteURL('/')
 				];
 
@@ -444,7 +445,7 @@ class UsersController extends Controller {
 
 				try {
 					$message = $this->mailer->createMessage();
-					$message->setTo([$email => $username]);
+					$message->setTo([$email => $userName]);
 					$message->setSubject($subject);
 					$message->setHtmlBody($mailContent);
 					$message->setPlainBody($plainTextMailContent);
@@ -479,8 +480,8 @@ class UsersController extends Controller {
 	 * @return DataResponse
 	 */
 	public function destroy($id) {
-		$userId = $this->userSession->getUser()->getUID();
-		$user = $this->userManager->get($id);
+		$userId = $this->userSession->getUser()->getUserId();
+		$user = $this->userManager->getByUserId($id);
 
 		if($userId === $id) {
 			return new DataResponse(
@@ -512,7 +513,7 @@ class UsersController extends Controller {
 					[
 						'status' => 'success',
 						'data' => [
-							'username' => $id
+							'userId' => $id
 						]
 					],
 					Http::STATUS_NO_CONTENT
@@ -537,15 +538,15 @@ class UsersController extends Controller {
 	 * @NoAdminRequired
 	 * @NoSubadminRequired
 	 *
-	 * @param string $id
+	 * @param string $userId
 	 * @param string $mailAddress
 	 * @return DataResponse
 	 */
-	public function setMailAddress($id, $mailAddress) {
-		$userId = $this->userSession->getUser()->getUID();
-		$user = $this->userManager->get($id);
+	public function setMailAddress($userId, $mailAddress) {
+		$curretUserId = $this->userSession->getUser()->getUserId();
+		$user = $this->userManager->getByUserId($userId);
 
-		if($userId !== $id
+		if($userId !== $curretUserId
 			&& !$this->isAdmin
 			&& !$this->groupManager->getSubAdmin()->isUserAccessible($this->userSession->getUser(), $user)) {
 			return new DataResponse(
@@ -617,7 +618,7 @@ class UsersController extends Controller {
 					[
 						'status' => 'success',
 						'data' => [
-							'username' => $id,
+							'userId' => $userId,
 							'mailAddress' => $mailAddress,
 							'message' => (string) $this->l10n->t('An email has been sent to this address for confirmation. Until the email is verified this address will not be set.')
 						]
@@ -629,7 +630,7 @@ class UsersController extends Controller {
 					[
 						'status' => 'error',
 						'data' => [
-							'username' => $id,
+							'userId' => $userId,
 							'mailAddress' => $mailAddress,
 							'message' => (string) $this->l10n->t('No email was sent because you already sent one recently. Please try again later.')
 						]
@@ -688,6 +689,58 @@ class UsersController extends Controller {
 		);
 	}
 
+	/**
+	 * Set the userName of a user
+	 *
+	 * @NoAdminRequired
+	 * @NoSubadminRequired
+	 *
+	 * @param string $userId
+	 * @param string $userName
+	 * @return DataResponse
+	 */
+	public function setUserName($userId, $userName) {
+		$currentUser = $this->userSession->getUser();
+
+		if ($userId === null) {
+			$userId = $currentUser->getUserId();
+		}
+
+		$user = $this->userManager->getByUserId($userId);
+
+		if ($user === null ||
+			// TODO !$user->canChangeDisplayName() ||
+			(
+				!$this->groupManager->isAdmin($currentUser->getUserId()) &&
+				!$this->groupManager->getSubAdmin()->isUserAccessible($currentUser, $user) &&
+				$currentUser !== $user)
+		) {
+			return new DataResponse([
+				'status' => 'error',
+				'data' => [
+					'message' => $this->l10n->t('Authentication error'),
+				],
+			]);
+		}
+
+		if ($user->setUserName($userName)) {
+			return new DataResponse([
+				'status' => 'success',
+				'data' => [
+					'message' => $this->l10n->t('Your user name has been changed.'),
+					'userId' => $userId,
+					'userName' => $userName,
+				],
+			]);
+		}
+		return new DataResponse([
+			'status' => 'error',
+			'data' => [
+				'message' => $this->l10n->t('Unable to change user name'),
+				'userName' => $user->getUserName(),
+			],
+		]);
+	}
 
 	/**
 	 * Set the displayName of a user
@@ -695,23 +748,23 @@ class UsersController extends Controller {
 	 * @NoAdminRequired
 	 * @NoSubadminRequired
 	 *
-	 * @param string $username
+	 * @param string $userId
 	 * @param string $displayName
 	 * @return DataResponse
 	 */
-	public function setDisplayName($username, $displayName) {
+	public function setDisplayName($userId, $displayName) {
 		$currentUser = $this->userSession->getUser();
 
-		if ($username === null) {
-			$username = $currentUser->getUID();
+		if ($userId === null) {
+			$userId = $currentUser->getUserId();
 		}
 
-		$user = $this->userManager->get($username);
+		$user = $this->userManager->getByUserId($userId);
 
 		if ($user === null ||
 			!$user->canChangeDisplayName() ||
 			(
-				!$this->groupManager->isAdmin($currentUser->getUID()) &&
+				!$this->groupManager->isAdmin($currentUser->getUserId()) &&
 				!$this->groupManager->getSubAdmin()->isUserAccessible($currentUser, $user) &&
 				$currentUser !== $user)
 			) {
@@ -727,8 +780,8 @@ class UsersController extends Controller {
 			return new DataResponse([
 				'status' => 'success',
 				'data' => [
-					'message' => $this->l10n->t('Your full name has been changed.'),
-					'username' => $username,
+					'message' => $this->l10n->t('Your display name has been changed.'),
+					'userId' => $userId,
 					'displayName' => $displayName,
 				],
 			]);
@@ -736,7 +789,7 @@ class UsersController extends Controller {
 			return new DataResponse([
 				'status' => 'error',
 				'data' => [
-					'message' => $this->l10n->t('Unable to change full name'),
+					'message' => $this->l10n->t('Unable to change display name'),
 					'displayName' => $user->getDisplayName(),
 				],
 			]);
@@ -773,7 +826,7 @@ class UsersController extends Controller {
 
 		try {
 			$message = $this->mailer->createMessage();
-			$message->setTo([$mailAddress => $userId]);
+			$message->setTo([$mailAddress => $userId]); // FIXME send to displayname or username
 			$message->setSubject($this->l10n->t('%s email address confirm', [$this->defaults->getName()]));
 			$message->setPlainBody($msg);
 			$message->setFrom([$this->fromMailAddress => $this->defaults->getName()]);
@@ -789,21 +842,22 @@ class UsersController extends Controller {
 	/**
 	 * @NoAdminRequired
 	 *
-	 * @param string $id
+	 * @param string $userId
  	 * @param string $mailAddress
 	 * @return JSONResponse
  	 */
-	public function setEmailAddress($id, $mailAddress) {
-		$user = $this->userManager->get($id);
+	public function setEmailAddress($userId, $mailAddress) {
+		$user = $this->userManager->getByUserId($userId);
 
 		// Only Admin and SubAdmins are allowed to set email
 		if($this->isAdmin ||
 			($this->groupManager->getSubAdmin()->isSubAdmin($this->userSession->getUser()) &&
 				$this->groupManager->getSubAdmin()->isUserAccessible($this->userSession->getUser(), $user)) ||
-				($this->userSession->getUser()->getUID() === $id)) {
+				($this->userSession->getUser()->getUserId() === $userId)
+		) {
 			$user->setEMailAddress($mailAddress);
-			if ($this->config->getUserValue($id, 'owncloud', 'changeMail') !== '') {
-				$this->config->deleteUserValue($id, 'owncloud', 'changeMail');
+			if ($this->config->getUserValue($userId, 'owncloud', 'changeMail') !== '') {
+				$this->config->deleteUserValue($userId, 'owncloud', 'changeMail');
 			}
 			return new JSONResponse();
 		}
@@ -825,7 +879,7 @@ class UsersController extends Controller {
 	 * @throws \Exception
 	 */
 	public function changeMail($token, $userId) {
-		$user = $this->userManager->get($userId);
+		$user = $this->userManager->getByUserId($userId);
 		$sessionUser = $this->userSession->getUser();
 
 		if ($user !== $sessionUser) {
@@ -865,58 +919,59 @@ class UsersController extends Controller {
 			}
 		}
 		return new RedirectResponse($this->urlGenerator->linkToRoute('settings.SettingsPage.getPersonal', ['changestatus' => 'success', 'user' => $userId]));
-  }
+  	}
   
-  /*
+  	/**
 	 * @NoAdminRequired
 	 *
-	 * @param string $id
+	 * @param string $userId
+	 * @param string $enabled
 	 * @return DataResponse
 	 */
-	public function setEnabled($id, $enabled) {
-                $userId = $this->userSession->getUser()->getUID();
-                $user = $this->userManager->get($id);
+	public function setEnabled($userId, $enabled) {
+		$currentUserId = $this->userSession->getUser()->getUserId();
+		$user = $this->userManager->getByUserId($userId);
 
-                if($userId === $id ||
-                        (!$this->isAdmin &&
-                        !$this->groupManager->getSubAdmin()->isUserAccessible($this->userSession->getUser(), $user))) {
-                        return new DataResponse(
-                                array(
-                                        'status' => 'error',
-                                        'data' => array(
-                                                'message' => (string)$this->l10n->t('Forbidden')
-                                        )
-                                ),
-                                Http::STATUS_FORBIDDEN
-                        );
-                }
+		if($userId === $currentUserId ||
+			(!$this->isAdmin &&
+			!$this->groupManager->getSubAdmin()->isUserAccessible($this->userSession->getUser(), $user))) {
+			return new DataResponse(
+				array(
+					'status' => 'error',
+					'data' => array(
+						'message' => (string)$this->l10n->t('Forbidden')
+					)
+				),
+				Http::STATUS_FORBIDDEN
+			);
+		}
 
 
-                if(!$user){
-                        return new DataResponse(
-                                array(
-                                        'status' => 'error',
-                                        'data' => array(
-                                                'message' => (string)$this->l10n->t('Invalid user')
-                                        )
-                                ),
-                                Http::STATUS_UNPROCESSABLE_ENTITY
-                        );
-                }
+		if(!$user){
+			return new DataResponse(
+				array(
+					'status' => 'error',
+					'data' => array(
+						'message' => (string)$this->l10n->t('Invalid user')
+					)
+				),
+				Http::STATUS_UNPROCESSABLE_ENTITY
+			);
+		}
 
 
 		$value = filter_var($enabled, FILTER_VALIDATE_BOOLEAN);
 		if(!isset($value) || is_null($value))
 		{
-                        return new DataResponse(
-                                array(
-                                        'status' => 'error',
-                                        'data' => array(
-                                                'message' => (string)$this->l10n->t('Unable to enable/disable user.')
-                                        )
-                                ),
-                                Http::STATUS_FORBIDDEN
-                        );
+			return new DataResponse(
+				array(
+					'status' => 'error',
+					'data' => array(
+						'message' => (string)$this->l10n->t('Unable to enable/disable user.')
+					)
+				),
+				Http::STATUS_FORBIDDEN
+			);
 		}
 
 		$user->setEnabled($value);
@@ -925,7 +980,7 @@ class UsersController extends Controller {
 			[
 				'status' => 'success',
 				'data' => [
-					'username' => $id,
+					'userId' => $userId,
 					'enabled' => $enabled
 				]
 			],
@@ -941,7 +996,7 @@ class UsersController extends Controller {
 		// is an admin
 		$activeUser = $this->userSession->getUser();
 		if($activeUser !== null) {
-			return $this->groupManager->isAdmin($activeUser->getUID());
+			return $this->groupManager->isAdmin($activeUser->getUserId());
 		}
 		return false;
 	}

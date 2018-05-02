@@ -27,10 +27,10 @@
 OC_JSON::checkSubAdminUser();
 OCP\JSON::callCheck();
 
-$username = (string)$_POST['username'];
+$userId = (string)$_POST['userId'];
 $group = (string)$_POST['group'];
 
-if($username === OC_User::getUser() && $group === "admin" &&  OC_User::isAdminUser($username)) {
+if($userId === OC_User::getUser() && $group === "admin" &&  OC_User::isAdminUser($userId)) {
 	$l = \OC::$server->getL10N('core');
 	OC_JSON::error(['data' => ['message' => $l->t('Admins can\'t remove themself from the admin group')]]);
 	exit();
@@ -39,7 +39,7 @@ if($username === OC_User::getUser() && $group === "admin" &&  OC_User::isAdminUs
 $isUserAccessible = false;
 $isGroupAccessible = false;
 $currentUserObject = \OC::$server->getUserSession()->getUser();
-$targetUserObject = \OC::$server->getUserManager()->get($username);
+$targetUserObject = \OC::$server->getUserManager()->getByUserId($userId);
 $targetGroupObject = \OC::$server->getGroupManager()->get($group);
 if($targetUserObject !== null && $currentUserObject !== null && $targetGroupObject !== null) {
 	$isUserAccessible = \OC::$server->getGroupManager()->getSubAdmin()->isUserAccessible($currentUserObject, $targetUserObject);
@@ -55,7 +55,7 @@ if(!OC_User::isAdminUser(OC_User::getUser())
 }
 
 if (is_null($targetUserObject)) {
-	OC_JSON::error(['data' => ['message' => $l->t('Unknown user')]]);
+	OC_JSON::error(['data' => ['message' => $l->t('Unknown user id')]]);
 	exit();
 }
 
@@ -68,16 +68,16 @@ $l = \OC::$server->getL10N('settings');
 $action = "add";
 
 // Toggle group
-if( \OC::$server->getGroupManager()->inGroup( $username, $group )) {
+if( \OC::$server->getGroupManager()->inGroup( $userId, $group )) {
 	$action = "remove";
 	$targetGroupObject->removeUser($targetUserObject);
 	$usersInGroup = $targetGroupObject->getUsers();
 	$usersInGroup = array_values(array_map(function(\OCP\IUser $g) {
-		return $g->getUID();
+		return $g->getUserId();
 	}, $usersInGroup));
 } else {
 	$targetGroupObject->addUser($targetUserObject);
 }
 
 // Return Success story
-OC_JSON::success(["data" => ["username" => $username, "action" => $action, "groupname" => $group]]);
+OC_JSON::success(["data" => ["userId" => $userId, "action" => $action, "groupname" => $group]]);

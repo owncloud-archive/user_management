@@ -16,7 +16,7 @@ var UserList = {
 	usersToLoad: 200,
 	initialUsersToLoad: 200, // initial number of users to load
 	perPageUsersToLoad: 100, // users to load when user scrolls down
-	currentUser: '',
+	currentUserId: '',
 	currentGid: '',
 	filter: '',
 
@@ -27,7 +27,7 @@ var UserList = {
 	initialize: function($el) {
 		this.$el = $el;
 
-		UserList.currentUser = OC.getCurrentUser().uid;
+		UserList.currentUserId = OC.getCurrentUser().uid;
 
 		// initially the list might already contain user entries (not fully ajaxified yet)
 		// initialize these entries
@@ -40,8 +40,9 @@ var UserList = {
 	 *
 	 * @param user object containing following keys:
 	 * 			{
-	 * 				'name': 			'username',
-	 * 				'displayname': 		'Users display name',
+	 * 				'userId': 			'user id',
+	 * 				'userName': 		'user name',
+	 * 				'displayName': 		'Users display name',
 	 * 				'groups': 			['group1', 'group2'],
 	 * 				'subadmin': 		['group4', 'group5'],
 	 *				'enabled'			'true'
@@ -69,21 +70,23 @@ var UserList = {
 		 */
 		if ($tr.find('div.avatardiv').length) {
 			if (user.isAvatarAvailable === true) {
-				$('div.avatardiv', $tr).avatar(user.name, 32, undefined, undefined, undefined, user.displayname);
+				$('div.avatardiv', $tr).avatar(user.userId, 32, undefined, undefined, undefined, user.displayName);
 			} else {
-				$('div.avatardiv', $tr).imageplaceholder(user.displayname, undefined, 32);
+				$('div.avatardiv', $tr).imageplaceholder(user.displayName, undefined, 32);
 			}
 		}
 
 		/**
-		 * add username and displayname to row (in data and visible markup)
+		 * add metadata to row (in data and visible markup)
 		 */
-		$tr.data('uid', user.name);
-		$tr.data('displayname', user.displayname);
+		$tr.data('userId', user.userId);
+		$tr.data('userName', user.userName);
+		$tr.data('displayName', user.displayName);
 		$tr.data('mailAddress', user.email);
 		$tr.data('restoreDisabled', user.isRestoreDisabled);
-		$tr.find('.name').text(user.name);
-		$tr.find('td.displayName > span').text(user.displayname);
+		$tr.find('td.userId').text(user.userId);
+		$tr.find('th.userName > span').text(user.userName);
+		$tr.find('td.displayName > span').text(user.displayName);
 		$tr.find('td.mailAddress > span').text(user.email);
 		$tr.find('td.displayName > .action').tooltip({placement: 'top'});
 		$tr.find('td.mailAddress > .action').tooltip({placement: 'top'});
@@ -105,7 +108,7 @@ var UserList = {
 		 * enabled
 		 */
 		var $tdEnabled = $tr.find('.isEnabled');
-		if(user.name !== UserList.currentUser) {
+		if(user.userId !== UserList.currentUserId) {
 			$tdEnabled.attr("checked", user.isEnabled);
 			$tdEnabled.on('change', UserList.onEnabledChange);
 		} else {
@@ -115,7 +118,7 @@ var UserList = {
 		/**
 		 * remove action
 		 */
-		if ($tr.find('td.remove img').length === 0 && OC.currentUser !== user.name) {
+		if ($tr.find('td.remove img').length === 0 && UserList.currentUserId !== user.userId) {
 			var deleteImage = $('<img class="action">').attr({
 				src: OC.imagePath('core', 'actions/delete')
 			});
@@ -123,7 +126,7 @@ var UserList = {
 				.attr({ href: '#', 'original-title': t('user_management', 'Delete')})
 				.append(deleteImage);
 			$tr.find('td.remove').append(deleteLink);
-		} else if (OC.currentUser === user.name) {
+		} else if (UserList.currentUserId === user.userId) {
 			$tr.find('td.remove a').remove();
 		}
 
@@ -266,8 +269,8 @@ var UserList = {
 		rows.sort(function(a, b) {
 			// FIXME: inefficient way of getting the names,
 			// better use a data attribute
-			a = $(a).find('.name').text();
-			b = $(b).find('.name').text();
+			a = $(a).find('.userId').text();
+			b = $(b).find('.userId').text();
 			var firstSort = UserList.preSortSearchString(a, b);
 			if(typeof firstSort !== 'undefined') {
 				return firstSort;
@@ -301,21 +304,21 @@ var UserList = {
 		$userListBody.find('tr:not(:first)').remove();
 		var $tr = $userListBody.find('tr:first');
 		$tr.hide();
-		//on an update a user may be missing when the username matches with that
+		//on an update a user may be missing when the userId matches with that
 		//of the hidden row. So change this to a random string.
-		$tr.data('uid', Math.random().toString(36).substring(2));
+		$tr.data('userId', Math.random().toString(36).substring(2));
 		UserList.isEmpty = true;
 		UserList.offset = 0;
 		UserList.checkUsersToLoad();
 	},
-	hide: function(uid) {
-		UserList.getRow(uid).hide();
+	hide: function(userId) {
+		UserList.getRow(userId).hide();
 	},
-	show: function(uid) {
-		UserList.getRow(uid).show();
+	show: function(userId) {
+		UserList.getRow(userId).show();
 	},
-	markRemove: function(uid) {
-		var $tr = UserList.getRow(uid);
+	markRemove: function(userId) {
+		var $tr = UserList.getRow(userId);
 		var groups = $tr.find('.groups').data('groups');
 		for(var i in groups) {
 			var gid = groups[i];
@@ -324,13 +327,13 @@ var UserList = {
 			GroupList.setUserCount($li, userCount - 1);
 		}
 		GroupList.decEveryoneCount();
-		UserList.hide(uid);
+		UserList.hide(userId);
 	},
-	remove: function(uid) {
-		UserList.getRow(uid).remove();
+	remove: function(userId) {
+		UserList.getRow(userId).remove();
 	},
-	undoRemove: function(uid) {
-		var $tr = UserList.getRow(uid);
+	undoRemove: function(userId) {
+		var $tr = UserList.getRow(userId);
 		var groups = $tr.find('.groups').data('groups');
 		for(var i in groups) {
 			var gid = groups[i];
@@ -339,21 +342,24 @@ var UserList = {
 			GroupList.setUserCount($li, userCount + 1);
 		}
 		GroupList.incEveryoneCount();
-		UserList.getRow(uid).show();
+		UserList.getRow(userId).show();
 	},
-	has: function(uid) {
-		return UserList.getRow(uid).length > 0;
+	has: function(userId) {
+		return UserList.getRow(userId).length > 0;
 	},
-	getRow: function(uid) {
+	getRow: function(userId) {
 		return $userListBody.find('tr').filter(function(){
-			return UserList.getUID(this) === uid;
+			return UserList.getUserId(this) === userId;
 		});
 	},
-	getUID: function(element) {
-		return ($(element).closest('tr').data('uid') || '').toString();
+	getUserId: function(element) {
+		return ($(element).closest('tr').data('userId') || '').toString();
+	},
+	getUserName: function(element) {
+		return ($(element).closest('tr').data('userName') || '').toString();
 	},
 	getDisplayName: function(element) {
-		return ($(element).closest('tr').data('displayname') || '').toString();
+		return ($(element).closest('tr').data('displayName') || '').toString();
 	},
 	getMailAddress: function(element) {
 		return ($(element).closest('tr').data('mailAddress') || '').toString();
@@ -363,12 +369,12 @@ var UserList = {
 	},
 	initDeleteHandling: function() {
 		//set up handler
-		UserDeleteHandler = new DeleteHandler('/apps/user_management/users', 'username',
+		UserDeleteHandler = new DeleteHandler('/apps/user_management/users', 'userId',
 											UserList.markRemove, UserList.remove);
 
 		//configure undo
 		OC.Notification.hide();
-		var msg = escapeHTML(t('user_management', 'deleted {userName}', {userName: '%oid'})) + '<span class="undo">' +
+		var msg = escapeHTML(t('user_management', 'deleted {userId}', {userId: '%oid'})) + '<span class="undo">' +
 			escapeHTML(t('user_management', 'undo')) + '</span>';
 		UserDeleteHandler.setNotification(OC.Notification, 'deleteuser', msg,
 										UserList.undoRemove);
@@ -376,8 +382,8 @@ var UserList = {
 		//when to mark user for delete
 		$userListBody.on('click', '.delete', function () {
 			// Call function for handling delete/undo
-			var uid = UserList.getUID(this);
-			UserDeleteHandler.mark(uid);
+			var userId = UserList.getUserId(this);
+			UserDeleteHandler.mark(userId);
 		});
 
 		//delete a marked user when leaving the page
@@ -409,7 +415,7 @@ var UserList = {
 				//because it is backend-dependent. For correct retrieval,
 				//always the limit(requested amount of users) needs to be added.
 				$.each(result, function (index, user) {
-					if(UserList.has(user.name)) {
+					if(UserList.has(user.userId)) {
 						return true;
 					}
 					var $tr = UserList.add(user, false);
@@ -432,13 +438,13 @@ var UserList = {
 			});
 	},
 
-	applyGroupSelect: function (element, user, checked) {
+	applyGroupSelect: function (element, userId, checked) {
 		var $element = $(element);
 
 		var checkHandler = null;
-		if(user) { // Only if in a user row, and not the #newusergroups select
+		if(userId) { // Only if in a user row, and not the #newusergroups select
 			checkHandler = function (group) {
-				if (user === OC.currentUser && group === 'admin') {
+				if (userId === UserList.currentUserId && group === 'admin') {
 					return false;
 				}
 				if (!oc_isadmin && checked.length === 1 && checked[0] === group) {
@@ -447,7 +453,7 @@ var UserList = {
 				$.post(
 					OC.filePath('user_management', 'ajax', 'togglegroups.php'),
 					{
-						username: user,
+						userId: userId,
 						group: group
 					},
 					function (response) {
@@ -494,7 +500,7 @@ var UserList = {
 		});
 	},
 
-	applySubadminSelect: function (element, user, checked) {
+	applySubadminSelect: function (element, userId, checked) {
 		var $element = $(element);
 		var checkHandler = function (group) {
 			if (group === 'admin') {
@@ -503,7 +509,7 @@ var UserList = {
 			$.post(
 				OC.filePath('user_management', 'ajax', 'togglesubadmins.php'),
 				{
-					username: user,
+					userId: userId,
 					group: group
 				},
 				function () {
@@ -535,7 +541,7 @@ var UserList = {
 	 */
 	onQuotaSelect: function(ev) {
 		var $select = $(ev.target);
-		var uid = UserList.getUID($select);
+		var userId = UserList.getUserId($select);
 		var quota = $select.val();
 		if (quota === 'other') {
 			return;
@@ -549,7 +555,7 @@ var UserList = {
 			OC.Notification.showTemporary(t('user_management', 'Invalid quota value "{val}"', {val: quota}));
 			return;
 		}
-		UserList._updateQuota(uid, quota, function(returnedQuota){
+		UserList._updateQuota(userId, quota, function(returnedQuota){
 			if (quota !== returnedQuota) {
 				$select.find(':selected').text(returnedQuota);
 			}
@@ -558,13 +564,13 @@ var UserList = {
 
 	/**
 	 * Saves the quota for the given user
-	 * @param {String} [uid] optional user id, sets default quota if empty
+	 * @param {String} [userId] optional user id, sets default quota if empty
 	 * @param {String} quota quota value
 	 * @param {Function} ready callback after save
 	 */
-	_updateQuota: function(uid, quota, ready) {
+	_updateQuota: function(userId, quota, ready) {
 		$.ajax({
-			url: OC.linkToOCS('cloud', 2) + 'users/' + encodeURIComponent(uid) + '?format=json',
+			url: OC.linkToOCS('cloud', 2) + 'users/' + encodeURIComponent(userId) + '?format=json',
 			/* jshint camelcase: false */
 			data: {
 				key: 'quota',
@@ -591,10 +597,10 @@ var UserList = {
          */
         onEnabledChange: function() {
                 var $select = $(this);
-                var uid = UserList.getUID($select);
+                var userId = UserList.getUserId($select);
                 var enabled = $select.prop('checked') ? 'true' : 'false';
 
-                UserList._updateEnabled(uid, enabled,
+                UserList._updateEnabled(userId, enabled,
                         function(returnedEnabled){
                                 if (enabled !== returnedEnabled) {
                                           $select.prop('checked', user.isEnabled);
@@ -605,18 +611,18 @@ var UserList = {
 
         /**
          * Saves the enabled value for the given user
-         * @param {String} [uid] optional user id, sets default quota if empty
+         * @param {String} [userId] optional user id, sets default quota if empty
          * @param {String} enabled value
          * @param {Function} ready callback after save
          */
-        _updateEnabled: function(uid, enabled, ready) {
+        _updateEnabled: function(userId, enabled, ready) {
                $.post(
-                        OC.generateUrl('/apps/user_management/{id}/enabled', {id: uid}),
-                        {username: uid, enabled: enabled},
+                        OC.generateUrl('/apps/user_management/{userId}/enabled', {userId: userId}),
+                        {userId: userId, enabled: enabled},
                         function (result) {
                                	if(result.status == 'success') {
-                                        OC.Notification.showTemporary(t('admin', 'User {uid} has been {state}!',
-                                                                        {uid: uid,
+                                        OC.Notification.showTemporary(t('admin', 'User {userId} has been {state}!',
+                                                                        {userId: userId,
                                                                         state: result.data.enabled === 'true' ?
                                                                         t('admin', 'enabled') :
                                                                         t('admin', 'disabled')}
@@ -727,7 +733,7 @@ $(document).ready(function () {
 
 		var $td = $(this).closest('td');
 		var $tr = $(this).closest('tr');
-		var uid = UserList.getUID($td);
+		var userId = UserList.getUserId($td);
 		var $input = $('<input type="password">');
 		var isRestoreDisabled = UserList.getRestoreDisabled($td) === true;
 		if(isRestoreDisabled) {
@@ -746,9 +752,9 @@ $(document).ready(function () {
 						var recoveryPasswordVal = $('input:password[id="recoveryPassword"]').val();
 						$.post(
 							OC.generateUrl('/apps/user_management/users/changepassword'),
-							{username: uid, password: $(this).val(), recoveryPassword: recoveryPasswordVal},
+							{userId: userId, password: $(this).val(), recoveryPassword: recoveryPasswordVal},
 							function (result) {
-								if(result.status == 'success') {
+								if(result.status === 'success') {
 									OC.Notification.showTemporary(t('admin', 'Password successfully changed'));
 								} else {
 									OC.Notification.showTemporary(t('admin', result.data.message));
@@ -772,11 +778,50 @@ $(document).ready(function () {
 		OC.Notification.hide();
 	});
 
+	$userListBody.on('click', '.userName', function (event) {
+		event.stopPropagation();
+		var $th = $(this).closest('th');
+		var $tr = $th.closest('tr');
+		var userId = UserList.getUserId($th);
+		var userName = escapeHTML(UserList.getUserName($th));
+		var $input = $('<input type="text" value="' + userName + '">');
+		$th.find('img').hide();
+		$th.children('span').replaceWith($input);
+		$input
+			.focus()
+			.keypress(function (event) {
+				if (event.keyCode === 13) {
+					if ($(this).val().length > 0) {
+						$.post(
+							OC.generateUrl('/apps/user_management/users/{userId}/userName', {userId: userId}),
+							{userId: userId, userName: $(this).val()},
+							function (result) {
+								var $div = $tr.find('div.avatardiv');
+								if (result && result.status==='success' && $div.length){
+									$div.avatar(result.data.displayName, 32);
+								}
+							}
+						);
+						var userName = $input.val();
+						$tr.data('userName', userName);
+						$input.blur();
+					} else {
+						$input.blur();
+					}
+				}
+			})
+			.blur(function () {
+				var userName = $tr.data('userName');
+				$input.replaceWith('<span>' + escapeHTML(userName) + '</span>');
+				$th.find('img').show();
+			});
+	});
+
 	$userListBody.on('click', '.displayName', function (event) {
 		event.stopPropagation();
 		var $td = $(this).closest('td');
 		var $tr = $td.closest('tr');
-		var uid = UserList.getUID($td);
+		var userId = UserList.getUserId($td);
 		var displayName = escapeHTML(UserList.getDisplayName($td));
 		var $input = $('<input type="text" value="' + displayName + '">');
 		$td.find('img').hide();
@@ -788,19 +833,19 @@ $(document).ready(function () {
 					if ($(this).val().length > 0) {
 						var $div = $tr.find('div.avatardiv');
 						if ($div.length) {
-							$div.imageplaceholder(uid, displayName);
+							$div.imageplaceholder(userId, displayName);
 						}
 						$.post(
-							OC.generateUrl('/apps/user_management/users/{id}/displayName', {id: uid}),
-							{username: uid, displayName: $(this).val()},
+							OC.generateUrl('/apps/user_management/users/{userId}/displayName', {userId: userId}),
+							{userId: userId, displayName: $(this).val()},
 							function (result) {
 								if (result && result.status==='success' && $div.length){
-									$div.avatar(result.data.username, 32);
+									$div.avatar(result.data.userId, 32);
 								}
 							}
 						);
 						var displayName = $input.val();
-						$tr.data('displayname', displayName);
+						$tr.data('displayName', displayName);
 						$input.blur();
 					} else {
 						$input.blur();
@@ -808,7 +853,7 @@ $(document).ready(function () {
 				}
 			})
 			.blur(function () {
-				var displayName = $tr.data('displayname');
+				var displayName = $tr.data('displayName');
 				$input.replaceWith('<span>' + escapeHTML(displayName) + '</span>');
 				$td.find('img').show();
 			});
@@ -818,7 +863,7 @@ $(document).ready(function () {
 		event.stopPropagation();
 		var $td = $(this).closest('td');
 		var $tr = $td.closest('tr');
-		var uid = UserList.getUID($td);
+		var userId = UserList.getUserId($td);
 		var mailAddress = escapeHTML(UserList.getMailAddress($td));
 		var $input = $('<input type="text">').val(mailAddress);
 		$td.children('span').replaceWith($input);
@@ -835,7 +880,7 @@ $(document).ready(function () {
 					$input.attr('disabled', 'disabled');
 					$.ajax({
 						type: 'PUT',
-						url: OC.generateUrl('/apps/user_management/admin/{id}/mailAddress', {id: uid}),
+						url: OC.generateUrl('/apps/user_management/admin/{userId}/mailAddress', {userId: userId}),
 						data: {
 							mailAddress: $(this).val()
 						}
@@ -885,12 +930,12 @@ $(document).ready(function () {
 	UserList._updateGroupListLabel($('#newuser .groups'), []);
 	$('#newuser').submit(function (event) {
 		event.preventDefault();
-		var username = $('#newusername').val();
+		var userName = $('#newusername').val();
 		var password = $('#newuserpassword').val();
 		var email = $('#newemail').val();
-		if ($.trim(username) === '') {
+		if ($.trim(userName) === '') {
 			OC.Notification.showTemporary(t('user_management', 'Error creating user: {message}', {
-				message: t('user_management', 'A valid username must be provided')
+				message: t('user_management', 'A valid user name must be provided')
 			}));
 			return false;
 		}
@@ -922,7 +967,7 @@ $(document).ready(function () {
 			$.post(
 				OC.generateUrl('/apps/user_management/users'),
 				{
-					username: username,
+					userName: userName,
 					password: password,
 					groups: groups,
 					email: email
@@ -939,7 +984,7 @@ $(document).ready(function () {
 							GroupList.setUserCount($li, userCount + 1);
 						}
 					}
-					if(!UserList.has(username)) {
+					if(!UserList.has(userName)) {
 						UserList.add(result, true);
 					}
 					$('#newusername').focus();
@@ -954,19 +999,19 @@ $(document).ready(function () {
 		});
 	});
 
-        if ($('#CheckboxIsEnabled').is(':checked')) {
-                $("#userlist .enabled").show();
-        }
-        // Option to display/hide the "Enabled" column
-        $('#CheckboxIsEnabled').click(function() {
-                if ($('#CheckboxIsEnabled').is(':checked')) {
-                        $("#userlist .enabled").show();
-                        OC.AppConfig.setValue('core', 'umgmt_show_is_enabled', 'true');
-                } else {
-                        $("#userlist .enabled").hide();
-                        OC.AppConfig.setValue('core', 'umgmt_show_is_enabled', 'false');
-                }
-        });
+	if ($('#CheckboxIsEnabled').is(':checked')) {
+			$("#userlist .enabled").show();
+	}
+	// Option to display/hide the "Enabled" column
+	$('#CheckboxIsEnabled').click(function() {
+			if ($('#CheckboxIsEnabled').is(':checked')) {
+					$("#userlist .enabled").show();
+					OC.AppConfig.setValue('core', 'umgmt_show_is_enabled', 'true');
+			} else {
+					$("#userlist .enabled").hide();
+					OC.AppConfig.setValue('core', 'umgmt_show_is_enabled', 'false');
+			}
+	});
 
 
 	if ($('#CheckboxStorageLocation').is(':checked')) {

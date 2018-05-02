@@ -69,11 +69,41 @@ table.grid {
 }
 
 table.grid th { height:2em; color:#999; }
-table.grid th, table.grid td { border-bottom:1px solid #ddd; padding:0 .5em; padding-left:.8em; text-align:left; font-weight:normal; }
-td.name, td.password { padding-left:.8em; }
-td.password>img,td.displayName>img, td.remove>a, td.quota>img { visibility:hidden; }
-td.password, td.quota, td.displayName { width:12em; cursor:pointer; }
-td.password>span, td.quota>span, rd.displayName>span { margin-right: 1.2em; color: #C7C7C7; }
+table.grid th,
+table.grid td {
+	border-bottom:1px solid #ddd;
+	padding:0 .5em;
+	padding-left:.8em;
+	text-align:left;
+	font-weight:normal;
+}
+td.userId,
+th.userName,
+td.password {
+	padding-left:.8em;
+}
+td.password>img,
+th.userName>img,
+td.displayName>img,
+td.remove>a,
+td.quota>img {
+	visibility:hidden;
+}
+td.userId,
+th.userName,
+td.displayName,
+td.password,
+td.quota {
+	width:12em;
+	cursor:pointer;
+}
+td.userId,
+th.userName>span,
+td.displayName>span,
+td.password>span,
+td.quota>span {
+	margin-right: 1.2em; color: #C7C7C7;
+}
 span.usersLastLoginTooltip { white-space: nowrap; }
 
 /* dropdowns will be relative to this element */
@@ -89,7 +119,7 @@ span.usersLastLoginTooltip { white-space: nowrap; }
 }
 
 /* because of accessibility the name cell is <th> - therefore we enforce the black color */
-#userlist th.name {
+#userlist th.userName>span {
 	color: #000000;
 }
 
@@ -110,8 +140,20 @@ span.usersLastLoginTooltip { white-space: nowrap; }
 	display: none;
 }
 
-tr:hover>td.password>span, tr:hover>td.displayName>span { margin:0; cursor:pointer; }
-tr:hover>td.remove>a, tr:hover>td.password>img,tr:hover>td.displayName>img, tr:hover>td.quota>img { visibility:visible; cursor:pointer; }
+tr:hover>th.userName>span,
+tr:hover>td.displayName>span,
+tr:hover>td.password>span {
+	margin:0;
+	cursor:pointer;
+}
+tr:hover>td.remove>a,
+tr:hover>th.userName>img,
+tr:hover>td.displayName>img,
+tr:hover>td.password>img,
+tr:hover>td.quota>img {
+	visibility:visible;
+	cursor:pointer;
+}
 td.remove {
 	width: 25px;
 }

@@ -81,28 +81,28 @@ class ChangePasswordController extends Controller {
 	}
 
 	/**
-	 * @param string $username
+	 * @param string $userId
 	 * @param string $password
 	 * @param string $recoveryPassword
 	 * @return JSONResponse
 	 * @throws \Exception
 	 */
-	public function changePassword($username, $password = null, $recoveryPassword = null) {
+	public function changePassword($userId, $password = null, $recoveryPassword = null) {
 
-		if ($username === null) {
+		if ($userId === null) {
 			return new JSONResponse([
 				'status' => 'error',
-				'data' => ['message' => $this->l10n->t('No user supplied')]]);
+				'data' => ['message' => $this->l10n->t('No user id supplied')]]);
 		}
 
 		$isUserAccessible = false;
 		$currentUserObject = $this->userSession->getUser();
-		$targetUserObject = $this->userManager->get($username);
+		$targetUserObject = $this->userManager->getByUserId($userId);
 		if($currentUserObject !== null && $targetUserObject !== null) {
 			$isUserAccessible = $this->groupManager->getSubAdmin()->isUserAccessible($currentUserObject, $targetUserObject);
 		}
 
-		if (!$this->groupManager->isAdmin($currentUserObject->getUID()) &&
+		if (!$this->groupManager->isAdmin($currentUserObject->getUserId()) &&
 			!$isUserAccessible ) {
 			return new JSONResponse([
 				'status' => 'error',
@@ -148,7 +148,7 @@ class ChangePasswordController extends Controller {
 			$recoveryEnabledForUser = false;
 			if ($recoveryAdminEnabled) {
 				$validRecoveryPassword = $keyManager->checkRecoveryPassword($recoveryPassword);
-				$recoveryEnabledForUser = $recovery->isRecoveryEnabledForUser($username);
+				$recoveryEnabledForUser = $recovery->isRecoveryEnabledForUser($userId);
 			}
 
 			if ($recoveryEnabledForUser && $recoveryPassword === '') {
@@ -177,20 +177,20 @@ class ChangePasswordController extends Controller {
 					'data' => ['message' => $this->l10n->t('Unable to change password')]]);
 			}
 
-			$this->sendNotificationMail($username);
+			$this->sendNotificationMail($userId);
 			return new JSONResponse([
 				'status' => 'success',
-				'data' => ['username' => $username]]);
+				'data' => ['userId' => $userId]]);
 		}
 		// @codeCoverageIgnoreEnd
 
 		// if encryption is disabled, proceed
 		try {
 			if ($password !== null && $targetUserObject->setPassword($password)) {
-				$this->sendNotificationMail($username);
+				$this->sendNotificationMail($userId);
 				return new JSONResponse([
 					'status' => 'success',
-					'data' => ['username' => $username]]);
+					'data' => ['userId' => $userId]]);
 			}
 
 			return new JSONResponse([
@@ -203,9 +203,9 @@ class ChangePasswordController extends Controller {
 		}
 	}
 
-	private function sendNotificationMail($username) {
-		$userObject = $this->userManager->get($username);
-		$email = $userObject->getEMailAddress();
+	private function sendNotificationMail($userId) {
+		$user = $this->userManager->getByUserId($userId);
+		$email = $user->getEMailAddress();
 		$defaults = new \OC_Defaults();
 		$from = \OCP\Util::getDefaultEmailAddress('lostpassword-noreply');
 
@@ -215,7 +215,7 @@ class ChangePasswordController extends Controller {
 
 			try {
 				$message = $this->mailer->createMessage();
-				$message->setTo([$email => $username]);
+				$message->setTo([$email => $user->getUserName()]);
 				$message->setSubject($this->l10n->t('%s password changed successfully', [$defaults->getName()]));
 				$message->setPlainBody($msg);
 				$message->setFrom([$from => $defaults->getName()]);

@@ -4,8 +4,9 @@
 		<?php if ($_['enableAvatars']): ?>
 			<th id="headerAvatar" scope="col"></th>
 		<?php endif; ?>
-			<th id="headerName" scope="col"><?php p($l->t('Username'))?></th>
-			<th id="headerDisplayName" scope="col"><?php p($l->t( 'Full Name' )); ?></th>
+			<th id="headerUserId" scope="col"><?php p($l->t('User id'))?></th>
+			<th id="headerUserName" scope="col"><?php p($l->t('User Name'))?></th>
+			<th id="headerDisplayName" scope="col"><?php p($l->t( 'Display Name' )); ?></th>
 			<th id="headerPassword" scope="col"><?php p($l->t( 'Password' )); ?></th>
 			<th class="mailAddress" scope="col"><?php p($l->t( 'Email' )); ?></th>
 			<th id="headerGroups" scope="col"><?php p($l->t( 'Groups' )); ?></th>
@@ -26,10 +27,14 @@
 		<?php if ($_['enableAvatars']): ?>
 			<td class="avatar"><div class="avatardiv"></div></td>
 		<?php endif; ?>
-			<th class="name" scope="row"></th>
+			<td class="userId" scope="row"></td>
+			<th class="userName"><span></span> <img class="action"
+			   src="<?php p(image_path('core', 'actions/rename.svg'))?>"
+			   alt="<?php p($l->t("change full name"))?>" title="<?php p($l->t("change full name"))?>"/>
+			</th>
 			<td class="displayName"><span></span> <img class="action"
-				src="<?php p(image_path('core', 'actions/rename.svg'))?>"
-				alt="<?php p($l->t("change full name"))?>" title="<?php p($l->t("change full name"))?>"/>
+			   src="<?php p(image_path('core', 'actions/rename.svg'))?>"
+			   alt="<?php p($l->t("change full name"))?>" title="<?php p($l->t("change full name"))?>"/>
 			</td>
 			<td class="password"><span>●●●●●●●</span> <img class="action"
 				src="<?php print_unescaped(image_path('core', 'actions/rename.svg'))?>"

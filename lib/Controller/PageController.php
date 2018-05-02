@@ -76,10 +76,10 @@ class PageController extends Controller {
 			}
 		}
 
-		$isAdmin = $this->groupManager->isAdmin($this->userSession->getUser()->getUID());
+		$isAdmin = $this->groupManager->isAdmin($this->userSession->getUser()->getUserId());
 
 		$groupsInfo = new MetaData(
-			$this->userSession->getUser()->getUID(),
+			$this->userSession->getUser()->getUserId(),
 			$isAdmin,
 			$this->groupManager,
 			$this->userSession
