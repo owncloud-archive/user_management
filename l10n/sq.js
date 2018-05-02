@@ -89,7 +89,7 @@ OC.L10N.register(
     "Quota" : "Kuota",
     "Storage Location" : "Vendndodhje Depozite",
     "User Backend" : "Program klient i përdoruesit",
-    "Last Login" : "Hyrja e fundit",
+    "Last Login" : "Hyrja e Fundit",
     "change full name" : "ndryshoni emrin e plotë",
     "set new password" : "caktoni fjalëkalim të ri",
     "change email address" : "ndryshoni adresën email",
