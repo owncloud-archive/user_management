@@ -39,9 +39,9 @@
 
 	<!--List of Groups-->
 	<?php foreach($_["groups"] as $group): ?>
-		<li data-gid="<?php p($group['name']) ?>" data-usercount="<?php p($group['usercount']) ?>" class="isgroup">
+		<li data-gid="<?php p($group['gid']) ?>" data-usercount="<?php p($group['usercount']) ?>" class="isgroup">
 			<a href="#" class="dorename">
-				<span class="groupname"><?php p($group['name']); ?></span>
+				<span class="groupname"><?php p($group['gid']); ?></span>
 			</a>
 			<span class="utils">
 				<span class="usercount"><?php if($group['usercount'] > 0) { p($group['usercount']); } ?></span>

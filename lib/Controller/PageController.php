@@ -62,7 +62,6 @@ class PageController extends Controller {
 	 * @NoCSRFRequired
 	 */
 	public function index() {
-
 		// Set the sort option: SORT_USERCOUNT or SORT_GROUPNAME
 		$sortGroupsBy = MetaData::SORT_USERCOUNT;
 
@@ -102,13 +101,6 @@ class PageController extends Controller {
 			}
 			$subAdmins = $result;
 		}else{
-			/* Retrieve group IDs from $groups array, so we can pass that information into \OC::$server->getGroupManager()->displayNamesInGroups() */
-			$gids = [];
-			foreach($groups as $group) {
-				if (isset($group['id'])) {
-					$gids[] = $group['id'];
-				}
-			}
 			$subAdmins = false;
 		}
 

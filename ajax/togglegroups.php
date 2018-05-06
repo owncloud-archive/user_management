@@ -28,9 +28,9 @@ OC_JSON::checkSubAdminUser();
 OCP\JSON::callCheck();
 
 $username = (string)$_POST['username'];
-$group = (string)$_POST['group'];
+$gid = (string)$_POST['gid'];
 
-if($username === OC_User::getUser() && $group === "admin" &&  OC_User::isAdminUser($username)) {
+if($username === OC_User::getUser() && $gid === "admin" &&  OC_User::isAdminUser($username)) {
 	$l = \OC::$server->getL10N('core');
 	OC_JSON::error(['data' => ['message' => $l->t('Admins can\'t remove themself from the admin group')]]);
 	exit();
@@ -40,7 +40,7 @@ $isUserAccessible = false;
 $isGroupAccessible = false;
 $currentUserObject = \OC::$server->getUserSession()->getUser();
 $targetUserObject = \OC::$server->getUserManager()->get($username);
-$targetGroupObject = \OC::$server->getGroupManager()->get($group);
+$targetGroupObject = \OC::$server->getGroupManager()->get($gid);
 if($targetUserObject !== null && $currentUserObject !== null && $targetGroupObject !== null) {
 	$isUserAccessible = \OC::$server->getGroupManager()->getSubAdmin()->isUserAccessible($currentUserObject, $targetUserObject);
 	$isGroupAccessible = \OC::$server->getGroupManager()->getSubAdmin()->isSubAdminofGroup($currentUserObject, $targetGroupObject);
@@ -59,8 +59,8 @@ if (is_null($targetUserObject)) {
 	exit();
 }
 
-if(!\OC::$server->getGroupManager()->groupExists($group)) {
-	$targetGroupObject = \OC::$server->getGroupManager()->createGroup($group);
+if(!\OC::$server->getGroupManager()->groupExists($gid)) {
+	$targetGroupObject = \OC::$server->getGroupManager()->createGroup($gid);
 }
 
 $l = \OC::$server->getL10N('settings');
@@ -68,7 +68,7 @@ $l = \OC::$server->getL10N('settings');
 $action = "add";
 
 // Toggle group
-if( \OC::$server->getGroupManager()->inGroup( $username, $group )) {
+if( \OC::$server->getGroupManager()->inGroup( $username, $gid )) {
 	$action = "remove";
 	$targetGroupObject->removeUser($targetUserObject);
 	$usersInGroup = $targetGroupObject->getUsers();
@@ -80,4 +80,4 @@ if( \OC::$server->getGroupManager()->inGroup( $username, $group )) {
 }
 
 // Return Success story
-OC_JSON::success(["data" => ["username" => $username, "action" => $action, "groupname" => $group]]);
+OC_JSON::success(["data" => ["username" => $username, "action" => $action, "gid" => $gid]]);

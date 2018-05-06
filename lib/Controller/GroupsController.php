@@ -90,11 +90,11 @@ class GroupsController extends Controller {
 	}
 
 	/**
-	 * @param string $id
+	 * @param string $gid
 	 * @return DataResponse
 	 */
-	public function create($id) {
-		if($this->groupManager->groupExists($id)) {
+	public function create($gid) {
+		if($this->groupManager->groupExists($gid)) {
 			return new DataResponse(
 				[
 					'message' => (string)$this->l10n->t('Group already exists.')
@@ -102,10 +102,10 @@ class GroupsController extends Controller {
 				Http::STATUS_CONFLICT
 			);
 		}
-		if($this->groupManager->createGroup($id)) {
+		if($this->groupManager->createGroup($gid)) {
 			return new DataResponse(
 				[
-					'groupname' => $id
+					'gid' => $gid
 				],
 				Http::STATUS_CREATED
 			);
@@ -134,7 +134,7 @@ class GroupsController extends Controller {
 					[
 						'status' => 'success',
 						'data' => [
-							'groupname' => $id
+							'gid' => $id
 						]
 					],
 					Http::STATUS_NO_CONTENT

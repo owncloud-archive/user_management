@@ -40,6 +40,7 @@ use OCP\AppFramework\Http\RedirectResponse;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IConfig;
+use OCP\IGroup;
 use OCP\IGroupManager;
 use OCP\IL10N;
 use OCP\ILogger;
@@ -148,11 +149,23 @@ class UsersController extends Controller {
 	}
 
 	/**
-	 * @param IUser $user
-	 * @param array $userGroups
+	 * @param IGroup[] $groups
 	 * @return array
 	 */
-	private function formatUserForIndex(IUser $user, array $userGroups = null) {
+	private function formatGroupsForIndex($groups) {
+		$formattedGroups = [];
+		foreach($groups as $group) {
+			$formattedGroups[] = ['gid' => $group->getGID(), 'displayname' => $group->getDisplayName()];
+		}
+		return $formattedGroups;
+	}
+
+	/**
+	 * @param IUser $user
+	 * @param IGroup[] $userGroups
+	 * @return array
+	 */
+	private function formatUserForIndex(IUser $user, $userGroups) {
 
 		// TODO: eliminate this encryption specific code below and somehow
 		// hook in additional user info from other apps
@@ -179,10 +192,6 @@ class UsersController extends Controller {
 			$restorePossible = true;
 		}
 
-		$subAdminGroups = $this->groupManager->getSubAdmin()->getSubAdminsGroups($user);
-		foreach($subAdminGroups as $key => $subAdminGroup) {
-			$subAdminGroups[$key] = $subAdminGroup->getGID();
-		}
 
 		$displayName = $user->getEMailAddress();
 		if (is_null($displayName)) {
@@ -198,11 +207,13 @@ class UsersController extends Controller {
 			}
 		}
 
+		$subAdminGroups = array_values($this->groupManager->getSubAdmin()->getSubAdminsGroups($user));
+
 		return [
 			'name' => $user->getUID(),
 			'displayname' => $user->getDisplayName(),
-			'groups' => (empty($userGroups)) ? $this->groupManager->getUserGroupIds($user, 'management') : $userGroups,
-			'subadmin' => $subAdminGroups,
+			'groups' => $this->formatGroupsForIndex($userGroups),
+			'subadmin' => $this->formatGroupsForIndex($subAdminGroups),
 			'isEnabled' => $user->isEnabled(),
 			'quota' => $user->getQuota(),
 			'storageLocation' => $user->getHome(),
@@ -287,7 +298,6 @@ class UsersController extends Controller {
 
 		$users = [];
 		if ($this->isAdmin) {
-
 			if($gid !== '') {
 				$batch = $this->getUsersForUID($this->groupManager->displayNamesInGroup($gid, $pattern, $limit, $offset));
 			} else {
@@ -295,28 +305,28 @@ class UsersController extends Controller {
 			}
 
 			foreach ($batch as $user) {
-				$users[] = $this->formatUserForIndex($user);
+				$userGroups = array_values($this->groupManager->getUserGroups($user, 'management'));
+				$users[] = $this->formatUserForIndex($user, $userGroups);
 			}
 
 		} else {
-			$subAdminOfGroups = $this->groupManager->getSubAdmin()->getSubAdminsGroups($this->userSession->getUser());
+			$subAdminsGroups = $this->groupManager->getSubAdmin()->getSubAdminsGroups($this->userSession->getUser());
 			// New class returns IGroup[] so convert back
-			$gids = [];
-			foreach ($subAdminOfGroups as $group) {
-				$gids[] = $group->getGID();
+			$subAdminsGroupGids = [];
+			foreach ($subAdminsGroups as $group) {
+				$subAdminsGroupGids[] = $group->getGID();
 			}
-			$subAdminOfGroups = $gids;
 
 			// Set the $gid parameter to an empty value if the subadmin has no rights to access a specific group
-			if($gid !== '' && !in_array($gid, $subAdminOfGroups)) {
+			if($gid !== '' && !in_array($gid, $subAdminsGroupGids)) {
 				$gid = '';
 			}
 
 			// Batch all groups the user is subadmin of when a group is specified
 			$batch = [];
 			if($gid === '') {
-				foreach($subAdminOfGroups as $group) {
-					$groupUsers = $this->groupManager->displayNamesInGroup($group, $pattern, $limit, $offset);
+				foreach($subAdminsGroups as $group) {
+					$groupUsers = $this->groupManager->displayNamesInGroup($group->getGID(), $pattern, $limit, $offset);
 
 					foreach($groupUsers as $uid => $displayName) {
 						$batch[$uid] = $displayName;
@@ -330,8 +340,8 @@ class UsersController extends Controller {
 			foreach ($batch as $user) {
 				// Only add the groups, this user is a subadmin of
 				$userGroups = array_values(array_intersect(
-					$this->groupManager->getUserGroupIds($user),
-					$subAdminOfGroups
+					$this->groupManager->getUserGroups($user),
+					$subAdminsGroups
 				));
 				$users[] = $this->formatUserForIndex($user, $userGroups);
 			}
@@ -345,11 +355,11 @@ class UsersController extends Controller {
 	 *
 	 * @param string $username
 	 * @param string $password
-	 * @param array $groups
+	 * @param array $gids
 	 * @param string $email
 	 * @return DataResponse
 	 */
-	public function create($username, $password, array $groups= [], $email='') {
+	public function create($username, $password, array $gids= [], $email='') {
 		if($email !== '' && !$this->mailer->validateMailAddress($email)) {
 			return new DataResponse(
 				[
@@ -362,29 +372,32 @@ class UsersController extends Controller {
 		$currentUser = $this->userSession->getUser();
 
 		if (!$this->isAdmin) {
-			if (!empty($groups)) {
-				foreach ($groups as $key => $group) {
+			// Is probably subadmin
+			// FIXME: Can not admin actually create users ??
+			$userGroupIds = [];
+			if (!empty($gids)) {
+				foreach ($gids as $key => $group) {
 					$groupObject = $this->groupManager->get($group);
 					if($groupObject === null) {
-						unset($groups[$key]);
 						continue;
 					}
 
-					if (!$this->groupManager->getSubAdmin()->isSubAdminofGroup($currentUser, $groupObject)) {
-						unset($groups[$key]);
+					if ($this->groupManager->getSubAdmin()->isSubAdminofGroup($currentUser, $groupObject)) {
+						$userGroupIds[] = $groupObject->getGID();
 					}
 				}
 			}
 
-			if (empty($groups)) {
+			if (empty($userGroupIds)) {
 				$groups = $this->groupManager->getSubAdmin()->getSubAdminsGroups($currentUser);
 				// New class returns IGroup[] so convert back
-				$gids = [];
 				foreach ($groups as $group) {
-					$gids[] = $group->getGID();
+					$userGroupIds[] = $group->getGID();
 				}
-				$groups = $gids;
 			}
+		} else {
+			// Is admin
+			$userGroupIds = $gids;
 		}
 
 		if ($this->userManager->userExists($username)) {
@@ -412,12 +425,12 @@ class UsersController extends Controller {
 		}
 
 		if($user instanceof User) {
-			if($groups !== null) {
-				foreach($groups as $groupName) {
-					$group = $this->groupManager->get($groupName);
+			if($userGroupIds !== null) {
+				foreach($userGroupIds as $gid) {
+					$group = $this->groupManager->get($gid);
 
 					if(empty($group)) {
-						$group = $this->groupManager->createGroup($groupName);
+						$group = $this->groupManager->createGroup($gid);
 					}
 					$group->addUser($user);
 				}
@@ -454,8 +467,9 @@ class UsersController extends Controller {
 					$this->log->error("Can't send new user mail to $email: " . $e->getMessage(), ['app' => 'settings']);
 				}
 			}
+
 			// fetch users groups
-			$userGroups = $this->groupManager->getUserGroupIds($user);
+			$userGroups = array_values($this->groupManager->getUserGroups($user));
 
 			return new DataResponse(
 				$this->formatUserForIndex($user, $userGroups),

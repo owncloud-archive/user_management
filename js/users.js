@@ -11,7 +11,7 @@ var $userListBody;
 
 var UserDeleteHandler;
 var UserList = {
-	availableGroups: [],
+	availableGroupIds: [],
 	offset: 0,
 	usersToLoad: 200,
 	initialUsersToLoad: 200, // initial number of users to load
@@ -34,7 +34,14 @@ var UserList = {
 		this.$el.find('.isEnabled').on('change', this.onEnabledChange);
 		this.$el.find('.quota-user').singleSelect().on('change', this.onQuotaSelect);
 	},
-
+	findObjectByKey: function(array, key, value) {
+		for (var i = 0; i < array.length; i++) {
+			if (array[i][key] === value) {
+				return array[i];
+			}
+		}
+		return null;
+	},
 	/**
 	 * Add a user row from user object
 	 *
@@ -42,8 +49,8 @@ var UserList = {
 	 * 			{
 	 * 				'name': 			'username',
 	 * 				'displayname': 		'Users display name',
-	 * 				'groups': 			['group1', 'group2'],
-	 * 				'subadmin': 		['group4', 'group5'],
+	 * 				'groups': 			[['gid' ==> 'group1', 'displayname' ==> 'Group 1'], ['gid' ==> 'group2', 'displayname' ==> 'Group 2']],
+	 * 				'subadmin': 		[['gid' ==> 'group4', 'displayname' ==> 'Group 4'], ['gid' ==> 'group5', 'displayname' ==> 'Group 5']],
 	 *				'enabled'			'true'
 	 *				'quota': 			'10 GB',
 	 *				'storageLocation':	'/srv/www/owncloud/data/username',
@@ -56,7 +63,8 @@ var UserList = {
 	 * @returns table row created for this user
 	 */
 	add: function (user, sort) {
-		if (this.currentGid && this.currentGid !== '_everyone' && _.indexOf(user.groups, this.currentGid) < 0) {
+		var isCurrentInUserGroup = UserList.findObjectByKey(user.groups, 'gid', this.currentGid);
+		if (this.currentGid && this.currentGid !== '_everyone' && isCurrentInUserGroup === null) {
 			return;
 		}
 
@@ -437,33 +445,33 @@ var UserList = {
 
 		var checkHandler = null;
 		if(user) { // Only if in a user row, and not the #newusergroups select
-			checkHandler = function (group) {
-				if (user === OC.currentUser && group === 'admin') {
+			checkHandler = function (gid) {
+				if (user === OC.currentUser && gid === 'admin') {
 					return false;
 				}
-				if (!oc_isadmin && checked.length === 1 && checked[0] === group) {
+				if (!oc_isadmin && checked.length === 1 && checked[0] === gid) {
 					return false;
 				}
 				$.post(
 					OC.filePath('user_management', 'ajax', 'togglegroups.php'),
 					{
 						username: user,
-						group: group
+						gid: gid
 					},
 					function (response) {
 						if (response.status === 'success') {
 							GroupList.update();
-							var groupName = response.data.groupname;
-							if (UserList.availableGroups.indexOf(groupName) === -1 &&
+							var gid = response.data.gid;
+							if (UserList.availableGroupIds.indexOf(gid) === -1 &&
 								response.data.action === 'add'
 							) {
-								UserList.availableGroups.push(groupName);
+								UserList.availableGroupIds.push(gid);
 							}
 
 							if (response.data.action === 'add') {
-								GroupList.incGroupCount(groupName);
+								GroupList.incGroupCount(gid);
 							} else {
-								GroupList.decGroupCount(groupName);
+								GroupList.decGroupCount(gid);
 							}
 						}
 						if (response.data.message) {
@@ -474,7 +482,8 @@ var UserList = {
 			};
 		}
 		var addGroup = function (select, group) {
-			GroupList.addGroup(escapeHTML(group));
+			var gid = escapeHTML(group);
+			GroupList.addGroup(gid, gid, 0);
 		};
 		var label;
 		if (oc_isadmin) {
@@ -496,15 +505,15 @@ var UserList = {
 
 	applySubadminSelect: function (element, user, checked) {
 		var $element = $(element);
-		var checkHandler = function (group) {
-			if (group === 'admin') {
+		var checkHandler = function (gid) {
+			if (gid === 'admin') {
 				return false;
 			}
 			$.post(
 				OC.filePath('user_management', 'ajax', 'togglesubadmins.php'),
 				{
 					username: user,
-					group: group
+					gid: gid
 				},
 				function () {
 				}
@@ -657,7 +666,7 @@ var UserList = {
 			$groupsSelect.append($('<option value="' + escapeHTML(group) + '">' + escapeHTML(group) + '</option>'));
 		}
 
-		$.each(this.availableGroups, function (i, group) {
+		$.each(this.availableGroupIds, function (i, group) {
 			// some new groups might be selected but not in the available groups list yet
 			var extraIndex = extraGroups.indexOf(group);
 			if (extraIndex >= 0) {
@@ -685,18 +694,29 @@ var UserList = {
 			$td.find('.multiselect:not(.groupsListContainer)').parent().remove();
 			$td.find('.multiselectoptions').remove();
 			$groupsListContainer.removeClass('hidden');
-			UserList._updateGroupListLabel($td, e.checked);
+
+			var groups = e.checked.map(function(gid) {
+				return { gid: gid, displayname: gid };
+			});
+			UserList._updateGroupListLabel($td, groups);
 		});
 	},
 
 	/**
 	 * Updates the groups list td with the given groups selection
+	 *
+	 * @param $td
+	 * @param groups - array containing group objects:
+	 *  [['gid' ==> 'group1', 'displayname' ==> 'Group 1'], ['gid' ==> 'group2', 'displayname' ==> 'Group 2']]
 	 */
 	_updateGroupListLabel: function($td, groups) {
 		var placeholder = $td.find('.groupsListContainer').attr('data-placeholder');
 		var $groupsEl = $td.find('.groupsList');
-		$groupsEl.text(groups.join(', ') || placeholder || t('user_management', 'no group'));
-		$td.data('groups', groups);
+		var groupIds = groups.map(function(group) {
+			return group.gid;
+		});
+		$groupsEl.text(groupIds.join(', ') || placeholder || t('user_management', 'no group'));
+		$td.data('groups', groupIds);
 	}
 };
 
@@ -713,7 +733,9 @@ $(document).ready(function () {
 	UserList.scrollArea = $('#app-content');
 
 	UserList.doSort();
-	UserList.availableGroups = $userList.data('groups');
+	UserList.availableGroupIds = $userList.data('groups').map(function(group) {
+		return group.gid;
+	});
 
 	UserList.scrollArea.scroll(function(e) {UserList._onScroll(e);});
 
@@ -924,17 +946,17 @@ $(document).ready(function () {
 				{
 					username: username,
 					password: password,
-					groups: groups,
+					gids: groups,
 					email: email
 				},
 				function (result) {
 					if (result.groups) {
 						for (var i in result.groups) {
-							var gid = result.groups[i];
-							if(UserList.availableGroups.indexOf(gid) === -1) {
-								UserList.availableGroups.push(gid);
+							var group = result.groups[i];
+							if(UserList.availableGroupIds.indexOf(group.gid) === -1) {
+								UserList.availableGroupIds.push(group.gid);
 							}
-							$li = GroupList.getGroupLI(gid);
+							$li = GroupList.getGroupLI(group.gid);
 							userCount = GroupList.getUserCount($li);
 							GroupList.setUserCount($li, userCount + 1);
 						}

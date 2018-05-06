@@ -15,7 +15,7 @@ GroupList = {
 	filter: '',
 	filterGroups: false,
 
-	addGroup: function (gid, usercount) {
+	addGroup: function (gid, displayName, usercount) {
 		var $li = $userGroupList.find('.isgroup:last-child').clone();
 		$li
 			.data('gid', gid)
@@ -126,17 +126,17 @@ GroupList = {
 		}
 	},
 
-	createGroup: function (groupname) {
+	createGroup: function (gid) {
 		$.post(
 			OC.generateUrl('/apps/user_management/groups'),
 			{
-				id: groupname
+				gid: gid
 			},
 			function (result) {
-				if (result.groupname) {
-					var addedGroup = result.groupname;
-					UserList.availableGroups = $.unique($.merge(UserList.availableGroups, [addedGroup]));
-					GroupList.addGroup(result.groupname);
+				if (result.gid) {
+					var addedGroup = result.gid;
+					UserList.availableGroupIds = $.unique($.merge(UserList.availableGroupIds, [addedGroup]));
+					GroupList.addGroup(result.gid, result.gid, 0);
 				}
 				GroupList.toggleAddGroup();
 			}).fail(function(result) {
@@ -162,11 +162,11 @@ GroupList = {
 				if (result.status === 'success') {
 					$.each(result.data, function (i, subset) {
 						$.each(subset, function (index, group) {
-							if (GroupList.getGroupLI(group.name).length > 0) {
-								GroupList.setUserCount(GroupList.getGroupLI(group.name).first(), group.usercount);
+							if (GroupList.getGroupLI(group.gid).length > 0) {
+								GroupList.setUserCount(GroupList.getGroupLI(group.gid).first(), group.usercount);
 							}
 							else {
-								var $li = GroupList.addGroup(group.name, group.usercount);
+								var $li = GroupList.addGroup(group.gid, group.gid, group.usercount);
 
 								$li.addClass('appear transparent');
 								lis.push($li);
@@ -266,12 +266,12 @@ GroupList = {
 	},
 	initDeleteHandling: function () {
 		//set up handler
-		GroupDeleteHandler = new DeleteHandler('/apps/user_management/groups', 'groupname',
+		GroupDeleteHandler = new DeleteHandler('/apps/user_management/groups', 'gid',
 			GroupList.hide, GroupList.remove);
 
 		//configure undo
 		OC.Notification.hide();
-		var msg = escapeHTML(t('user_management', 'deleted {groupName}', {groupName: '%oid'})) + '<span class="undo">' +
+		var msg = escapeHTML(t('user_management', 'deleted {gid}', {gid: '%oid'})) + '<span class="undo">' +
 			escapeHTML(t('user_management', 'undo')) + '</span>';
 		GroupDeleteHandler.setNotification(OC.Notification, 'deletegroup', msg,
 			GroupList.show);
