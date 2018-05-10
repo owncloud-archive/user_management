@@ -715,7 +715,10 @@ var UserList = {
 		var groupIds = groups.map(function(group) {
 			return group.gid;
 		});
-		$groupsEl.text(groupIds.join(', ') || placeholder || t('user_management', 'no group'));
+		var groupDisplaynames = groups.map(function(group) {
+			return group.displayname;
+		});
+		$groupsEl.text(groupDisplaynames.join(', ') || placeholder || t('user_management', 'no group'));
 		$td.data('groups', groupIds);
 	}
 };

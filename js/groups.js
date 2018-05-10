@@ -20,7 +20,7 @@ GroupList = {
 		$li
 			.data('gid', gid)
 			.attr('data-gid', gid)
-			.find('.groupname').text(gid);
+			.find('.groupname').text(displayName);
 		GroupList.setUserCount($li, usercount);
 
 		$li.appendTo($userGroupList);
@@ -166,7 +166,7 @@ GroupList = {
 								GroupList.setUserCount(GroupList.getGroupLI(group.gid).first(), group.usercount);
 							}
 							else {
-								var $li = GroupList.addGroup(group.gid, group.gid, group.usercount);
+								var $li = GroupList.addGroup(group.gid, group.displayname, group.usercount);
 
 								$li.addClass('appear transparent');
 								lis.push($li);
