@@ -79,5 +79,5 @@
     "set new password" : "تنظیم کلمه عبور جدید",
     "change email address" : "تغییر آدرس ایمیل ",
     "Default" : "پیش فرض"
-},"pluralForm" :"nplurals=2; plural=((n<=1 && n>= 0) ? 1);"
+},"pluralForm" :"nplurals=2; plural=(n > 1);"
 }
