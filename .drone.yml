@@ -75,6 +75,7 @@ pipeline:
       - cd /var/www/owncloud/apps/user_management
       - make
       - vendor/bin/parallel-lint  --exclude vendor .
+      - vendor/bin/php-cs-fixer fix --allow-risky yes --dry-run -v --diff --diff-format udiff
     when:
       matrix:
         TEST_SUITE: lint
