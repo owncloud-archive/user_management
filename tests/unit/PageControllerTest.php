@@ -17,9 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
 
-
 namespace OCA\UserManagement\Test\Unit;
-
 
 use OCA\UserManagement\Controller\PageController;
 use OCP\App\IAppManager;
@@ -33,7 +31,6 @@ use OCP\IUserSession;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class PageControllerTest extends \PHPUnit_Framework_TestCase {
-
 	public function testIndex() {
 
 		/** @var IRequest $request */

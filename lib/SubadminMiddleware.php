@@ -66,18 +66,18 @@ class SubadminMiddleware extends Middleware {
 	 * @throws \Exception
 	 */
 	public function beforeController($controller, $methodName) {
-		if(!$this->reflector->hasAnnotation('NoSubadminRequired')) {
+		if (!$this->reflector->hasAnnotation('NoSubadminRequired')) {
 			// Check if current user (active and not in incognito mode)
 			// can manage users
 			$hasUserManagementPrivileges = false;
 			$activeUser = $this->userSession->getUser();
-			if($activeUser !== null) {
+			if ($activeUser !== null) {
 				//Admin and SubAdmins are allowed to access user management
 				$hasUserManagementPrivileges = $this->groupManager->isAdmin($activeUser->getUID())
 					|| $this->groupManager->getSubAdmin()->isSubAdmin($activeUser);
 			}
 
-			if(!$hasUserManagementPrivileges) {
+			if (!$hasUserManagementPrivileges) {
 				throw new NotAdminException('Logged in user must be a subadmin');
 			}
 		}
@@ -92,7 +92,7 @@ class SubadminMiddleware extends Middleware {
 	 * @throws \Exception
 	 */
 	public function afterException($controller, $methodName, \Exception $exception) {
-		if($exception instanceof NotAdminException) {
+		if ($exception instanceof NotAdminException) {
 			$response = new TemplateResponse('core', '403', [], 'guest');
 			$response->setStatus(Http::STATUS_FORBIDDEN);
 			return $response;
@@ -100,5 +100,4 @@ class SubadminMiddleware extends Middleware {
 
 		throw $exception;
 	}
-
 }

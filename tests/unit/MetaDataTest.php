@@ -71,10 +71,9 @@ class MetaDataTest extends \Test\TestCase {
 		return $group;
 	}
 
-
 	public function testGet() {
 		$group = $this->getGroupMock();
-		$groups = array_fill(0, 3, $group);
+		$groups = \array_fill(0, 3, $group);
 
 		$this->groupManager->expects($this->once())
 			->method('search')
@@ -94,7 +93,7 @@ class MetaDataTest extends \Test\TestCase {
 	public function testGetWithSorting() {
 		$this->groupMetadata->setSorting(1);
 		$group = $this->getGroupMock(3);
-		$groups = array_fill(0, 3, $group);
+		$groups = \array_fill(0, 3, $group);
 
 		$this->groupManager->expects($this->once())
 			->method('search')
@@ -112,7 +111,7 @@ class MetaDataTest extends \Test\TestCase {
 
 	public function testGetWithCache() {
 		$group = $this->getGroupMock();
-		$groups = array_fill(0, 3, $group);
+		$groups = \array_fill(0, 3, $group);
 
 		$this->groupManager->expects($this->once())
 			->method('search')

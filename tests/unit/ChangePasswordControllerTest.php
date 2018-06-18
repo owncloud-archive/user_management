@@ -8,7 +8,6 @@
 
 namespace OCA\UserManagement\Test\Unit;
 
-
 use OC\Mail\Message;
 use OCA\UserManagement\Controller\ChangePasswordController;
 use OCP\IGroupManager;

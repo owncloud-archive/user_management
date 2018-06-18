@@ -88,9 +88,9 @@ class PageController extends Controller {
 		list($adminGroup, $groups) = $groupsInfo->get();
 
 		$recoveryAdminEnabled = $this->appManager->isEnabledForUser('encryption') &&
-			$this->config->getAppValue( 'encryption', 'recoveryAdminEnabled', null );
+			$this->config->getAppValue('encryption', 'recoveryAdminEnabled', null);
 
-		if($isAdmin) {
+		if ($isAdmin) {
 			$subAdmins = $this->groupManager->getSubAdmin()->getAllSubAdmins();
 			// New class returns IUser[] so convert back
 			$result = [];
@@ -101,10 +101,10 @@ class PageController extends Controller {
 				];
 			}
 			$subAdmins = $result;
-		}else{
+		} else {
 			/* Retrieve group IDs from $groups array, so we can pass that information into \OC::$server->getGroupManager()->displayNamesInGroups() */
 			$gids = [];
-			foreach($groups as $group) {
+			foreach ($groups as $group) {
 				if (isset($group['id'])) {
 					$gids[] = $group['id'];
 				}
@@ -114,14 +114,14 @@ class PageController extends Controller {
 
 		// load preset quotas
 		$quotaPreset=$this->config->getAppValue('files', 'quota_preset', '1 GB, 5 GB, 10 GB');
-		$quotaPreset=explode(',', $quotaPreset);
-		foreach($quotaPreset as &$preset) {
-			$preset=trim($preset);
+		$quotaPreset=\explode(',', $quotaPreset);
+		foreach ($quotaPreset as &$preset) {
+			$preset=\trim($preset);
 		}
-		$quotaPreset=array_diff($quotaPreset, ['default', 'none']);
+		$quotaPreset=\array_diff($quotaPreset, ['default', 'none']);
 
 		$defaultQuota=$this->config->getAppValue('files', 'default_quota', 'none');
-		$defaultQuotaIsUserDefined = !in_array($defaultQuota, $quotaPreset) && !in_array($defaultQuota, ['none', 'default']);
+		$defaultQuotaIsUserDefined = !\in_array($defaultQuota, $quotaPreset) && !\in_array($defaultQuota, ['none', 'default']);
 
 		$this->eventDispatcher->dispatch('OC\Settings\Users::loadAdditionalScripts');
 
@@ -131,7 +131,7 @@ class PageController extends Controller {
 			'adminGroup' => $adminGroup,
 			'isAdmin' => (int)$isAdmin,
 			'subadmins' => $subAdmins,
-			'numofgroups' => count($groups) + count($adminGroup),
+			'numofgroups' => \count($groups) + \count($adminGroup),
 			'quota_preset' => $quotaPreset,
 			'default_quota' => $defaultQuota,
 			'defaultQuotaIsUserDefined' => $defaultQuotaIsUserDefined,
@@ -146,6 +146,5 @@ class PageController extends Controller {
 			];
 
 		return new TemplateResponse('user_management', 'main', $params, 'user');
-
 	}
 }

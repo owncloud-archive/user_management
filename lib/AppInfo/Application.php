@@ -21,25 +21,22 @@
 
 namespace OCA\UserManagement\AppInfo;
 
-
 use OCA\UserManagement\SubadminMiddleware;
 use OCP\AppFramework\App;
 use OCP\IContainer;
 
 class Application extends App {
-
-	function __construct(array $urlParams = []) {
+	public function __construct(array $urlParams = []) {
 		parent::__construct('user_management', $urlParams);
 
 		/**
 		 * Middleware
 		 */
 		$this->getContainer()
-			->registerService('SubadminMiddleware', function(IContainer $c){
+			->registerService('SubadminMiddleware', function (IContainer $c) {
 				return 	$c->query(SubadminMiddleware::class);
 			});
 		// Execute middlewares
 		$this->getContainer()->registerMiddleWare('SubadminMiddleware');
 	}
-
 }
