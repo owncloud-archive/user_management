@@ -145,7 +145,7 @@ class MetaData {
 			$sortKeys[$sortIndex] = $data['usercount'];
 			$sortIndex++;
 		} else if ($this->sorting === self::SORT_GROUPNAME) {
-			$sortKeys[$sortIndex] = $data['name'];
+			$sortKeys[$sortIndex] = $data['displayname'];
 			$sortIndex++;
 		}
 	}
@@ -158,8 +158,8 @@ class MetaData {
 	 */
 	private function generateGroupMetaData(\OCP\IGroup $group, $userSearch) {
 		return [
-				'id' => $group->getGID(),
-				'name' => $group->getGID(),
+				'gid' => $group->getGID(),
+				'displayname' => $group->getDisplayName(),
 				'usercount' => $this->sorting === self::SORT_USERCOUNT ? $group->count($userSearch) : 0,
 		];
 	}
@@ -168,7 +168,6 @@ class MetaData {
 	 * sorts the result array, if applicable
 	 * @param array $entries the result array, by reference
 	 * @param array $sortKeys the array containing the sort keys
-	 * @param return null
 	 */
 	private function sort(&$entries, $sortKeys) {
 		if ($this->sorting === self::SORT_USERCOUNT) {

@@ -23,16 +23,18 @@ $l->t("Users");
 $userlistParams = [];
 $allGroups= [];
 foreach($_["adminGroup"] as $group) {
-	$allGroups[] = $group['name'];
+	$allGroups[] = $group;
 }
 foreach($_["groups"] as $group) {
-	$allGroups[] = $group['name'];
+	$allGroups[] = $group;
 }
-$userlistParams['subadmingroups'] = $allGroups;
+$userlistParams['subadmingroups'] = [];
 $userlistParams['allGroups'] = json_encode($allGroups);
-$items = array_flip($userlistParams['subadmingroups']);
-unset($items['admin']);
-$userlistParams['subadmingroups'] = array_flip($items);
+for($i=0; $i < count($allGroups); $i++){
+	if ($allGroups[$i]['gid'] !== 'admin') {
+		$userlistParams['subadmingroups'][] = $allGroups[$i];
+	}
+}
 
 translation('settings');
 ?>
