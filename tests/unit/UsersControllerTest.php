@@ -40,7 +40,6 @@ use OCP\IAvatar;
 use OC\User\Session;
 use OC\Group\Manager;
 
-
 /**
  * @group DB
  *
@@ -91,8 +90,8 @@ class UsersControllerTest extends TestCase {
 		$this->l10N
 			->expects($this->any())
 			->method('t')
-			->will($this->returnCallback(function($text, $parameters = []) {
-				return vsprintf($text, $parameters);
+			->will($this->returnCallback(function ($text, $parameters = []) {
+				return \vsprintf($text, $parameters);
 			}));
 		$this->defaults = $this->getMockBuilder(\OC_Defaults::class)
 			->disableOriginalConstructor()->getMock();
@@ -857,7 +856,7 @@ class UsersControllerTest extends TestCase {
 				]
 			]
 		);
-		$response = $this->createController()->index(0, 10, '','', Dummy::class);
+		$response = $this->createController()->index(0, 10, '', '', Dummy::class);
 		$this->assertEquals($expectedResponse, $response);
 	}
 
@@ -888,7 +887,7 @@ class UsersControllerTest extends TestCase {
 			->will($this->returnValue([]));
 
 		$expectedResponse = new DataResponse([]);
-		$response = $this->createController()->index(0, 10, '','', Dummy::class);
+		$response = $this->createController()->index(0, 10, '', '', Dummy::class);
 		$this->assertEquals($expectedResponse, $response);
 	}
 
@@ -1375,7 +1374,6 @@ class UsersControllerTest extends TestCase {
 			->expects($this->any())
 			->method('isAdmin')
 			->will($this->returnValue(false));
-
 
 		$user = $this->getMockBuilder(User::class)
 			->disableOriginalConstructor()->getMock();
@@ -2082,7 +2080,6 @@ class UsersControllerTest extends TestCase {
 	 * @param $emailAddress
 	 */
 	public function testSetSelfEmailAddress($loginUser, $setUser, $emailAddress) {
-
 		$appName = 'user_management';
 		$irequest = $this->createMock(IRequest::class);
 		$userManager = $this->createMock(IUserManager::class);
@@ -2116,7 +2113,7 @@ class UsersControllerTest extends TestCase {
 			->willReturn($subAdmin);
 		$response = $userController->setEmailAddress($setUser, $emailAddress);
 		if ($loginUser !== $setUser) {
-			$this->assertEquals( new Http\JSONResponse([
+			$this->assertEquals(new Http\JSONResponse([
 				'error' => 'cannotSetEmailAddress',
 				'message' => 'Cannot set email address for user'
 			], HTTP::STATUS_NOT_FOUND), $response);
@@ -2141,7 +2138,6 @@ class UsersControllerTest extends TestCase {
 	 * @param $mailaddress
 	 */
 	public function testSetEmailAddressSendEmail($id, $mailaddress) {
-
 		$appName = 'settings';
 		$irequest = $this->createMock(IRequest::class);
 		$userManager = $this->createMock(IUserManager::class);
@@ -2653,7 +2649,6 @@ class UsersControllerTest extends TestCase {
 			->expects($this->once())
 			->method('error')
 			->with('Couldn\'t change the email address because the token is invalid');
-
 
 		$expectedResponse = new RedirectResponse(
 			$this->urlGenerator->linkToRoute('settings.SettingsPage.getPersonal', ['changestatus' => 'error'])

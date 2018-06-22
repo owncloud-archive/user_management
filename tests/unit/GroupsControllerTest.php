@@ -53,8 +53,8 @@ class GroupsControllerTest extends TestCase {
 		$this->l10N
 			->expects($this->any())
 					->method('t')
-					->will($this->returnCallback(function($text, $parameters = []) {
-							return vsprintf($text, $parameters);
+					->will($this->returnCallback(function ($text, $parameters = []) {
+						return \vsprintf($text, $parameters);
 					}));
 
 		$request = $this->createMock(IRequest::class);
@@ -368,5 +368,4 @@ class GroupsControllerTest extends TestCase {
 		$response = $this->groupsController->destroy('ExistingGroup');
 		$this->assertEquals($expectedResponse, $response);
 	}
-
 }

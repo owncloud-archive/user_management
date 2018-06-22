@@ -88,7 +88,6 @@ class ChangePasswordController extends Controller {
 	 * @throws \Exception
 	 */
 	public function changePassword($username, $password = null, $recoveryPassword = null) {
-
 		if ($username === null) {
 			return new JSONResponse([
 				'status' => 'error',
@@ -98,12 +97,12 @@ class ChangePasswordController extends Controller {
 		$isUserAccessible = false;
 		$currentUserObject = $this->userSession->getUser();
 		$targetUserObject = $this->userManager->get($username);
-		if($currentUserObject !== null && $targetUserObject !== null) {
+		if ($currentUserObject !== null && $targetUserObject !== null) {
 			$isUserAccessible = $this->groupManager->getSubAdmin()->isUserAccessible($currentUserObject, $targetUserObject);
 		}
 
 		if (!$this->groupManager->isAdmin($currentUserObject->getUID()) &&
-			!$isUserAccessible ) {
+			!$isUserAccessible) {
 			return new JSONResponse([
 				'status' => 'error',
 				'data' => ['message' => $this->l10n->t('Authentication error')]]);
