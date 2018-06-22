@@ -35,7 +35,7 @@ module.exports = function(config) {
 	];
 
 	var testFiles = [
-		'tests/js/*.js'
+		'tests/js/*Spec.js'
 	];
 
 	var basePath = '../../';
