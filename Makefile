@@ -16,7 +16,7 @@ JSDOC=$(NODE_PREFIX)/node_modules/.bin/jsdoc
 
 app_name=$(notdir $(CURDIR))
 user_management_doc_files=LICENSE
-user_management_src_dirs=appinfo css img js lib l10n templates vendor
+user_management_src_dirs=ajax appinfo css img js lib l10n templates vendor
 user_management_all_src=$(user_management_src_dirs) $(user_management_doc_files)
 build_dir=$(CURDIR)/build
 dist_dir=$(build_dir)/dist
