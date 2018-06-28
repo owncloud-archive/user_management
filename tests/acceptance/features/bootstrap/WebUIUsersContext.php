@@ -20,8 +20,6 @@
  *
  */
 
-require_once 'bootstrap.php';
-
 use Behat\Behat\Context\Context;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
@@ -29,11 +27,18 @@ use Behat\MinkExtension\Context\RawMinkContext;
 use Page\LoginPage;
 use Page\UsersPage;
 
+require_once 'bootstrap.php';
+
 /**
  * WebUI Users context.
  */
 class WebUIUsersContext extends RawMinkContext implements Context {
 	private $usersPage;
+
+	/**
+	 *
+	 * @var LoginPage
+	 */
 	private $loginPage;
 
 	/**
@@ -210,7 +215,39 @@ class WebUIUsersContext extends RawMinkContext implements Context {
 	}
 
 	/**
-	 * @When the administrator deletes the user with the username :username using the webUI
+	 * @When the admin disables the user :username using the webUI
+	 *
+	 * @param string $username
+	 *
+	 * @return void
+	 */
+	public function theAdminDisablesTheUserUsingTheWebui($username) {
+		$this->usersPage->openSettingsMenu();
+		$this->usersPage->setSetting("Show enabled/disabled option");
+		$this->usersPage->disableUser($username);
+	}
+
+	/**
+	 * @When the disabled user :username tries to login using the password :password from the webUI
+	 *
+	 * @param string $username
+	 *
+	 * @param string $password
+	 *
+	 * @return void
+	 */
+	public function theDisabledUserTriesToLogin($username, $password) {
+		$this->webUIGeneralContext->theUserLogsOutOfTheWebUI();
+		/**
+		 *
+		 * @var DisabledUserPage $disabledPage
+		 */
+		$disabledPage = $this->loginPage->loginAs($username, $password, 'DisabledUserPage');
+		$disabledPage->waitTillPageIsLoaded($this->getSession());
+	}
+
+	/**
+	 * @When the administrator deletes the user :username using the webUI
 	 *
 	 * @param string $username
 	 *
