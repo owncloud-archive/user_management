@@ -12,6 +12,7 @@ Feature: disable users
 		And user admin has logged in using the webUI
 		And the administrator has browsed to the users page
 
+	@skip @issue-24
 	Scenario: disable a user
 		When the admin disables the user "user1" using the webUI
 		And the disabled user "user1" tries to login using the password "1234" from the webUI
