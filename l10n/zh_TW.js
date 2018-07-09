@@ -28,6 +28,7 @@ OC.L10N.register(
     "Wrong admin recovery password. Please check the password and try again." : "錯誤的管理者還原密碼",
     "Backend doesn't support password change, but the user's encryption key was successfully updated." : "後端不支援變更密碼，但成功更新使用者的加密金鑰",
     "Unable to change password" : "無法修改密碼",
+    "%s password changed successfully" : "%s 密碼修改成功",
     "Couldn't send reset email. Please contact your administrator." : "無法寄送重設 email ，請聯絡系統管理員",
     "Group already exists." : "群組已存在",
     "Unable to add group." : "無法新增群組",
