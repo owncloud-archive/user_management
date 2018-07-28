@@ -84,7 +84,7 @@ OC.L10N.register(
     "Other" : "Otro",
     "Full Name" : "Nombre completo",
     "Email" : "Correo electrónico",
-    "Group Admin for" : "Grupo administrador para",
+    "Group Admin for" : "Adiminstrador de Grupo",
     "Enabled" : "Habilitado",
     "Quota" : "Cupo",
     "Storage Location" : "Ubicación de almacenamiento",
