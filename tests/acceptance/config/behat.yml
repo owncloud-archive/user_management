@@ -8,12 +8,6 @@ default:
     webUIManageQuota:
       paths:
         - %paths.base%/../features/webUIManageQuota
-      context: &common_webui_suite_context
-        parameters:
-          ocPath: apps/testing/api/v1/occ
-          adminUsername: admin
-          adminPassword: admin
-          regularUserPassword: 123456
       contexts:
         - WebUIUsersContext:
         - FeatureContext: &common_feature_context_params
@@ -21,7 +15,7 @@ default:
             adminUsername: admin
             adminPassword: admin
             regularUserPassword: 123456
-            ocPath: ../../../../
+            ocPath: apps/testing/api/v1/occ
         - WebUIGeneralContext:
         - WebUILoginContext:
         - WebUIUserContext:
@@ -31,7 +25,6 @@ default:
     webUIManageUsersGroups:
       paths:
         - %paths.base%/../features/webUIManageUsersGroups
-      context: *common_webui_suite_context
       contexts:
         - WebUIUsersContext:
         - FeatureContext: *common_feature_context_params
