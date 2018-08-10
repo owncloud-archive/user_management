@@ -8,8 +8,10 @@
 
 namespace OCA\UserManagement\Test\Unit;
 
+use OC\L10N\L10NString;
 use OC\Mail\Message;
 use OCA\UserManagement\Controller\ChangePasswordController;
+use OCP\IConfig;
 use OCP\IGroupManager;
 use OCP\IL10N;
 use OCP\IRequest;
@@ -21,17 +23,38 @@ use OCP\Mail\IMailer;
 use Test\TestCase;
 
 class ChangePasswordControllerTest extends TestCase {
+	/** @var  IRequest | \PHPUnit_Framework_MockObject_MockObject */
+	private $request;
+	/** @var  IL10N | \PHPUnit_Framework_MockObject_MockObject */
+	private $l10n;
+	/** @var  IUserSession | \PHPUnit_Framework_MockObject_MockObject */
+	private $userSession;
+	/** @var  IUserManager | \PHPUnit_Framework_MockObject_MockObject */
+	private $userManager;
+	/** @var  IGroupManager | \PHPUnit_Framework_MockObject_MockObject */
+	private $groupManager;
+	/** @var  IMailer | \PHPUnit_Framework_MockObject_MockObject */
+	private $mailer;
+	/** @var  ChangePasswordController */
+	private $controller;
+	protected function setUp() {
+		$this->request = $this->createMock(IRequest::class);
+		$this->l10n = $this->createMock(IL10N::class);
+		$this->userSession = $this->createMock(IUserSession::class);
+		$this->userManager = $this->createMock(IUserManager::class);
+		$this->groupManager = $this->createMock(IGroupManager::class);
+		$this->mailer = $this->createMock(IMailer::class);
+
+		$this->controller = new ChangePasswordController('user_management',
+			$this->request, $this->l10n, $this->userSession, $this->userManager,
+			$this->groupManager, $this->mailer);
+		parent::setUp();
+	}
 
 	/**
 	 * @dataProvider providesData
 	 */
 	public function testPasswordChange($expectedStatus, $isAdmin, $isSubAdmin, $passwordChangeIsSuccessfull = true) {
-		$request = $this->createMock(IRequest::class);
-		$l10n = $this->createMock(IL10N::class);
-		$userSession = $this->createMock(IUserSession::class);
-		$userManager = $this->createMock(IUserManager::class);
-		$groupManager = $this->createMock(IGroupManager::class);
-
 		$sessionUser = $this->createMock(IUser::class);
 		$sessionUser->method('getUID')->willReturn('admin');
 
@@ -43,19 +66,14 @@ class ChangePasswordControllerTest extends TestCase {
 		$subAdmin->method('isUserAccessible')->willReturn($isSubAdmin);
 
 		$message = $this->createMock(Message::class);
-		$mailer = $this->createMock(IMailer::class);
-		$mailer->method('createMessage')->willReturn($message);
-//		$mailer->method('send')->willReturn(true);
+		$this->mailer->method('createMessage')->willReturn($message);
 
-		$userSession->method('getUser')->willReturn($sessionUser);
-		$userManager->method('get')->willReturn($targetUser);
-		$groupManager->method('isAdmin')->willReturn($isAdmin);
-		$groupManager->method('getSubAdmin')->willReturn($subAdmin);
+		$this->userSession->method('getUser')->willReturn($sessionUser);
+		$this->userManager->method('get')->willReturn($targetUser);
+		$this->groupManager->method('isAdmin')->willReturn($isAdmin);
+		$this->groupManager->method('getSubAdmin')->willReturn($subAdmin);
 
-		$controller = new ChangePasswordController('user_management',
-			$request, $l10n, $userSession, $userManager, $groupManager, $mailer);
-
-		$response = $controller->changePassword('alice', '123456');
+		$response = $this->controller->changePassword('alice', '123456');
 		$this->assertEquals($expectedStatus, $response->getData()['status']);
 	}
 
