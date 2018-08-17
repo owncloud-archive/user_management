@@ -23,6 +23,7 @@ OC.L10N.register(
     "Wrong admin recovery password. Please check the password and try again." : "Невірний пароль відновлення адміністратора.  Будь ласка, перевірте пароль та спробуйте ще раз.",
     "Backend doesn't support password change, but the user's encryption key was successfully updated." : "Backend не підтримує зміну паролів, але користувацький ключ шифрування було успішно змінено",
     "Unable to change password" : "Неможливо змінити пароль",
+    "%s password changed successfully" : "%s пароль змінено успішно",
     "Couldn't send reset email. Please contact your administrator." : "Не можу надіслати email для скидання. Будь ласка, зверніться до вашого адміністратора.",
     "Group already exists." : "Група вже існує.",
     "Unable to add group." : "Неможливо додати групу.",
