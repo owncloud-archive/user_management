@@ -84,7 +84,9 @@ class WebUIUsersContext extends RawMinkContext implements Context {
 	 *
 	 * @return void
 	 */
-	public function theAdministratorSetsTheQuotaOfUserUsingTheWebUI($username, $quota) {
+	public function theAdministratorSetsTheQuotaOfUserUsingTheWebUI(
+		$username, $quota
+	) {
 		$this->usersPage->setQuotaOfUserTo($username, $quota, $this->getSession());
 	}
 
@@ -189,7 +191,9 @@ class WebUIUsersContext extends RawMinkContext implements Context {
 	 *
 	 * @return void
 	 */
-	public function theseGroupsShouldBeListedOnTheWebUI($shouldOrNot, TableNode $table) {
+	public function theseGroupsShouldBeListedOnTheWebUI(
+		$shouldOrNot, TableNode $table
+	) {
 		$should = ($shouldOrNot !== "not");
 		$groups = $this->usersPage->getAllGroups();
 		foreach ($table as $row) {
@@ -242,7 +246,9 @@ class WebUIUsersContext extends RawMinkContext implements Context {
 		 *
 		 * @var DisabledUserPage $disabledPage
 		 */
-		$disabledPage = $this->loginPage->loginAs($username, $password, 'DisabledUserPage');
+		$disabledPage = $this->loginPage->loginAs(
+			$username, $password, 'DisabledUserPage'
+		);
 		$disabledPage->waitTillPageIsLoaded($this->getSession());
 	}
 

@@ -45,25 +45,34 @@ class UsersPage extends OwncloudPage {
 
 	protected $quotaOptionXpath = "//option[contains(text(), '%s')]";
 
-	protected $manualQuotaInputXpath = "//input[contains(@data-original-title,'Please enter storage quota')]";
+	protected $manualQuotaInputXpath
+		= "//input[contains(@data-original-title,'Please enter storage quota')]";
 	protected $settingsBtnXpath = ".//*[@id='app-settings-header']/button";
 	protected $settingContentId = "app-settings-content";
-	protected $labelMailOnUserCreateXpath = ".//label[@for='CheckboxMailOnUserCreate']";
-	protected $settingByTextXpath = ".//*[@id='userlistoptions']//label[normalize-space()='%s']";
+	protected $labelMailOnUserCreateXpath
+		= ".//label[@for='CheckboxMailOnUserCreate']";
+	protected $settingByTextXpath
+		= ".//*[@id='userlistoptions']//label[normalize-space()='%s']";
 	protected $newUserUsernameFieldId = "newusername";
 	protected $newUserPasswordFieldId = "newuserpassword";
 	protected $newUserEmailFieldId = "newemail";
 	protected $createUserBtnXpath = ".//*[@id='newuser']/input[@type='submit']";
-	protected $newUserGroupsDropDownXpath = ".//*[@id='newuser']//div[@class='groupsListContainer multiselect button']";
+	protected $newUserGroupsDropDownXpath
+		= ".//*[@id='newuser']//div[@class='groupsListContainer multiselect button']";
 	protected $newUserGroupsDropDownListTag = "li";
 	protected $newUserGroupsSelectedClass = "selected";
-	protected $newUserGroupsListXpath = ".//*[@id='newuser']//ul[@class='multiselectoptions down']";
-	protected $newUserGroupXpath = ".//*[@id='newuser']//ul[@class='multiselectoptions down']//label[@title='%s']/..";
-	protected $newUserAddGroupBtnXpath = ".//*[@id='newuser']//ul[@class='multiselectoptions down']//li[@title='add group']";
-	protected $createGroupWithNewUserInputXpath = ".//*[@id='newuser']//ul[@class='multiselectoptions down']//input[@type='text']";
+	protected $newUserGroupsListXpath
+		= ".//*[@id='newuser']//ul[@class='multiselectoptions down']";
+	protected $newUserGroupXpath
+		= ".//*[@id='newuser']//ul[@class='multiselectoptions down']//label[@title='%s']/..";
+	protected $newUserAddGroupBtnXpath
+		= ".//*[@id='newuser']//ul[@class='multiselectoptions down']//li[@title='add group']";
+	protected $createGroupWithNewUserInputXpath
+		= ".//*[@id='newuser']//ul[@class='multiselectoptions down']//input[@type='text']";
 	protected $groupListId = "usergrouplist";
 	protected $disableUserCheckboxXpath = "//input[@type='checkbox']";
-	protected $deleteUserBtnXpath = ".//td[@class='remove']/a[@class='action delete']";
+	protected $deleteUserBtnXpath
+		= ".//td[@class='remove']/a[@class='action delete']";
 
 	/**
 	 * @param string $username
@@ -289,7 +298,8 @@ class UsersPage extends OwncloudPage {
 						$createUserInput->setValue($group . "\n");
 					} catch (NoSuchElement $e) {
 						// this seems to be a bug in MinkSelenium2Driver.
-						// Actually all that we need does happen, so we just don't do anything
+						// Actually all that we need does happen,
+						// so we just don't do anything
 					}
 				}
 			}
@@ -335,7 +345,9 @@ class UsersPage extends OwncloudPage {
 			}
 
 			$selectOption->click();
-			$manualQuotaInputElement = $this->find('xpath', $this->manualQuotaInputXpath);
+			$manualQuotaInputElement = $this->find(
+				'xpath', $this->manualQuotaInputXpath
+			);
 
 			if ($manualQuotaInputElement === null) {
 				throw new ElementNotFoundException(
