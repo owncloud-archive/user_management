@@ -11,3 +11,5 @@ Install and enable this app if you are testing core master functionality and wan
 When making fixes in this repository, also ensure that the equivalent fix is made in core stable10 so it gets in the 10.0.* release process.
 
 When adding features in this repository, consider if the feature should be backported into core stable10.
+
+Trigger CI.
