@@ -37,7 +37,6 @@ pipeline:
       - cd /var/www/owncloud/
       - php occ a:l
       - php occ a:e user_management
-      - php occ a:e testing
       - php occ a:l
       - php occ config:system:set trusted_domains 1 --value=server
       - php occ config:system:set trusted_domains 2 --value=federated
@@ -45,6 +44,20 @@ pipeline:
     when:
       matrix:
         NEED_INSTALL_APP: true
+
+  install-testing-app:
+    image: owncloudci/php:${PHP_VERSION}
+    pull: true
+    commands:
+      - cd /var/www/owncloud/apps
+      - git clone https://github.com/owncloud/testing.git
+      - cd /var/www/owncloud/
+      - php occ a:l
+      - php occ a:e testing
+      - php occ a:l
+    when:
+      matrix:
+        NEED_INSTALL_TESTING_APP: true
 
   webui-acceptance-tests:
     image: owncloudci/php:${PHP_VERSION}
@@ -199,6 +212,7 @@ matrix:
      PHP_VERSION: 7.1
      NEED_SERVER: true
      NEED_INSTALL_APP: true
+     NEED_INSTALL_TESTING_APP: true
      BEHAT_SUITE: webUIManageQuota
 
    - TEST_SUITE: acceptance
@@ -206,6 +220,7 @@ matrix:
      PHP_VERSION: 7.1
      NEED_SERVER: true
      NEED_INSTALL_APP: true
+     NEED_INSTALL_TESTING_APP: true
      BEHAT_SUITE: webUIManageUsersGroups
 #
 #   - TEST_SUITE: acceptance
@@ -213,6 +228,7 @@ matrix:
 #     PHP_VERSION: 7.1
 #     NEED_SERVER: true
 #     NEED_INSTALL_APP: true
+#     NEED_INSTALL_TESTING_APP: true
 #     BEHAT_SUITE: webUIManageQuota
 #
 #   - TEST_SUITE: acceptance
@@ -220,4 +236,5 @@ matrix:
 #     PHP_VERSION: 7.1
 #     NEED_SERVER: true
 #     NEED_INSTALL_APP: true
+#     NEED_INSTALL_TESTING_APP: true
 #     BEHAT_SUITE: webUIManageUsersGroups
