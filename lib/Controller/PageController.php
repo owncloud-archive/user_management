@@ -142,7 +142,7 @@ class PageController extends Controller {
 			'show_last_login' => $this->config->getAppValue('core', 'umgmt_show_last_login', 'false'),
 			'show_email' => $this->config->getAppValue('core', 'umgmt_show_email', 'false'),
 			'show_backend' => $this->config->getAppValue('core', 'umgmt_show_backend', 'false'),
-			'send_email' => $this->config->getAppValue('core', 'umgmt_send_email', 'false')
+			'set_password' => $this->config->getAppValue('core', 'umgmt_set_password', 'false')
 			];
 
 		return new TemplateResponse('user_management', 'main', $params, 'user');

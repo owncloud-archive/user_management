@@ -11,6 +11,7 @@
 namespace OCA\UserManagement\Test\Unit;
 
 use OCA\UserManagement\Controller\UsersController;
+use OCA\UserManagement\Exception\UserTokenException;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Http\RedirectResponse;
@@ -34,6 +35,8 @@ use OC\Mail\Message;
 use OC\User\User;
 use OC\Group\Group;
 use OCP\IGroup;
+use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\EventDispatcher\GenericEvent;
 use Test\TestCase;
 use Test\Util\User\Dummy;
 use OCP\IAvatar;
@@ -75,6 +78,8 @@ class UsersControllerTest extends TestCase {
 	private $appManager;
 	/** @var IRequest | \PHPUnit_Framework_MockObject_MockObject */
 	private $request;
+	/** @var  EventDispatcher | \PHPUnit_Framework_MockObject_MockObject */
+	private $eventDispatcher;
 
 	protected function setUp() {
 		$this->groupManager = $this->getMockBuilder(Manager::class)
@@ -125,6 +130,7 @@ class UsersControllerTest extends TestCase {
 				['foo', $avatarExists],
 				['bar', $avatarExists],
 				['admin', $avatarNotExists],
+				['foobazz', $avatarExists]
 			]));
 
 		$this->config
@@ -133,6 +139,7 @@ class UsersControllerTest extends TestCase {
 			->willReturn(true);
 
 		$this->request = $this->createMock(IRequest::class);
+		$this->eventDispatcher = $this->createMock(EventDispatcher::class);
 	}
 
 	public function testIndexAdmin() {
@@ -1686,6 +1693,9 @@ class UsersControllerTest extends TestCase {
 			->method('getUser')
 			->will($this->returnValue($user));
 
+		$this->defaults->method('getName')
+			->willReturn('ownCloud');
+
 		$message = $this->getMockBuilder(Message::class)
 			->disableOriginalConstructor()->getMock();
 		$message
@@ -1695,7 +1705,7 @@ class UsersControllerTest extends TestCase {
 		$message
 			->expects($this->at(1))
 			->method('setSubject')
-			->with('Your  account was created');
+			->with('Your ownCloud account was created');
 		$htmlBody = new Http\TemplateResponse(
 			'user_management',
 			'new_user/email-html',
@@ -1725,7 +1735,7 @@ class UsersControllerTest extends TestCase {
 		$message
 			->expects($this->at(4))
 			->method('setFrom')
-			->with(['no-reply@localhost' => null]);
+			->with(['no-reply@localhost' => 'ownCloud']);
 
 		$this->mailer
 			->expects($this->at(0))
@@ -1736,10 +1746,6 @@ class UsersControllerTest extends TestCase {
 			->expects($this->at(1))
 			->method('createMessage')
 			->will($this->returnValue($message));
-		$this->mailer
-			->expects($this->at(2))
-			->method('send')
-			->with($message);
 
 		$user = $this->getMockBuilder(User::class)
 			->disableOriginalConstructor()->getMock();
@@ -1777,6 +1783,514 @@ class UsersControllerTest extends TestCase {
 		$this->assertEquals(Http::STATUS_CREATED, $response->getStatus());
 	}
 
+	public function testCreateSuccessfulWithEmailAndUsername() {
+		$this->mailer->expects($this->once())
+			->method('validateMailAddress')
+			->willReturn(true);
+
+		$iUser = $this->createMock(IUser::class);
+
+		$this->userSession->method('getUser')
+			->willReturn($iUser);
+
+		$this->groupManager
+			->expects($this->any())
+			->method('isAdmin')
+			->will($this->returnValue(true));
+
+		$this->userManager->expects($this->once())
+			->method('userExists')
+			->willReturn(false);
+
+		$this->eventDispatcher->expects($this->once())
+			->method('dispatch')
+			->with('OCP\User::createPassword', new GenericEvent());
+
+		$this->secureRandom->method('generate')
+			->willReturn('AsDfGh12345');
+
+		$targetUser = $this->createMock(User::class);
+		$targetUser->method('getUID')
+			->willReturn('foobazz');
+		$targetUser->expects($this->once())
+			->method('setEMailAddress')
+			->with('validMail@Adre.ss');
+
+		$this->userManager->expects($this->once())
+			->method('createUser')
+			->with('foobazz', 'AsDfGh12345')
+			->willReturn($targetUser);
+
+		$message = $this->createMock(Message::class);
+		$message->expects($this->once())
+			->method('setTo')
+			->with(['validMail@Adre.ss' => 'foobazz']);
+		$message->expects($this->once())
+			->method('setSubject')
+			->with('Your  account was created');
+
+		$this->mailer->expects($this->once())
+			->method('createMessage')
+			->willReturn($message);
+		$this->mailer->expects($this->once())
+			->method('send')
+			->with($message);
+		$subadmin = $this->createMock(SubAdmin::class);
+		$subadmin->expects($this->once())
+			->method('getSubAdminsGroups')
+			->with($targetUser)
+			->will($this->returnValue([]));
+		$this->groupManager->method('getSubAdmin')
+			->will($this->returnValue($subadmin));
+
+		$response = $this->createController()->create('foobazz', '', [], 'validMail@Adre.ss');
+		$this->assertEquals(Http::STATUS_CREATED, $response->getStatus());
+	}
+
+	public function testSetPasswordForm() {
+		$user = $this->createMock(IUser::class);
+
+		$this->userManager->expects($this->once())
+			->method('get')
+			->with('foo')
+			->willReturn($user);
+
+		$this->config->expects($this->once())
+			->method('getUserValue')
+			->willReturn('1234:fooBaZ1');
+		$this->config->expects($this->once())
+			->method('getAppValue')
+			->willReturn('43200');
+
+		$this->timeFactory->expects($this->once())
+			->method('getTime')
+			->willReturn(44430);
+
+		$this->urlGenerator->expects($this->once())
+			->method('linkToRouteAbsolute')
+			->willReturn('http://localhost/apps/user_management/setpassword/form/1234/foo');
+		$result = $this->createController()->setPasswordForm('fooBaZ1', 'foo');
+		$this->assertEquals(new Http\TemplateResponse(
+			'user_management', 'new_user/setpassword',
+			['link' => 'http://localhost/apps/user_management/setpassword/form/1234/foo'],
+			'guest'), $result);
+	}
+
+	public function providesUserTokenExceptionData() {
+		return [
+			['invalid_token'],
+			['expired_token'],
+			['mismatch_token']
+		];
+	}
+
+	/**
+	 * @dataProvider providesUserTokenExceptionData
+	 */
+	public function testSetPasswordFormExceptionResponse($tokenException) {
+		$user = $this->createMock(IUser::class);
+
+		$this->userManager->expects($this->once())
+			->method('get')
+			->with('foo')
+			->willReturn($user);
+
+		if ($tokenException === 'expired_token') {
+			$this->config->expects($this->once())
+				->method('getUserValue')
+				->willReturn('1234:fooBaZ1');
+			$this->timeFactory->expects($this->once())
+				->method('getTime')
+				->willReturn(44444);
+
+			$this->urlGenerator->expects($this->once())
+				->method('linkToRouteAbsolute')
+				->willReturn('http://localhost/apps/user_management/setpassword/form/1234/foo');
+
+			$result = $this->createController()->setPasswordForm('fooBaZ1', 'foo');
+			$this->assertEquals(
+				new Http\TemplateResponse('user_management', 'new_user/resendtokenbymail',
+					['link' => 'http://localhost/apps/user_management/setpassword/form/1234/foo'],
+					'guest'), $result);
+		} elseif ($tokenException === 'mismatch_token') {
+			$this->config->expects($this->once())
+				->method('getUserValue')
+				->willReturn('1234:fooBaZ11');
+			$this->timeFactory->expects($this->once())
+				->method('getTime')
+				->willReturn(44430);
+			$this->config->expects($this->once())
+				->method('getAppValue')
+				->willReturn('43200');
+			$result = $this->createController()->setPasswordForm('fooBaZ1', 'foo');
+			$this->assertEquals(
+				new Http\TemplateResponse(
+					'core', 'error',
+					['errors' => [['error' => 'The token provided is invalid.']]], 'guest'), $result
+			);
+		} elseif ($tokenException === 'invalid_token') {
+			$this->config->expects($this->once())
+				->method('getUserValue')
+				->willReturn('');
+			$result = $this->createController()->setPasswordForm('fooBaZ1', 'foo');
+			$this->assertEquals(
+				new Http\TemplateResponse('core', 'error',
+					['errors' => [["error" => 'The token provided is invalid.']]], 'guest'), $result);
+		}
+	}
+
+	public function testResendToken() {
+		$user = $this->createMock(IUser::class);
+		$user->method('getEMailAddress')
+			->willReturn('foo@bar.com');
+
+		$this->userManager->expects($this->once())
+			->method('get')
+			->willReturn($user);
+
+		$this->secureRandom->expects($this->once())
+			->method('generate')
+			->willReturn('foOBaZ1');
+		$this->urlGenerator->expects($this->once())
+			->method('linkToRouteAbsolute')
+			->willReturn('http://localhost/setpassword/foOBaZ1/foo');
+
+		$message = $this->createMock(Message::class);
+		$message->expects($this->once())
+			->method('setTo')
+			->willReturn($message);
+		$message->expects($this->once())
+			->method('setSubject')
+			->willReturn($message);
+		$message->expects($this->once())
+			->method('setHtmlBody')
+			->willReturn($message);
+		$message->expects($this->once())
+			->method('setPlainBody')
+			->willReturn($message);
+		$message->expects($this->once())
+			->method('setFrom')
+			->willReturn($message);
+
+		$this->defaults->method('getName')
+			->willReturn('ownCloud');
+
+		$this->mailer->expects($this->once())
+			->method('createMessage')
+			->willReturn($message);
+		$this->mailer->expects($this->once())
+			->method('send')
+			->with($message)
+			->willReturn([]);
+
+		$result = $this->createController()->resendToken('foo');
+		$this->assertEquals(
+			new Http\TemplateResponse(
+				'user_management', 'new_user/tokensendnotify',
+				[], 'guest'), $result);
+	}
+
+	/**
+	 * @param $conditionForException
+	 */
+	public function testResendTokenNullUserResponse() {
+		$result = $this->createController()->resendToken('foo');
+		$this->assertEquals(
+			new Http\TemplateResponse(
+				'core', 'error',
+				["errors" => [["error" =>"Failed to create activation link. Please contact your administrator."]]],
+				'guest'), $result);
+	}
+
+	public function testResendTokenEmailNotSendResponse() {
+		$user = $this->createMock(IUser::class);
+
+		$this->userManager->expects($this->once())
+			->method('get')
+			->willReturn($user);
+		$result = $this->createController()->resendToken('foo');
+		$this->assertEquals(
+			new Http\TemplateResponse(
+				'core', 'error',
+				["errors" => [["error" =>"Failed to create activation link. Please contact your administrator."]]],
+				'guest'), $result);
+	}
+
+	public function testResendTokenSendMailFailedResponse() {
+		$user = $this->createMock(IUser::class);
+
+		$user->method('getEMailAddress')
+			->willReturn('foo@bar.com');
+
+		$this->userManager->expects($this->once())
+			->method('get')
+			->willReturn($user);
+
+		$this->secureRandom->expects($this->once())
+			->method('generate')
+			->willReturn('foOBaZ1');
+		$this->urlGenerator->expects($this->once())
+			->method('linkToRouteAbsolute')
+			->willReturn('http://localhost/setpassword/foOBaZ1/foo');
+
+		$message = $this->createMock(Message::class);
+		$message->expects($this->once())
+			->method('setTo')
+			->willReturn($message);
+		$message->expects($this->once())
+			->method('setSubject')
+			->willReturn($message);
+		$message->expects($this->once())
+			->method('setHtmlBody')
+			->willReturn($message);
+		$message->expects($this->once())
+			->method('setPlainBody')
+			->willReturn($message);
+		$message->expects($this->once())
+			->method('setFrom')
+			->willReturn($message);
+
+		$this->defaults->method('getName')
+			->willReturn('ownCloud');
+
+		$this->mailer->expects($this->once())
+			->method('createMessage')
+			->willReturn($message);
+		$this->mailer->expects($this->once())
+			->method('send')
+			->with($message)
+			->willThrowException(new \Exception('Mail can not be sent'));
+		$result = $this->createController()->resendToken('foo');
+		$this->assertEquals(
+			new Http\TemplateResponse(
+				'core', 'error',
+				["errors" => [["error" =>"Can't send email to the user. Contact your administrator."]]],
+				'guest'), $result);
+	}
+
+	public function testSetPassword() {
+		$user = $this->createMock(IUser::class);
+		$user->expects($this->once())
+			->method('setPassword')
+			->willReturn(true);
+		$user->expects($this->once())
+			->method('getEMailAddress')
+			->willReturn('foo@bar.com');
+
+		$this->userManager->method('get')
+			->with('foo')
+			->willReturn($user);
+
+		$this->config->expects($this->once())
+			->method('getUserValue')
+			->willReturn('1234:fooBaZ1');
+
+		$this->timeFactory->expects($this->once())
+			->method('getTime')
+			->willReturn(44430);
+		$this->config->expects($this->once())
+			->method('getAppValue')
+			->willReturn(43200);
+
+		$message = $this->createMock(Message::class);
+		$message->expects($this->once())
+			->method('setTo')
+			->willReturn($message);
+		$message->expects($this->once())
+			->method('setSubject')
+			->willReturn($message);
+		$message->expects($this->once())
+			->method('setFrom')
+			->willReturn($message);
+
+		$this->defaults->method('getName')
+			->willReturn('ownCloud');
+
+		$this->mailer->expects($this->once())
+			->method('createMessage')
+			->willReturn($message);
+		$this->mailer->expects($this->once())
+			->method('send')
+			->with($message)
+			->willReturn([]);
+
+		$result = $this->createController()->setPassword('fooBaZ1', 'foo', '123');
+		$this->assertEquals(new Http\JSONResponse(['status' => 'success']), $result);
+	}
+
+	/**
+	 * @param $conditionForException
+	 */
+	public function testSetPasswordNullUserExcception() {
+		$result = $this->createController()->setPassword('fooBaZ1', 'foo', '123');
+		$this->assertEquals(
+			new Http\JSONResponse(
+				[
+					'status' => 'error',
+					'message' => 'Failed to set password. Please contact the administrator.',
+					'type' => 'usererror'
+				], Http::STATUS_NOT_FOUND
+			), $result);
+	}
+
+	public function testSetPasswordInvalidTokenExcception() {
+		$user = $this->createMock(IUser::class);
+		$this->userManager->method('get')
+			->with('foo')
+			->willReturn($user);
+
+		$this->config->expects($this->once())
+			->method('getUserValue')
+			->willReturn('');
+
+		$result = $this->createController()->setPassword('fooBaZ1', 'foo', '123');
+		$this->assertEquals(new Http\JSONResponse(
+			[
+				'status' => 'error',
+				'message' => 'The token provided is invalid.',
+				'type' => 'tokenfailure'
+			], Http::STATUS_UNAUTHORIZED
+		), $result);
+	}
+
+	public function testSetPasswordExpiredTokenException() {
+		$user = $this->createMock(IUser::class);
+
+		$this->userManager->method('get')
+			->with('foo')
+			->willReturn($user);
+		$this->config->expects($this->once())
+			->method('getUserValue')
+			->willReturn('1234:fooBaZ1');
+		$this->timeFactory->expects($this->once())
+			->method('getTime')
+			->willReturn(44444);
+
+		$result = $this->createController()->setPassword('fooBaZ1', 'foo', '123');
+		$this->assertEquals(new Http\JSONResponse(
+			[
+				'status' => 'error',
+				'message' => 'The token provided had expired.',
+				'type' => 'tokenfailure'
+			], Http::STATUS_UNAUTHORIZED
+		), $result);
+	}
+
+	public function testSetPasswordMismatchTokenException() {
+		$user = $this->createMock(IUser::class);
+
+		$this->userManager->method('get')
+			->with('foo')
+			->willReturn($user);
+		$this->config->expects($this->once())
+			->method('getUserValue')
+			->willReturn('1234:fooBaZ11');
+		$this->config->expects($this->once())
+			->method('getAppValue')
+			->willReturn('43200');
+		$this->timeFactory->expects($this->once())
+			->method('getTime')
+			->willReturn(44430);
+
+		$result = $this->createController()->setPassword('fooBaZ1', 'foo', '123');
+		$this->assertEquals(new Http\JSONResponse(
+			[
+				'status' => 'error',
+				'message' => 'The token provided is invalid.',
+				'type' => 'tokenfailure'
+			], Http::STATUS_UNAUTHORIZED
+		), $result);
+	}
+
+	public function testSetPasswordSetFailed() {
+		$user = $this->createMock(IUser::class);
+
+		$this->config->expects($this->once())
+			->method('getUserValue')
+			->willReturn('1234:fooBaZ1');
+
+		$this->timeFactory->expects($this->once())
+			->method('getTime')
+			->willReturn(44430);
+		$this->config->expects($this->once())
+			->method('getAppValue')
+			->willReturn('43200');
+
+		$this->userManager->method('get')
+			->with('foo')
+			->willReturn($user);
+
+		$user->expects($this->once())
+			->method('setPassword')
+			->with('123')
+			->willReturn(false);
+
+		$result = $this->createController()->setPassword('fooBaZ1', 'foo', '123');
+		$this->assertEquals(new Http\JSONResponse(
+			[
+				'status' => 'error',
+				'message' => 'Failed to set password. Please contact your administrator.',
+				'type' => 'passwordsetfailed'
+			], Http::STATUS_FORBIDDEN
+		), $result);
+	}
+
+	public function testSetPasswordSendMailFailed() {
+		$user = $this->createMock(IUser::class);
+
+		$this->config->expects($this->once())
+			->method('getUserValue')
+			->willReturn('1234:fooBaZ1');
+
+		$this->timeFactory->expects($this->once())
+			->method('getTime')
+			->willReturn(44430);
+		$this->config->expects($this->once())
+			->method('getAppValue')
+			->willReturn('43200');
+
+		$this->userManager->method('get')
+			->with('foo')
+			->willReturn($user);
+
+		$user->expects($this->once())
+			->method('setPassword')
+			->with('123')
+			->willReturn(true);
+		$user->expects($this->once())
+			->method('getEMailAddress')
+			->willReturn('foo@bar.com');
+
+		$message = $this->createMock(Message::class);
+		$message->expects($this->once())
+			->method('setTo')
+			->willReturn($message);
+		$message->expects($this->once())
+			->method('setSubject')
+			->willReturn($message);
+		$message->expects($this->once())
+			->method('setPlainBody')
+			->willReturn($message);
+		$message->expects($this->once())
+			->method('setFrom')
+			->willReturn($message);
+
+		$this->mailer->expects($this->once())
+			->method('createMessage')
+			->willReturn($message);
+		$this->mailer->expects($this->once())
+			->method('send')
+			->willThrowException(new \Exception('can not send mail'));
+
+		$result = $this->createController()->setPassword('fooBaZ1', 'foo', '123');
+		$this->assertEquals(new Http\JSONResponse(
+			[
+				'status' => 'error',
+				'message' => 'Failed to send email. Please contact your administrator.',
+				'type' => 'emailsendfailed'
+			], Http::STATUS_INTERNAL_SERVER_ERROR
+		), $result);
+	}
 	private function mockUser($userId = 'foo', $displayName = 'M. Foo', $isEnabled = true,
 							  $lastLogin = 500, $home = '/home/foo', $backend = 'OC_User_Database') {
 		$user = $this->getMockBuilder(User::class)
@@ -2096,9 +2610,10 @@ class UsersControllerTest extends TestCase {
 		$urlGenerator = $this->createMock(IURLGenerator::class);
 		$appManager = $this->createMock(IAppManager::class);
 		$iAvatarManager = $this->createMock(IAvatarManager::class);
+		$eventDispatcher = $this->createMock(EventDispatcher::class);
 		$userController = new UsersController($appName, $irequest, $userManager, $groupManager,
 			$userSession, $iConfig, $iSecureRandom, $iL10, $iLogger, $ocDefault, $iMailer,
-			$iTimeFactory, $urlGenerator, $appManager, $iAvatarManager);
+			$iTimeFactory, $urlGenerator, $appManager, $iAvatarManager, $eventDispatcher);
 
 		$iUser = $this->createMock(IUser::class);
 		$userManager->method('get')->willReturn($iUser);
@@ -2154,9 +2669,10 @@ class UsersControllerTest extends TestCase {
 		$urlGenerator = $this->createMock(IURLGenerator::class);
 		$appManager = $this->createMock(IAppManager::class);
 		$iAvatarManager = $this->createMock(IAvatarManager::class);
+		$eventDispatcher = $this->createMock(EventDispatcher::class);
 		$userController = new UsersController($appName, $irequest, $userManager, $groupManager,
 			$userSession, $iConfig, $iSecureRandom, $iL10, $iLogger, $ocDefault, $iMailer,
-			$iTimeFactory, $urlGenerator, $appManager, $iAvatarManager);
+			$iTimeFactory, $urlGenerator, $appManager, $iAvatarManager, $eventDispatcher);
 
 		$iUser = $this->createMock(IUser::class);
 		$iUser->expects($this->once())
@@ -3058,7 +3574,8 @@ class UsersControllerTest extends TestCase {
 			$this->timeFactory,
 			$this->urlGenerator,
 			$this->appManager,
-			$this->avatarManager
+			$this->avatarManager,
+			$this->eventDispatcher
 		);
 	}
 }

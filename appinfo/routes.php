@@ -38,6 +38,9 @@ return [
 		['name' => 'Users#setEmailAddress', 'url' => '/admin/{id}/mailAddress', 'verb' => 'PUT'],
 		['name' => 'Users#setEnabled', 'url' => '/users/{id}/enabled', 'verb' => 'POST'],
 		['name' => 'Users#stats', 'url' => '/users/stats', 'verb' => 'GET'],
-		['name' => 'ChangePassword#changePassword', 'url' => '/users/changepassword', 'verb' => 'POST']
+		['name' => 'ChangePassword#changePassword', 'url' => '/users/changepassword', 'verb' => 'POST'],
+		['name' => 'Users#setPasswordForm', 'url' => '/setpassword/form/{token}/{userId}', 'verb' => 'GET'],
+		['name' => 'Users#resendToken', 'url' => '/resend/token/{userId}', 'verb' => 'POST'],
+		['name' => 'Users#setPassword', 'url' => '/setpassword/{token}/{userId}', 'verb' => 'POST'],
 	]
 ];
