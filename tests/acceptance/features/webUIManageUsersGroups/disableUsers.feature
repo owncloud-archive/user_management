@@ -14,7 +14,7 @@ Feature: disable users
 
 	@skip @issue-24
 	Scenario: disable a user
-		When the admin disables the user "user1" using the webUI
+		When the administrator disables the user "user1" using the webUI
 		And the disabled user "user1" tries to login using the password "1234" from the webUI
 		Then the user should be redirected to a webUI page with the title "ownCloud"
 		When the user has browsed to the login page
