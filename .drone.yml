@@ -8,7 +8,7 @@ pipeline:
   install-server:
     image: owncloudci/core
     pull: true
-    GIT_REFERENCE: ${OC_VERSION}
+    version: ${OC_VERSION}
     db_type: mysql
     db_name: owncloud
     db_host: mysql:3306
@@ -160,7 +160,7 @@ matrix:
   include:
    - TEST_SUITE: javascript
      PHP_VERSION: 7.1
-     OC_VERSION: master
+     OC_VERSION: daily-master-qa
      NEED_SERVER: true
      NEED_INSTALL_APP: true
 
@@ -177,46 +177,46 @@ matrix:
 #unit tests
    - TEST_SUITE: phpunit
      PHP_VERSION: 7.1
-     OC_VERSION: master
+     OC_VERSION: daily-master-qa
      NEED_SERVER: true
      NEED_INSTALL_APP: true
      
    - TEST_SUITE: phpunit
      PHP_VERSION: 7.2
-     OC_VERSION: master
+     OC_VERSION: daily-master-qa
      NEED_SERVER: true
      NEED_INSTALL_APP: true
 
    - TEST_SUITE: phpunit
      PHP_VERSION: 5.6
-     OC_VERSION: stable10
+     OC_VERSION: daily-stable10-qa
      NEED_SERVER: true
      NEED_INSTALL_APP: true
 
 #acceptance tests
    - TEST_SUITE: acceptance
-     OC_VERSION: master
+     OC_VERSION: daily-master-qa
      PHP_VERSION: 7.1
      NEED_SERVER: true
      NEED_INSTALL_APP: true
      BEHAT_SUITE: webUIManageQuota
 
    - TEST_SUITE: acceptance
-     OC_VERSION: master
+     OC_VERSION: daily-master-qa
      PHP_VERSION: 7.1
      NEED_SERVER: true
      NEED_INSTALL_APP: true
      BEHAT_SUITE: webUIManageUsersGroups
 #
 #   - TEST_SUITE: acceptance
-#     OC_VERSION: stable10
+#     OC_VERSION: daily-stable10-qa
 #     PHP_VERSION: 7.1
 #     NEED_SERVER: true
 #     NEED_INSTALL_APP: true
 #     BEHAT_SUITE: webUIManageQuota
 #
 #   - TEST_SUITE: acceptance
-#     OC_VERSION: stable10
+#     OC_VERSION: daily-stable10-qa
 #     PHP_VERSION: 7.1
 #     NEED_SERVER: true
 #     NEED_INSTALL_APP: true
