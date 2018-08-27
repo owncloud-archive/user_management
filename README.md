@@ -1,5 +1,7 @@
 # User Management
 
+Trigger CI
+
 Provides the User and Group Management page on the web UI.
 
 The code has been removed from the core master branch.
