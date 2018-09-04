@@ -195,12 +195,6 @@ matrix:
      NEED_SERVER: true
      NEED_INSTALL_APP: true
 
-   - TEST_SUITE: phpunit
-     PHP_VERSION: 5.6
-     OC_VERSION: daily-stable10-qa
-     NEED_SERVER: true
-     NEED_INSTALL_APP: true
-
 #acceptance tests
    - TEST_SUITE: acceptance
      OC_VERSION: daily-master-qa
@@ -225,18 +219,3 @@ matrix:
      NEED_INSTALL_APP: true
      BEHAT_SUITE: webUISettingsMenu
      USE_EMAIL: true
-
-#
-#   - TEST_SUITE: acceptance
-#     OC_VERSION: daily-stable10-qa
-#     PHP_VERSION: 7.1
-#     NEED_SERVER: true
-#     NEED_INSTALL_APP: true
-#     BEHAT_SUITE: webUIManageQuota
-#
-#   - TEST_SUITE: acceptance
-#     OC_VERSION: daily-stable10-qa
-#     PHP_VERSION: 7.1
-#     NEED_SERVER: true
-#     NEED_INSTALL_APP: true
-#     BEHAT_SUITE: webUIManageUsersGroups
