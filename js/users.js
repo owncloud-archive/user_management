@@ -1047,11 +1047,15 @@ $(document).ready(function () {
 		if ($('#CheckBoxPasswordOnUserCreate').is(':checked')) {
 			OC.AppConfig.setValue('core', 'umgmt_set_password', 'true');
 			$('#newemail').hide();
+			//Clear the value after hide
+			$('#newemail').val('');
 			$('#newuserpassword').show();
 		} else {
 			OC.AppConfig.setValue('core', 'umgmt_set_password', 'false');
 			$('#newemail').show();
-			$("#newuserpassword").hide();
+			$('#newuserpassword').hide();
+			//Clear the value after hide
+			$('#newuserpassword').val('');
 		}
 	});
 
