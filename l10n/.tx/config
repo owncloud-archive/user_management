@@ -7,3 +7,4 @@ file_filter = <lang>/user_management.po
 source_file = templates/user_management.pot
 source_lang = en
 type = PO
+
