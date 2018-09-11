@@ -36,3 +36,4 @@ default:
         - WebUIUserContext:
         - WebUISharingContext:
         - WebUIFilesContext:
+        - EmailContext:
