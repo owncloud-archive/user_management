@@ -3,6 +3,9 @@ default:
     '': %paths.base%/../features/bootstrap
   extensions:
     SensioLabs\Behat\PageObjectExtension: ~
+    jarnaiz\JUnitFormatter\JUnitFormatterExtension:
+      filename: report.xml
+      outputDir: %paths.base%/../output/
 
   suites:
     webUIManageQuota:

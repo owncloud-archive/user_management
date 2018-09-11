@@ -1,5 +1,6 @@
 tests/unit/clover.xml
 tests/js/node_modules
+tests/acceptance/output
 build
 vendor
 .php_cs.cache
