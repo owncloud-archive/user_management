@@ -56,6 +56,7 @@ pipeline:
       - TEST_SERVER_URL=http://server
       - TEST_SERVER_FED_URL=http://federated
       - PLATFORM=Linux
+      - MAILHOG_HOST=email
     commands:
       - cd /var/www/owncloud
       - chown www-data * -R
@@ -156,6 +157,13 @@ services:
       matrix:
         NEED_SERVER: true
 
+  email:
+    image: mailhog/mailhog
+    pull: true
+    when:
+      matrix:
+        USE_EMAIL: true
+
 matrix:
   include:
    - TEST_SUITE: javascript
@@ -200,6 +208,7 @@ matrix:
      NEED_SERVER: true
      NEED_INSTALL_APP: true
      BEHAT_SUITE: webUIManageQuota
+     USE_EMAIL: true
 
    - TEST_SUITE: acceptance
      OC_VERSION: daily-master-qa
@@ -207,6 +216,7 @@ matrix:
      NEED_SERVER: true
      NEED_INSTALL_APP: true
      BEHAT_SUITE: webUIManageUsersGroups
+     USE_EMAIL: true
 #
 #   - TEST_SUITE: acceptance
 #     OC_VERSION: daily-stable10-qa
