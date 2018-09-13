@@ -527,7 +527,7 @@ class UsersController extends Controller {
 		try {
 			$this->checkPasswordSetToken($token, $userId);
 		} catch (UserTokenException $e) {
-			if ($e->getPrevious() instanceof UserTokenExpiredException) {
+			if ($e instanceof UserTokenExpiredException) {
 				return new TemplateResponse(
 					'user_management', 'new_user/resendtokenbymail',
 					[
