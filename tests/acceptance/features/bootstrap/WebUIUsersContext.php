@@ -338,15 +338,15 @@ class WebUIUsersContext extends RawMinkContext implements Context {
 
 		// user_management app configs
 		$configs = [
-			'umgmt_send_email',
-			'umgmt_set_password',
-			'umgmt_show_backend',
-			'umgmt_show_email',
-			'umgmt_show_is_enabled',
-			'umgmt_show_last_login',
-			'umgmt_show_storage_location'
+			'umgmt_send_email' => '',
+			'umgmt_set_password' => '',
+			'umgmt_show_backend' => '',
+			'umgmt_show_email' => '',
+			'umgmt_show_is_enabled' => '',
+			'umgmt_show_last_login' => '',
+			'umgmt_show_storage_location' => ''
 		];
-		
+
 		if ($this->appParameterValues === null) {
 			// Get app config values
 			$appConfigs =  AppConfigHelper::getAppConfigs(
@@ -357,16 +357,13 @@ class WebUIUsersContext extends RawMinkContext implements Context {
 			);
 			$results = [];
 			foreach ($appConfigs as $appConfig) {
-				foreach ($configs as $config) {
-					if ($config === $appConfig['configkey']) {
-						$results[] = $appConfig;
-					}
+				if (isset($configs[$appConfig['configkey']])) {
+					$results[] = $appConfig;
 				}
 			}
 			// Save the app configs
 			$this->appParameterValues = $results;
 		}
-
 	}
 
 	/**
