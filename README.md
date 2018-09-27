@@ -2,6 +2,8 @@
 
 Provides the User and Group Management page on the web UI.
 
+Trigger CI
+
 The code has been removed from the core master branch.
 The core code removal has not been backported to the core stable10 branch.
 So this new app is not yet part of any formal release.
