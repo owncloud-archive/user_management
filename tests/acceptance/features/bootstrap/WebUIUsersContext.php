@@ -108,6 +108,7 @@ class WebUIUsersContext extends RawMinkContext implements Context {
 	public function theAdminCreatesAUserUsingTheWebUI(
 		$attemptTo, $username, $password, $email=null, TableNode $groupsTable=null
 	) {
+		$password = $this->featureContext->getActualPassword($password);
 		if ($groupsTable !== null) {
 			$groups = $groupsTable->getColumn(0);
 			//get rid of the header
