@@ -27,6 +27,7 @@ use Behat\Mink\Session;
 use Page\UserPageElement\GroupList;
 use SensioLabs\Behat\PageObjectExtension\PageObject\Exception\ElementNotFoundException;
 use WebDriver\Exception\NoSuchElement;
+use WebDriver\Exception\ElementNotVisible;
 
 /**
  * Users page.
@@ -45,6 +46,8 @@ class UsersPage extends OwncloudPage {
 
 	protected $quotaOptionXpath = "//option[contains(text(), '%s')]";
 
+	protected $emailColumnXpath = "//td[@class='mailAddress']";
+	
 	protected $manualQuotaInputXpath
 		= "//input[contains(@data-original-title,'Please enter storage quota')]";
 	protected $settingsBtnXpath = ".//*[@id='app-settings-header']/button";
@@ -122,6 +125,34 @@ class UsersPage extends OwncloudPage {
 		}
 
 		return $this->getTrimmedText($selectField);
+	}
+
+	/**
+	 * @param string $username
+	 *
+	 * @throws ElementNotFoundException
+	 * @return string email of user
+	 */
+	public function getEmailOfUser($username) {
+		$userTr = $this->findUserInTable($username);
+		$userEmail = $userTr->find('xpath', $this->emailColumnXpath);
+
+		if ($userEmail === null) {
+			throw new ElementNotFoundException(
+				__METHOD__ .
+				" xpath $this->emailColumnXpath " .
+				"email of user " . $username . " not found"
+			);
+		}
+
+		if (!$userEmail->isVisible()) {
+			throw new ElementNotVisible(
+				__METHOD__ .
+				" email of user " . $username . " is not visible"
+			);
+		};
+
+		return $this->getTrimmedText($userEmail);
 	}
 
 	/**

@@ -37,3 +37,16 @@ default:
         - WebUISharingContext:
         - WebUIFilesContext:
         - EmailContext:
+
+    webUISettingsMenu:
+      paths:
+        - %paths.base%/../features/webUISettingsMenu
+      contexts:
+        - WebUIUsersContext:
+        - FeatureContext: *common_feature_context_params
+        - WebUIGeneralContext:
+        - WebUILoginContext:
+        - WebUIUserContext:
+        - WebUISharingContext:
+        - WebUIFilesContext:
+        - EmailContext:

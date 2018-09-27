@@ -178,6 +178,19 @@ class WebUIUsersContext extends RawMinkContext implements Context {
 	}
 
 	/**
+	 * @When /^the administrator (enables|disables) the setting "([^"]*)" using the webUI$/
+	 *
+	 * @param string $action
+	 * @param string $setting
+	 *
+	 * @return void
+	 */
+	public function enableOrDisableSettings($action, $setting) {
+		$value = $action === 'enables' ? true : false;
+		$this->usersPage->setSetting($setting, $value);
+	}
+
+	/**
 	 * @Then the group name :groupName should be listed on the webUI
 	 *
 	 * @param string $groupName
@@ -318,6 +331,21 @@ class WebUIUsersContext extends RawMinkContext implements Context {
 			'Users quota is set to "' . $setQuota .
 			'" but expected "' . $quota . '"'
 		);
+	}
+
+	/**
+	 * @Then /^the administrator should be able to see email of the users as:$/
+	 *
+	 * @param TableNode $table table of usernames and emails with a heading | username | and | email |
+	 *
+	 * @return void
+	 */
+	public function theAdministratorShouldBeAbleToSeeEmailOfTheUsersAs(TableNode $table) {
+		foreach ($table as $row) {
+			$userEmail = $this->usersPage->getEmailOfUser($row['username']);
+
+			PHPUnit_Framework_Assert::assertEquals($row['email'], $userEmail);
+		}
 	}
 
 	/**
