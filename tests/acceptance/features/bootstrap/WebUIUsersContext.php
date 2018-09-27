@@ -349,6 +349,23 @@ class WebUIUsersContext extends RawMinkContext implements Context {
 	}
 
 	/**
+	 * @Then /^the administrator should be able to see storage location of the users as:$/
+	 *
+	 * @param TableNode $table table of usernames and storage locations with a heading | username | and | storage location |
+	 *
+	 * @return void
+	 */
+	public function theAdministratorShouldBeAbleToSeeStorageLocationOfTheUsersAs(
+		TableNode $table
+	) {
+		foreach ($table as $row) {
+			$userStorageLocation = $this->usersPage->getStorageLocationOfUser($row['username']);
+
+			PHPUnit_Framework_Assert::assertContains($row['storage location'], $userStorageLocation);
+		}
+	}
+
+	/**
 	 * This will run before EVERY scenario.
 	 *
 	 * @BeforeScenario @webUI

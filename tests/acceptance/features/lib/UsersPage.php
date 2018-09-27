@@ -47,6 +47,7 @@ class UsersPage extends OwncloudPage {
 	protected $quotaOptionXpath = "//option[contains(text(), '%s')]";
 
 	protected $emailColumnXpath = "//td[@class='mailAddress']";
+	protected $storageLocationColumnXpath = "//td[@class='storageLocation']";
 	
 	protected $manualQuotaInputXpath
 		= "//input[contains(@data-original-title,'Please enter storage quota')]";
@@ -153,6 +154,37 @@ class UsersPage extends OwncloudPage {
 		};
 
 		return $this->getTrimmedText($userEmail);
+	}
+
+	/**
+	 * @param string $username
+	 *
+	 * @throws ElementNotFoundException
+	 * @return string storage location of user
+	 */
+	public function getStorageLocationOfUser($username) {
+		$userTr = $this->findUserInTable($username);
+		$userStorageLocation = $userTr->find(
+			'xpath',
+			$this->storageLocationColumnXpath
+		);
+		
+		if ($userStorageLocation === null) {
+			throw new ElementNotFoundException(
+				__METHOD__ .
+				" xpath $this->storageLocationColumnXpath " .
+				"storage location of user " . $username . " not found"
+			);
+		}
+		
+		if (!$userStorageLocation->isVisible()) {
+			throw new ElementNotVisible(
+				__METHOD__ .
+				" storage location of user " . $username . " is not visible"
+			);
+		};
+		
+		return $this->getTrimmedText($userStorageLocation);
 	}
 
 	/**
