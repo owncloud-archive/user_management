@@ -458,7 +458,7 @@ class UsersPage extends OwncloudPage {
 		} else {
 			$selectOption->click();
 		}
-		$this->waitForAjaxCallsToStart($session);
+		$this->waitForAjaxCallsToStartAndFinish($session);
 	}
 
 	/**
