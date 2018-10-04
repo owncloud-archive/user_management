@@ -31,7 +31,7 @@ Feature: add users
       | "a+^"  | "%alt1%"    |
       | "a)~"  | "%alt2%"    |
       | "a(="  | "%alt3%"    |
-      | "a`*^" | "%regular%" |
+      | "a`*^" | "%alt4%"    |
 
   Scenario: use the webUI to create a user with empty password
     When the administrator attempts to create a user with the name "bijay" and the password "" using the webUI

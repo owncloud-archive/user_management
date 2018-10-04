@@ -6,9 +6,9 @@ Feature: add users
 
   Background:
     Given these users have been created but not initialized:
-      | username | password  | displayname | email        |
-      | user1    | %regular% | User One    | u1@oc.com.np |
-      | user2    | %regular% | User Two    | u2@oc.com.np |
+      | username |
+      | user1    |
+      | user2    |
     And user admin has logged in using the webUI
     And the administrator has browsed to the users page
 
@@ -16,8 +16,8 @@ Feature: add users
     When the administrator enables the setting "Show email address" in the User Management page using the webUI
     Then the administrator should be able to see email of the users in the User Management page as:
       | username | email        |
-      | user1    | u1@oc.com.np |
-      | user2    | u2@oc.com.np |
+      | user1    | user1@example.org |
+      | user2    | user2@example.org |
 
   Scenario: administrator should be able to see storage location of a user
     When the administrator enables the setting "Show storage location" in the User Management page using the webUI
@@ -36,7 +36,7 @@ Feature: add users
   Scenario: administrator should be able to see last login of a user when the user is initialized
     When the administrator enables the setting "Show last log in" in the User Management page using the webUI
     And the administrator logs out of the webUI
-    And the user logs in with username "user1" and password "%regular%" using the webUI
+    And the user logs in with username "user1" and password "%alt1%" using the webUI
     And the user logs out of the webUI
     And user admin logs in using the webUI
     And the administrator browses to the users page
