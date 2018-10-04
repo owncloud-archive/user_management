@@ -6,8 +6,8 @@ Feature: manage user quota
 
   Background:
     Given these users have been created but not initialized:
-      | username | password  | displayname | email        |
-      | user1    | %regular% | User One    | u1@oc.com.np |
+      | username |
+      | user1    |
     And user admin has logged in using the webUI
     And the administrator has browsed to the users page
 
