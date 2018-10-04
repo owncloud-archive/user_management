@@ -4,7 +4,7 @@ Feature: add users
   I want to be able to change different settings
   So that I can see various details about users
 
-  Background: 
+  Background:
     Given these users have been created but not initialized:
       | username | password  | displayname | email        |
       | user1    | %regular% | User One    | u1@oc.com.np |
