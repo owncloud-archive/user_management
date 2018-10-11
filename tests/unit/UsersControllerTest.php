@@ -2069,6 +2069,7 @@ class UsersControllerTest extends TestCase {
 	}
 
 	public function testSetPassword() {
+		$controller = $this->createController();
 		$user = $this->createMock(IUser::class);
 		$user->expects($this->once())
 			->method('setPassword')
@@ -2092,6 +2093,10 @@ class UsersControllerTest extends TestCase {
 			->method('getAppValue')
 			->willReturn(43200);
 
+		$fromMailAddress = $this->invokePrivate($controller, 'fromMailAddress', []);
+		$this->defaults->method('getName')
+			->willReturn('ownCloud');
+
 		$message = $this->createMock(Message::class);
 		$message->expects($this->once())
 			->method('setTo')
@@ -2101,10 +2106,8 @@ class UsersControllerTest extends TestCase {
 			->willReturn($message);
 		$message->expects($this->once())
 			->method('setFrom')
+			->with([$fromMailAddress => 'ownCloud'])
 			->willReturn($message);
-
-		$this->defaults->method('getName')
-			->willReturn('ownCloud');
 
 		$this->mailer->expects($this->once())
 			->method('createMessage')
@@ -2114,8 +2117,9 @@ class UsersControllerTest extends TestCase {
 			->with($message)
 			->willReturn([]);
 
-		$result = $this->createController()->setPassword('fooBaZ1', 'foo', '123');
+		$result = $controller->setPassword('fooBaZ1', 'foo', '123');
 		$this->assertEquals(new Http\JSONResponse(['status' => 'success']), $result);
+		$this->assertNotEquals($fromMailAddress, 'foo@bar.com');
 	}
 
 	/**
