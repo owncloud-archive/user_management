@@ -138,7 +138,6 @@ Feature: add users
     And the user logs in with username "guiusr1" and password "%regular%" using the webUI
     Then the user should be redirected to a webUI page with the title "Files - %productname%"
 
-  @skip @issue-90
   Scenario: check if the sender email address is valid
     When the administrator creates a user with the name "user1" and the email "guiusr1@owncloud" without a password using the webUI
     And the administrator logs out of the webUI
