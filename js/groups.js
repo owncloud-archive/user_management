@@ -269,22 +269,25 @@ GroupList = {
 		GroupDeleteHandler = new DeleteHandler('/apps/user_management/groups', 'groupname',
 			GroupList.hide, GroupList.remove);
 
-		//configure undo
-		OC.Notification.hide();
 		var msg = escapeHTML(t('user_management', 'deleted {groupName}', {groupName: '%oid'})) + '<span class="undo">' +
 			escapeHTML(t('user_management', 'undo')) + '</span>';
 		GroupDeleteHandler.setNotification(OC.Notification, 'deletegroup', msg,
-			GroupList.show);
+			GroupList.remove);
 
 		//when to mark user for delete
 		$userGroupList.on('click', '.delete', function () {
 			// Call function for handling delete/undo
-			GroupDeleteHandler.mark(encodeURIComponent(GroupList.getElementGID(this)).toString());
-		});
-
-		//delete a marked user when leaving the page
-		$(window).on('beforeunload', function () {
-			GroupDeleteHandler.deleteEntry();
+			var groupName = encodeURIComponent(GroupList.getElementGID(this)).toString();
+			OC.dialogs.confirm(
+				t('user_management', 'You are about to delete a group. This action can\'t be undone and is permanent. Are you sure that you want to permanently delete {groupName}?', {groupName: decodeURIComponent(groupName)}),
+				t('user_management', 'Delete group'),
+				function (confirmation) {
+					if (confirmation) {
+						GroupDeleteHandler.mark(groupName);
+						GroupDeleteHandler.deleteEntry();
+					}
+				}
+			);
 		});
 	},
 
