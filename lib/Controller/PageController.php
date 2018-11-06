@@ -19,7 +19,7 @@
 
 namespace OCA\UserManagement\Controller;
 
-use OCA\UserManagement\MetaData;
+use OC\MetaData;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\TemplateResponse;

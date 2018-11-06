@@ -25,7 +25,7 @@
 namespace OCA\UserManagement\Controller;
 
 use OC\AppFramework\Http;
-use OCA\UserManagement\MetaData;
+use OC\MetaData;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\IGroupManager;
@@ -60,33 +60,6 @@ class GroupsController extends Controller {
 		$this->groupManager = $groupManager;
 		$this->userSession = $userSession;
 		$this->l10n = $l10n;
-	}
-
-	/**
-	 * @NoAdminRequired
-	 *
-	 * @param string $pattern
-	 * @param bool $filterGroups
-	 * @param int $sortGroups
-	 * @return DataResponse
-	 */
-	public function index($pattern = '', $filterGroups = false, $sortGroups = MetaData::SORT_USERCOUNT) {
-		$groupPattern = $filterGroups ? $pattern : '';
-
-		$groupsInfo = new MetaData(
-			$this->userSession->getUser()->getUID(),
-			$this->isAdmin(),
-			$this->groupManager,
-			$this->userSession
-		);
-		$groupsInfo->setSorting($sortGroups);
-		list($adminGroups, $groups) = $groupsInfo->get($groupPattern, $pattern);
-
-		return new DataResponse(
-			[
-				'data' => ['adminGroups' => $adminGroups, 'groups' => $groups]
-			]
-		);
 	}
 
 	/**
@@ -150,20 +123,5 @@ class GroupsController extends Controller {
 			],
 			Http::STATUS_FORBIDDEN
 		);
-	}
-
-	/**
-	 * Check if current user (active and not in incognito mode)
-	 * is an admin
-	 *
-	 * @return bool
-	 */
-	private function isAdmin() {
-		// Get current user (active and not in incognito mode)
-		$user = $this->userSession->getUser();
-		if ($user !== null) {
-			return $this->groupManager->isAdmin($user->getUID());
-		}
-		return false;
 	}
 }
