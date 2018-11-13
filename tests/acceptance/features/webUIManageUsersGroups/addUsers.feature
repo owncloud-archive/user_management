@@ -11,13 +11,13 @@ Feature: add users
   Scenario: use the webUI to create a simple user
     When the administrator creates a user with the name "guiusr1" and the password "%regular%" using the webUI
     And the administrator logs out of the webUI
-    And the user logs in with username "guiusr1" and password "%regular%" using the webUI
+    And user "guiusr1" logs in using the webUI
     Then the user should be redirected to a webUI page with the title "Files - %productname%"
 
   Scenario: use the webUI to create a user with special valid characters
     When the administrator creates a user with the name "@-_.'" and the password "%regular%" using the webUI
     And the administrator logs out of the webUI
-    And the user logs in with username "@-_.'" and password "%regular%" using the webUI
+    And user "@-_.'" logs in using the webUI
     Then the user should be redirected to a webUI page with the title "Files - %productname%"
 
   Scenario Outline: use the webUI to create a user with special invalid characters
