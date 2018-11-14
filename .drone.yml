@@ -18,22 +18,10 @@ pipeline:
       matrix:
         NEED_SERVER: true
 
-  owncloud-log:
-    image: owncloud/ubuntu:16.04
-    detach: true
-    pull: true
-    commands:
-      - tail -f /var/www/owncloud/data/owncloud.log
-    when:
-      matrix:
-        NEED_SERVER: true
-
   install-app:
     image: owncloudci/php:${PHP_VERSION}
     pull: true
     commands:
-      - cd /var/www/owncloud/apps/user_management
-      - make
       - cd /var/www/owncloud/
       - php occ a:l
       - php occ a:e user_management
@@ -46,6 +34,49 @@ pipeline:
       matrix:
         NEED_INSTALL_APP: true
 
+  fix-permissions:
+    image: owncloudci/php:${PHP_VERSION}
+    pull: true
+    commands:
+      - chown www-data /var/www/owncloud -R
+      - chmod 777 /var/www/owncloud/tests/acceptance/filesForUpload -R
+      - chmod +x /var/www/owncloud/tests/acceptance/run.sh
+    when:
+      matrix:
+        NEED_SERVER: true
+
+  owncloud-log:
+    image: owncloud/ubuntu:16.04
+    detach: true
+    pull: true
+    commands:
+      - tail -f /var/www/owncloud/data/owncloud.log
+    when:
+      matrix:
+        NEED_SERVER: true
+
+  owncloud-coding-standard:
+    image: owncloudci/php:${PHP_VERSION}
+    pull: true
+    commands:
+      - make test-php-style
+    when:
+      matrix:
+        TEST_SUITE: owncloud-coding-standard
+
+  phpunit-tests:
+    image: owncloudci/php:${PHP_VERSION}
+    pull: true
+    environment:
+      - PHP_VERSION=${PHP_VERSION}
+      - COVERAGE=${COVERAGE}
+    commands:
+      - if [ -z "${COVERAGE}" ]; then make test-php-unit; fi
+      - if [ "${COVERAGE}" = "true" ]; then make test-php-unit-dbg; fi
+    when:
+      matrix:
+        TEST_SUITE: phpunit
+
   webui-acceptance-tests:
     image: owncloudci/php:${PHP_VERSION}
     pull: true
@@ -56,38 +87,22 @@ pipeline:
       - TEST_SERVER_URL=http://server
       - TEST_SERVER_FED_URL=http://federated
       - PLATFORM=Linux
+      - BEHAT_SUITE=${BEHAT_SUITE}
       - MAILHOG_HOST=email
     commands:
-      - cd /var/www/owncloud
-      - chown www-data * -R
-      - chmod 777 /var/www/owncloud/tests/acceptance/filesForUpload -R
-      - cd tests/acceptance
-      - bash run.sh --remote --config /var/www/owncloud/apps/user_management/tests/acceptance/config/behat.yml
+      - make test-acceptance-webui
     when:
       matrix:
-        TEST_SUITE: acceptance
+        TEST_SUITE: web-acceptance
 
-  lint-test:
+  phplint-tests:
     image: owncloudci/php:${PHP_VERSION}
     pull: true
     commands:
-      - cd /var/www/owncloud/apps/user_management
-      - make
-      - vendor/bin/parallel-lint  --exclude vendor .
-      - vendor/bin/php-cs-fixer fix --allow-risky yes --dry-run -v --diff --diff-format udiff
+      - make test-php-lint
     when:
       matrix:
         TEST_SUITE: lint
-
-  phpunit-tests:
-    image: owncloudci/php:${PHP_VERSION}
-    pull: true
-    commands:
-      - cd /var/www/owncloud
-      - phpdbg -d memory_limit=4096M -rr ./lib/composer/bin/phpunit --configuration apps/user_management/tests/unit/phpunit.xml
-    when:
-      matrix:
-        TEST_SUITE: phpunit
 
   js-tests:
     image: owncloudci/php:${PHP_VERSION}
@@ -106,8 +121,7 @@ pipeline:
     token: af884a52-14ff-4e5c-91f9-ce4f79469623
     when:
       matrix:
-        TEST_SUITE: phpunit
-        PHP_VERSION: 7.1
+        COVERAGE: true
 
   notify:
     image: plugins/slack:1
@@ -127,7 +141,7 @@ services:
     command: [ "/usr/local/bin/apachectl", "-e", "debug", "-D", "FOREGROUND" ]
     when:
       matrix:
-        TEST_SUITE: acceptance
+        NEED_SERVER: true
 
   federated:
     image: owncloudci/php:${PHP_VERSION}
@@ -137,14 +151,14 @@ services:
     command: [ "/usr/local/bin/apachectl", "-e", "debug", "-D", "FOREGROUND" ]
     when:
       matrix:
-        TEST_SUITE: acceptance
+        NEED_SERVER: true
 
   selenium:
     image: selenium/standalone-chrome-debug:latest
     pull: true
     when:
       matrix:
-        TEST_SUITE: acceptance
+        TEST_SUITE: web-acceptance
 
   mysql:
     image: mysql:5.5
@@ -166,77 +180,92 @@ services:
 
 matrix:
   include:
-   - TEST_SUITE: javascript
-     PHP_VERSION: 7.1
-     OC_VERSION: daily-master-qa
-     NEED_SERVER: true
-     NEED_INSTALL_APP: true
+    # owncloud-coding-standard
+    - PHP_VERSION: 7.2
+      TEST_SUITE: owncloud-coding-standard
 
-#syntax lint check
-   - TEST_SUITE: lint
-     PHP_VERSION: 7.1
-     NEED_SERVER: false
-     NEED_INSTALL_APP: false
-   - TEST_SUITE: lint
-     PHP_VERSION: 5.6
-     NEED_SERVER: false
-     NEED_INSTALL_APP: false
-     
-#unit tests
-   - TEST_SUITE: phpunit
-     PHP_VERSION: 7.1
-     OC_VERSION: daily-master-qa
-     NEED_SERVER: true
-     NEED_INSTALL_APP: true
-     
-   - TEST_SUITE: phpunit
-     PHP_VERSION: 7.2
-     OC_VERSION: daily-master-qa
-     NEED_SERVER: true
-     NEED_INSTALL_APP: true
+    - TEST_SUITE: javascript
+      PHP_VERSION: 7.1
+      OC_VERSION: daily-master-qa
+      NEED_SERVER: true
+      NEED_INSTALL_APP: true
 
-   - TEST_SUITE: phpunit
-     PHP_VERSION: 5.6
-     OC_VERSION: daily-stable10-qa
-     NEED_SERVER: true
-     NEED_INSTALL_APP: true
+    #syntax lint check
+    - TEST_SUITE: lint
+      PHP_VERSION: 7.1
+      NEED_SERVER: false
+      NEED_INSTALL_APP: false
 
-#acceptance tests
-   - TEST_SUITE: acceptance
-     OC_VERSION: daily-master-qa
-     PHP_VERSION: 7.1
-     NEED_SERVER: true
-     NEED_INSTALL_APP: true
-     BEHAT_SUITE: webUIManageQuota
-     USE_EMAIL: true
+    - TEST_SUITE: lint
+      PHP_VERSION: 5.6
+      NEED_SERVER: false
+      NEED_INSTALL_APP: false
 
-   - TEST_SUITE: acceptance
-     OC_VERSION: daily-master-qa
-     PHP_VERSION: 7.1
-     NEED_SERVER: true
-     NEED_INSTALL_APP: true
-     BEHAT_SUITE: webUIManageUsersGroups
-     USE_EMAIL: true
+    #unit tests
+    - TEST_SUITE: phpunit
+      PHP_VERSION: 7.1
+      OC_VERSION: daily-master-qa
+      NEED_SERVER: true
+      NEED_INSTALL_APP: true
+      COVERAGE: true
 
-   - TEST_SUITE: acceptance
-     OC_VERSION: daily-master-qa
-     PHP_VERSION: 7.1
-     NEED_SERVER: true
-     NEED_INSTALL_APP: true
-     BEHAT_SUITE: webUISettingsMenu
-     USE_EMAIL: true
+    - TEST_SUITE: phpunit
+      PHP_VERSION: 7.2
+      OC_VERSION: daily-master-qa
+      NEED_SERVER: true
+      NEED_INSTALL_APP: true
 
-#
-#   - TEST_SUITE: acceptance
+    #  - TEST_SUITE: phpunit
+    #    PHP_VERSION: 5.6
+    #    OC_VERSION: daily-stable10-qa
+    #    NEED_SERVER: true
+    #    NEED_INSTALL_APP: true
+
+    #acceptance tests
+    - TEST_SUITE: web-acceptance
+      OC_VERSION: daily-master-qa
+      PHP_VERSION: 7.1
+      NEED_SERVER: true
+      NEED_INSTALL_APP: true
+      BEHAT_SUITE: webUIManageQuota
+      USE_EMAIL: true
+
+    - TEST_SUITE: web-acceptance
+      OC_VERSION: daily-master-qa
+      PHP_VERSION: 7.1
+      NEED_SERVER: true
+      NEED_INSTALL_APP: true
+      BEHAT_SUITE: webUIManageUsersGroups
+      USE_EMAIL: true
+
+    - TEST_SUITE: web-acceptance
+      OC_VERSION: daily-master-qa
+      PHP_VERSION: 7.1
+      NEED_SERVER: true
+      NEED_INSTALL_APP: true
+      BEHAT_SUITE: webUISettingsMenu
+      USE_EMAIL: true
+
+#   - TEST_SUITE: web-acceptance
 #     OC_VERSION: daily-stable10-qa
 #     PHP_VERSION: 7.1
 #     NEED_SERVER: true
 #     NEED_INSTALL_APP: true
 #     BEHAT_SUITE: webUIManageQuota
+#     USE_EMAIL: true
 #
-#   - TEST_SUITE: acceptance
+#   - TEST_SUITE: web-acceptance
 #     OC_VERSION: daily-stable10-qa
 #     PHP_VERSION: 7.1
 #     NEED_SERVER: true
 #     NEED_INSTALL_APP: true
 #     BEHAT_SUITE: webUIManageUsersGroups
+#     USE_EMAIL: true
+#
+#   - TEST_SUITE: web-acceptance
+#     OC_VERSION: daily-stable10-qa
+#     PHP_VERSION: 7.1
+#     NEED_SERVER: true
+#     NEED_INSTALL_APP: true
+#     BEHAT_SUITE: webUISettingsMenu
+#     USE_EMAIL: true

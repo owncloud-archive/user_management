@@ -1,5 +1,10 @@
 SHELL := /bin/bash
 
+COMPOSER_BIN := $(shell command -v composer 2> /dev/null)
+ifndef COMPOSER_BIN
+    $(error composer is not available on your system, please install composer)
+endif
+
 #
 # Define NPM and check if it is available on the system.
 #
@@ -9,8 +14,6 @@ ifndef NPM
 endif
 
 NODE_PREFIX=$(shell pwd)
-
-PHPUNIT="$(PWD)/lib/composer/phpunit/phpunit/phpunit"
 BOWER=$(NODE_PREFIX)/node_modules/bower/bin/bower
 JSDOC=$(NODE_PREFIX)/node_modules/.bin/jsdoc
 
@@ -20,12 +23,14 @@ user_management_src_dirs=ajax appinfo css img js lib l10n templates vendor
 user_management_all_src=$(user_management_src_dirs) $(user_management_doc_files)
 build_dir=$(CURDIR)/build
 dist_dir=$(build_dir)/dist
-COMPOSER_BIN=$(build_dir)/composer.phar
 
-# internal aliases
+# dependency folders (leave empty if not required)
 composer_deps=vendor/
 composer_dev_deps=lib/composer/phpunit
+nodejs_deps=
+bower_deps=
 
+# signing
 occ=$(CURDIR)/../../occ
 private_key=$(HOME)/.owncloud/certificates/$(app_name).key
 certificate=$(HOME)/.owncloud/certificates/$(app_name).crt
@@ -39,15 +44,18 @@ endif
 endif
 endif
 
-#
-# Catch-all rules
-#
-.PHONY: all
-all: $(composer_dev_deps)
+# bin file definitions
+PHPUNIT=php -d zend.enable_gc=0  vendor/bin/phpunit
+PHPUNITDBG=phpdbg -qrr -d memory_limit=4096M -d zend.enable_gc=0 "./vendor/bin/phpunit"
+PHP_CS_FIXER=php -d zend.enable_gc=0 vendor-bin/owncloud-codestyle/vendor/bin/php-cs-fixer
+PHAN=php -d zend.enable_gc=0 vendor-bin/phan/vendor/bin/phan
+PHPSTAN=php -d zend.enable_gc=0 vendor-bin/phpstan/vendor/bin/phpstan
 
-.PHONY: clean
-clean: clean-composer-deps clean-dist clean-build
+.DEFAULT_GOAL := help
 
+# start with displaying help
+help:
+	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | sed -e 's/##//'
 
 #
 # Basic required tools
@@ -76,17 +84,9 @@ update-composer: $(COMPOSER_BIN)
 	php $(COMPOSER_BIN) install --prefer-dist
 
 #
-# testing
-#
-.PHONY: test-js
-test-js:
-	cd tests/js && npm install --deps
-	cd tests/js && node_modules/karma/bin/karma start karma.config.js --single-run
-
-#
 # dist
 #
-$(dist_dir)/user_management: $(composer_deps)
+$(dist_dir)/$(app_name): $(composer_deps)
 	rm -Rf $@; mkdir -p $@
 	cp -R $(user_management_all_src) $@
 	find $@/vendor -type d -iname Test? -print | xargs rm -Rf
@@ -100,10 +100,10 @@ ifdef CAN_SIGN
 else
 	@echo $(sign_skip_msg)
 endif
-	tar -czf $(dist_dir)/user_management.tar.gz -C $(dist_dir) $(app_name)
+	tar -czf $(dist_dir)/$(app_name).tar.gz -C $(dist_dir) $(app_name)
 
 .PHONY: dist
-dist: $(dist_dir)/user_management
+dist: $(dist_dir)/$(app_name)
 
 .PHONY: clean-dist
 clean-dist:
@@ -112,3 +112,93 @@ clean-dist:
 .PHONY: clean-build
 clean-build:
 	rm -Rf $(build_dir)
+
+.PHONY: clean-deps
+clean-deps:
+	rm -Rf $(nodejs_deps) $(bower_deps)
+
+.PHONY: clean
+clean: clean-deps clean-dist clean-build
+
+##
+## Tests
+##--------------------------------------
+
+.PHONY: test-js
+test-js:
+	cd tests/js && npm install --deps
+	cd tests/js && node_modules/karma/bin/karma start karma.config.js --single-run
+
+.PHONY: test-php-lint
+test-php-lint:             ## Run php lint
+test-php-lint: vendor/bin/phpunit
+	vendor/bin/parallel-lint  --exclude vendor .
+
+.PHONY: test-php-unit
+test-php-unit:             ## Run php unit tests
+test-php-unit: vendor/bin/phpunit
+	$(PHPUNIT) --configuration ./tests/unit/phpunit.xml --testsuite unit
+
+.PHONY: test-php-unit-dbg
+test-php-unit-dbg:         ## Run php unit tests using phpdbg
+test-php-unit-dbg: vendor/bin/phpunit
+	$(PHPUNITDBG) --configuration ./tests/unit/phpunit.xml --testsuite unit
+
+.PHONY: test-php-style
+test-php-style:            ## Run php-cs-fixer and check owncloud code-style
+test-php-style: vendor-bin/owncloud-codestyle/vendor
+	$(PHP_CS_FIXER) fix -v --diff --diff-format udiff --allow-risky yes --dry-run
+
+.PHONY: test-php-style-fix
+test-php-style-fix:        ## Run php-cs-fixer and fix code style issues
+test-php-style-fix: vendor-bin/owncloud-codestyle/vendor
+	$(PHP_CS_FIXER) fix -v --diff --diff-format udiff --allow-risky yes
+
+.PHONY: test-php-phan
+test-php-phan:             ## Run phan
+test-php-phan: vendor-bin/phan/vendor
+	$(PHAN) --config-file .phan/config.php --require-config-exists
+
+.PHONY: test-php-phpstan
+test-php-phpstan:          ## Run phpstan
+test-php-phpstan: vendor-bin/phpstan/vendor
+	$(PHPSTAN) analyse --memory-limit=4G --configuration=./phpstan.neon --no-progress --level=5 appinfo lib
+
+.PHONY: test-acceptance-webui
+test-acceptance-webui:     ## Run webUI acceptance tests
+test-acceptance-webui: vendor/bin/phpunit
+	../../tests/acceptance/run.sh --remote --type webUI
+
+#
+# Dependency management
+#--------------------------------------
+
+composer.lock: composer.json
+	@echo composer.lock is not up to date.
+
+vendor: composer.lock
+	composer install --no-dev
+
+vendor/bin/phpunit: composer.lock
+	composer install
+
+vendor/bamarni/composer-bin-plugin: composer.lock
+	composer install
+
+vendor-bin/owncloud-codestyle/vendor: vendor/bamarni/composer-bin-plugin vendor-bin/owncloud-codestyle/composer.lock
+	composer bin owncloud-codestyle install --no-progress
+
+vendor-bin/owncloud-codestyle/composer.lock: vendor-bin/owncloud-codestyle/composer.json
+	@echo owncloud-codestyle composer.lock is not up to date.
+
+vendor-bin/phan/vendor: vendor/bamarni/composer-bin-plugin vendor-bin/phan/composer.lock
+	composer bin phan install --no-progress
+
+vendor-bin/phan/composer.lock: vendor-bin/phan/composer.json
+	@echo phan composer.lock is not up to date.
+
+vendor-bin/phpstan/vendor: vendor/bamarni/composer-bin-plugin vendor-bin/phpstan/composer.lock
+	composer bin phpstan install --no-progress
+
+vendor-bin/phpstan/composer.lock: vendor-bin/phpstan/composer.json
+	@echo phpstan composer.lock is not up to date.
