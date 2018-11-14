@@ -114,11 +114,13 @@ pipeline:
         TEST_SUITE: javascript
 
   codecov:
-    image: robertstettner/drone-codecov
+    image: plugins/codecov:2
+    secrets: [codecov_token]
     pull: true
+    paths:
+      - tests/unit/clover.xml
     files:
-      - apps/user_management/tests/unit/clover.xml
-    token: af884a52-14ff-4e5c-91f9-ce4f79469623
+      - '*.xml'
     when:
       matrix:
         COVERAGE: true
