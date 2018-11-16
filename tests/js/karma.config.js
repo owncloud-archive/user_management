@@ -31,7 +31,8 @@ module.exports = function(config) {
 		'js/deleteHandler.js',
 		'js/filter.js',
 		'js/groups.js',
-		'js/users.js'
+		'js/users.js',
+		'js/setpassword.js'
 	];
 
 	var testFiles = [
