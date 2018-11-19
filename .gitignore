@@ -3,5 +3,7 @@ tests/js/node_modules
 tests/acceptance/output
 build
 vendor
+vendor-bin/**/vendor
+vendor-bin/**/composer.lock
 .php_cs.cache
 
