@@ -290,13 +290,13 @@ class WebUIUsersContext extends RawMinkContext implements Context {
 	}
 
 	/**
-	 * @When the administrator deletes the user :username using the webUI
+	 * @When the administrator deletes user :username using the webUI
 	 *
 	 * @param string $username
 	 *
 	 * @return void
 	 */
-	public function theAdministratorDeletesTheUser($username) {
+	public function theAdministratorDeletesUser($username) {
 		$this->usersPage->deleteUser($username);
 		$this->featureContext->rememberThatUserIsNotExpectedToExist($username);
 	}
@@ -335,13 +335,13 @@ class WebUIUsersContext extends RawMinkContext implements Context {
 	}
 
 	/**
-	 * @Then /^the administrator should be able to see email of the users in the User Management page as:$/
+	 * @Then /^the administrator should be able to see the email of these users in the User Management page:$/
 	 *
 	 * @param TableNode $table table of usernames and emails with a heading | username | and | email |
 	 *
 	 * @return void
 	 */
-	public function theAdministratorShouldBeAbleToSeeEmailOfTheUsersAs(TableNode $table) {
+	public function theAdministratorShouldBeAbleToSeeEmailOfTheseUsers(TableNode $table) {
 		foreach ($table as $row) {
 			$userEmail = $this->usersPage->getEmailOfUser($row['username']);
 
@@ -350,13 +350,13 @@ class WebUIUsersContext extends RawMinkContext implements Context {
 	}
 
 	/**
-	 * @Then /^the administrator should be able to see storage location of the users in the User Management page as:$/
+	 * @Then /^the administrator should be able to see the storage location of these users in the User Management page:$/
 	 *
 	 * @param TableNode $table table of usernames and storage locations with a heading | username | and | storage location |
 	 *
 	 * @return void
 	 */
-	public function theAdministratorShouldBeAbleToSeeStorageLocationOfTheUsersAs(
+	public function theAdministratorShouldBeAbleToSeeStorageLocationOfTheseUsers(
 		TableNode $table
 	) {
 		foreach ($table as $row) {
@@ -367,13 +367,13 @@ class WebUIUsersContext extends RawMinkContext implements Context {
 	}
 
 	/**
-	 * @Then /^the administrator should be able to see last login of the users in the User Management page as:$/
+	 * @Then /^the administrator should be able to see the last login of these users in the User Management page:$/
 	 *
 	 * @param TableNode $table table of usernames and last logins with a heading | username | and | last logins |
 	 *
 	 * @return void
 	 */
-	public function theAdministratorShouldBeAbleToSeeLastLoginOfTheUsersAs(
+	public function theAdministratorShouldBeAbleToSeeLastLoginOfTheseUsers(
 		TableNode $table
 	) {
 		foreach ($table as $row) {
