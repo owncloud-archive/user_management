@@ -10,6 +10,8 @@
 
 namespace OCA\UserManagement\Test\Unit;
 
+use OC\User\Service\CreateUser;
+use OC\User\Service\UserSendMail;
 use OCA\UserManagement\Controller\UsersController;
 use OCA\UserManagement\Exception\UserTokenException;
 use OCP\AppFramework\Http;
@@ -80,6 +82,8 @@ class UsersControllerTest extends TestCase {
 	private $request;
 	/** @var  EventDispatcher | \PHPUnit_Framework_MockObject_MockObject */
 	private $eventDispatcher;
+	/** @var CreateUser | \PHPUnit_Framework_MockObject_MockObject */
+	private $createUser;
 
 	protected function setUp() {
 		$this->groupManager = $this->getMockBuilder(Manager::class)
@@ -140,6 +144,11 @@ class UsersControllerTest extends TestCase {
 
 		$this->request = $this->createMock(IRequest::class);
 		$this->eventDispatcher = $this->createMock(EventDispatcher::class);
+		$this->createUser = new CreateUser($this->userSession, $this->groupManager,
+			$this->userManager, $this->mailer, $this->secureRandom, $this->eventDispatcher,
+			$this->logger, new UserSendMail(
+				$this->secureRandom, $this->config, $this->mailer, $this->urlGenerator,
+				$this->defaults, $this->timeFactory, $this->l10N));
 	}
 
 	public function testIndexAdmin() {
@@ -1059,7 +1068,32 @@ class UsersControllerTest extends TestCase {
 			],
 			Http::STATUS_CREATED
 		);
-		$response = $this->createController()->create('foo', 'password');
+
+		$this->createUser = new CreateUser($this->userSession, $this->groupManager,
+			$this->userManager, $this->mailer, $this->secureRandom, $this->eventDispatcher,
+			$this->logger, new UserSendMail(
+				$this->secureRandom, $this->config, $this->mailer, $this->urlGenerator,
+				$this->defaults, $this->timeFactory, $this->l10N));
+		$usersController = new UsersController(
+			'user_management',
+			$this->request,
+			$this->userManager,
+			$this->groupManager,
+			$this->userSession,
+			$this->createUser,
+			$this->config,
+			$this->secureRandom,
+			$this->l10N,
+			$this->logger,
+			$this->defaults,
+			$this->mailer,
+			$this->timeFactory,
+			$this->urlGenerator,
+			$this->appManager,
+			$this->avatarManager,
+			$this->eventDispatcher
+		);
+		$response = $usersController->create('foo', 'password');
 		$this->assertEquals($expectedResponse, $response);
 	}
 
@@ -1161,6 +1195,7 @@ class UsersControllerTest extends TestCase {
 	}
 
 	public function testCreateSuccessfulWithGroupSubAdmin() {
+		$this->invokePrivate($this->createUser, 'isAdmin', []);
 		$this->groupManager
 			->expects($this->any())
 			->method('isAdmin')
@@ -1204,7 +1239,10 @@ class UsersControllerTest extends TestCase {
 			->expects($this->once())
 			->method('createUser')
 			->will($this->returnValue($newUser));
-		$this->groupManager
+		$this->groupManager->expects($this->any())
+			->method('get')
+			->willReturn($subGroup1);
+		/*$this->groupManager
 			->expects($this->at(1))
 			->method('get')
 			->with('SubGroup1')
@@ -1213,7 +1251,7 @@ class UsersControllerTest extends TestCase {
 			->expects($this->at(5))
 			->method('get')
 			->with('SubGroup1')
-			->will($this->returnValue($subGroup1));
+			->will($this->returnValue($subGroup1));*/
 		$this->groupManager
 			->expects($this->once())
 			->method('getUserGroupIds')
@@ -1228,14 +1266,20 @@ class UsersControllerTest extends TestCase {
 		$subadmin = $this->getMockBuilder(SubAdmin::class)
 			->disableOriginalConstructor()
 			->getMock();
-		$subadmin->expects($this->at(1))
+		$subadmin->expects($this->any())
+			->method('getSubAdminsGroups')
+			->willReturnMap([
+				[$user, [$subGroup1]],
+				[$newUser, []],
+			]);
+		/*$subadmin->expects($this->at(1))
 			->method('getSubAdminsGroups')
 			->with($user)
 			->will($this->returnValue([$subGroup1]));
 		$subadmin->expects($this->at(2))
 			->method('getSubAdminsGroups')
 			->with($newUser)
-			->will($this->returnValue([]));
+			->will($this->returnValue([]));*/
 		$this->groupManager
 			->expects($this->any())
 			->method('getSubAdmin')
@@ -1258,7 +1302,32 @@ class UsersControllerTest extends TestCase {
 			],
 			Http::STATUS_CREATED
 		);
-		$response = $this->createController()->create('foo', 'password', ['SubGroup1', 'ExistingGroup']);
+
+		$this->createUser = new CreateUser($this->userSession, $this->groupManager,
+			$this->userManager, $this->mailer, $this->secureRandom, $this->eventDispatcher,
+			$this->logger, new UserSendMail(
+				$this->secureRandom, $this->config, $this->mailer, $this->urlGenerator,
+				$this->defaults, $this->timeFactory, $this->l10N));
+		$usersController = new UsersController(
+			'user_management',
+			$this->request,
+			$this->userManager,
+			$this->groupManager,
+			$this->userSession,
+			$this->createUser,
+			$this->config,
+			$this->secureRandom,
+			$this->l10N,
+			$this->logger,
+			$this->defaults,
+			$this->mailer,
+			$this->timeFactory,
+			$this->urlGenerator,
+			$this->appManager,
+			$this->avatarManager,
+			$this->eventDispatcher
+		);
+		$response = $usersController->create('foo', 'password', ['SubGroup1', 'ExistingGroup']);
 		$this->assertEquals($expectedResponse, $response);
 	}
 
@@ -1343,7 +1412,32 @@ class UsersControllerTest extends TestCase {
 			],
 			Http::STATUS_FORBIDDEN
 		);
-		$response = $this->createController()->create('foo', 'password', []);
+
+		$this->createUser = new CreateUser($this->userSession, $this->groupManager,
+			$this->userManager, $this->mailer, $this->secureRandom, $this->eventDispatcher,
+			$this->logger, new UserSendMail(
+				$this->secureRandom, $this->config, $this->mailer, $this->urlGenerator,
+				$this->defaults, $this->timeFactory, $this->l10N));
+		$usersController = new UsersController(
+			'user_management',
+			$this->request,
+			$this->userManager,
+			$this->groupManager,
+			$this->userSession,
+			$this->createUser,
+			$this->config,
+			$this->secureRandom,
+			$this->l10N,
+			$this->logger,
+			$this->defaults,
+			$this->mailer,
+			$this->timeFactory,
+			$this->urlGenerator,
+			$this->appManager,
+			$this->avatarManager,
+			$this->eventDispatcher
+		);
+		$response = $usersController->create('foo', 'password', []);
 		$this->assertEquals($expectedResponse, $response);
 	}
 
@@ -1707,7 +1801,7 @@ class UsersControllerTest extends TestCase {
 			->method('setSubject')
 			->with('Your ownCloud account was created');
 		$htmlBody = new Http\TemplateResponse(
-			'user_management',
+			'core',
 			'new_user/email-html',
 			[
 				'username' => 'foo',
@@ -1720,7 +1814,7 @@ class UsersControllerTest extends TestCase {
 			->method('setHtmlBody')
 			->with($htmlBody->render());
 		$plainBody = new Http\TemplateResponse(
-			'user_management',
+			'core',
 			'new_user/email-plain_text',
 			[
 				'username' => 'foo',
@@ -2370,7 +2464,7 @@ class UsersControllerTest extends TestCase {
 			->method('getSubAdmin')
 			->will($this->returnValue($subadmin));
 
-		$result = self::invokePrivate($this->createController(), 'formatUserForIndex', [$user]);
+		$result = $this->invokePrivate($this->createController(), 'formatUserForIndex', [$user]);
 		$this->assertEquals($expectedResult, $result);
 	}
 
@@ -2432,7 +2526,12 @@ class UsersControllerTest extends TestCase {
 			->method('getSubAdmin')
 			->will($this->returnValue($subadmin));
 
-		$result = self::invokePrivate($this->createController(), 'formatUserForIndex', [$user]);
+		$this->createUser = new CreateUser($this->userSession, $this->groupManager,
+			$this->userManager, $this->mailer, $this->secureRandom, $this->eventDispatcher,
+			$this->logger, new UserSendMail(
+				$this->secureRandom, $this->config, $this->mailer, $this->urlGenerator,
+				$this->defaults, $this->timeFactory, $this->l10N));
+		$result = $this->invokePrivate($this->createController(), 'formatUserForIndex', [$user]);
 		$this->assertEquals($expectedResult, $result);
 	}
 
@@ -2475,7 +2574,12 @@ class UsersControllerTest extends TestCase {
 			->method('getSubAdmin')
 			->will($this->returnValue($subadmin));
 
-		$result = self::invokePrivate($this->createController(), 'formatUserForIndex', [$user]);
+		$this->createUser = new CreateUser($this->userSession, $this->groupManager,
+			$this->userManager, $this->mailer, $this->secureRandom, $this->eventDispatcher,
+			$this->logger, new UserSendMail(
+				$this->secureRandom, $this->config, $this->mailer, $this->urlGenerator,
+				$this->defaults, $this->timeFactory, $this->l10N));
+		$result = $this->invokePrivate($this->createController(), 'formatUserForIndex', [$user]);
 		$this->assertEquals($expectedResult, $result);
 	}
 
@@ -2539,7 +2643,12 @@ class UsersControllerTest extends TestCase {
 			->method('getSubAdmin')
 			->will($this->returnValue($subadmin));
 
-		$result = self::invokePrivate($this->createController(), 'formatUserForIndex', [$user]);
+		$this->createUser = new CreateUser($this->userSession, $this->groupManager,
+			$this->userManager, $this->mailer, $this->secureRandom, $this->eventDispatcher,
+			$this->logger, new UserSendMail(
+				$this->secureRandom, $this->config, $this->mailer, $this->urlGenerator,
+				$this->defaults, $this->timeFactory, $this->l10N));
+		$result = $this->invokePrivate($this->createController(), 'formatUserForIndex', [$user]);
 		$this->assertEquals($expectedResult, $result);
 	}
 
@@ -2578,7 +2687,12 @@ class UsersControllerTest extends TestCase {
 			->will($this->throwException(new \OCP\Files\NotFoundException()));
 		$expectedResult['isAvatarAvailable'] = false;
 
-		$result = self::invokePrivate($this->createController(), 'formatUserForIndex', [$user]);
+		$this->createUser = new CreateUser($this->userSession, $this->groupManager,
+			$this->userManager, $this->mailer, $this->secureRandom, $this->eventDispatcher,
+			$this->logger, new UserSendMail(
+				$this->secureRandom, $this->config, $this->mailer, $this->urlGenerator,
+				$this->defaults, $this->timeFactory, $this->l10N));
+		$result = $this->invokePrivate($this->createController(), 'formatUserForIndex', [$user]);
 		$this->assertEquals($expectedResult, $result);
 	}
 
@@ -2616,9 +2730,14 @@ class UsersControllerTest extends TestCase {
 		$appManager = $this->createMock(IAppManager::class);
 		$iAvatarManager = $this->createMock(IAvatarManager::class);
 		$eventDispatcher = $this->createMock(EventDispatcher::class);
+		$createUser = new CreateUser($this->userSession, $this->groupManager,
+			$this->userManager, $this->mailer, $this->secureRandom, $this->eventDispatcher,
+			$this->logger, new UserSendMail(
+				$this->secureRandom, $this->config, $this->mailer, $this->urlGenerator,
+				$this->defaults, $this->timeFactory, $this->l10N));
 		$userController = new UsersController($appName, $irequest, $userManager, $groupManager,
-			$userSession, $iConfig, $iSecureRandom, $iL10, $iLogger, $ocDefault, $iMailer,
-			$iTimeFactory, $urlGenerator, $appManager, $iAvatarManager, $eventDispatcher);
+			$userSession, $createUser, $iConfig, $iSecureRandom, $iL10, $iLogger, $ocDefault,
+			$iMailer, $iTimeFactory, $urlGenerator, $appManager, $iAvatarManager, $eventDispatcher);
 
 		$iUser = $this->createMock(IUser::class);
 		$userManager->method('get')->willReturn($iUser);
@@ -2675,9 +2794,14 @@ class UsersControllerTest extends TestCase {
 		$appManager = $this->createMock(IAppManager::class);
 		$iAvatarManager = $this->createMock(IAvatarManager::class);
 		$eventDispatcher = $this->createMock(EventDispatcher::class);
+		$createUser = new CreateUser($this->userSession, $this->groupManager,
+			$this->userManager, $this->mailer, $this->secureRandom, $this->eventDispatcher,
+			$this->logger, new UserSendMail(
+				$this->secureRandom, $this->config, $this->mailer, $this->urlGenerator,
+				$this->defaults, $this->timeFactory, $this->l10N));
 		$userController = new UsersController($appName, $irequest, $userManager, $groupManager,
-			$userSession, $iConfig, $iSecureRandom, $iL10, $iLogger, $ocDefault, $iMailer,
-			$iTimeFactory, $urlGenerator, $appManager, $iAvatarManager, $eventDispatcher);
+			$userSession, $createUser, $iConfig, $iSecureRandom, $iL10, $iLogger, $ocDefault,
+			$iMailer, $iTimeFactory, $urlGenerator, $appManager, $iAvatarManager, $eventDispatcher);
 
 		$iUser = $this->createMock(IUser::class);
 		$iUser->expects($this->once())
@@ -3685,6 +3809,7 @@ class UsersControllerTest extends TestCase {
 			$this->userManager,
 			$this->groupManager,
 			$this->userSession,
+			$this->createUser,
 			$this->config,
 			$this->secureRandom,
 			$this->l10N,
