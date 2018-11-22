@@ -9,6 +9,7 @@ OC.L10N.register(
     "A valid group name must be provided" : "Deve essere fornito un nome valido per il gruppo",
     "deleted {groupName}" : "{groupName} eliminato",
     "undo" : "annulla",
+    "Delete group" : "Elimina gruppo",
     "Delete" : "Elimina",
     "never" : "mai",
     "deleted {userName}" : "{userName} eliminato",

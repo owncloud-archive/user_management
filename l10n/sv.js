@@ -9,6 +9,7 @@ OC.L10N.register(
     "A valid group name must be provided" : "Ett giltigt gruppnamn måste anges",
     "deleted {groupName}" : "raderade {groupName} ",
     "undo" : "ångra",
+    "Delete group" : "Radera grupp",
     "Delete" : "Ta bort",
     "never" : "aldrig",
     "deleted {userName}" : "raderade {userName}",

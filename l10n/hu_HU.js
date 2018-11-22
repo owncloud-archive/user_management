@@ -9,6 +9,7 @@ OC.L10N.register(
     "A valid group name must be provided" : "Érvényes csoportnevet kell megadni",
     "deleted {groupName}" : "törölve: {groupName}",
     "undo" : "visszavonás",
+    "Delete group" : "Csoport törlése",
     "Delete" : "Törlés",
     "never" : "soha",
     "deleted {userName}" : "törölve: {userName}",

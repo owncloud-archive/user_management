@@ -9,6 +9,7 @@ OC.L10N.register(
     "A valid group name must be provided" : "必須提供一個有效的群組名稱",
     "deleted {groupName}" : "刪除 {groupName}",
     "undo" : "復原",
+    "Delete group" : "刪除群組",
     "Delete" : "刪除",
     "never" : "永不",
     "deleted {userName}" : "刪除 {userName}",

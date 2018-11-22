@@ -9,6 +9,7 @@ OC.L10N.register(
     "A valid group name must be provided" : "Et gyldigt gruppenavn skal angives ",
     "deleted {groupName}" : "slettede {groupName}",
     "undo" : "fortryd",
+    "Delete group" : "Slet gruppe",
     "Delete" : "Slet",
     "never" : "aldrig",
     "deleted {userName}" : "slettede {userName}",

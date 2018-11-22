@@ -9,6 +9,7 @@ OC.L10N.register(
     "A valid group name must be provided" : "Anna kelvollinen ryhmän nimi",
     "deleted {groupName}" : "poistettu {groupName}",
     "undo" : "kumoa",
+    "Delete group" : "Poista ryhmä",
     "Delete" : "Poista",
     "never" : "ei koskaan",
     "deleted {userName}" : "poistettu {userName}",

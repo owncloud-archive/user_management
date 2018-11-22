@@ -9,6 +9,7 @@ OC.L10N.register(
     "A valid group name must be provided" : "Baliozko talde izena eman behar da",
     "deleted {groupName}" : "{groupName} ezbatuta",
     "undo" : "desegin",
+    "Delete group" : "Ezabatu taldea",
     "Delete" : "Ezabatu",
     "never" : "inoiz",
     "deleted {userName}" : "{userName} ezabatuta",

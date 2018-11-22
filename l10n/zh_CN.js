@@ -9,6 +9,7 @@ OC.L10N.register(
     "A valid group name must be provided" : "请提供一个有效的组名称",
     "deleted {groupName}" : "已删除 {groupName}",
     "undo" : "撤销",
+    "Delete group" : "删除分组",
     "Delete" : "删除",
     "never" : "从不",
     "deleted {userName}" : "已删除 {userName}",

@@ -9,6 +9,7 @@ OC.L10N.register(
     "A valid group name must be provided" : "Navedeno mora biti veljavno ime skupine",
     "deleted {groupName}" : "izbrisano {groupName}",
     "undo" : "razveljavi",
+    "Delete group" : "Izbriši skupino",
     "Delete" : "Izbriši",
     "never" : "nikoli",
     "deleted {userName}" : "izbrisano {userName}",

@@ -9,6 +9,7 @@ OC.L10N.register(
     "A valid group name must be provided" : "올바른 그룹 이름을 입력해야 함",
     "deleted {groupName}" : "{groupName} 삭제됨",
     "undo" : "실행 취소",
+    "Delete group" : "그룹 삭제",
     "Delete" : "삭제",
     "never" : "없음",
     "deleted {userName}" : "{userName} 삭제됨",

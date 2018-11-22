@@ -9,6 +9,7 @@ OC.L10N.register(
     "A valid group name must be provided" : "יש לספק שם קבוצה תקני",
     "deleted {groupName}" : "נמחק {groupName}",
     "undo" : "ביטול",
+    "Delete group" : "מחק קבוצה",
     "Delete" : "מחיקה",
     "never" : "לעולם לא",
     "deleted {userName}" : "נמחק {userName}",

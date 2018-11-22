@@ -9,6 +9,7 @@ OC.L10N.register(
     "A valid group name must be provided" : "Musíte zadat platný název skupiny",
     "deleted {groupName}" : "smazána {groupName}",
     "undo" : "vrátit zpět",
+    "Delete group" : "Smazat skupinu",
     "Delete" : "Smazat",
     "never" : "nikdy",
     "deleted {userName}" : "smazán {userName}",
