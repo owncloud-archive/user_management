@@ -45,27 +45,6 @@ DeleteHandler.TIMEOUT_MS = 7000;
 DeleteHandler.prototype._timeout = null;
 
 /**
- * The function to be called after successfully marking the object for deletion
- * @callback markCallback
- * @param {string} oid the ID of the specific user or group
- */
-
-/**
- * The function to be called after successful delete. The id of the object will
- * be passed as argument. Unsuccessful operations will display an error using
- * OC.dialogs, no callback is fired.
- * @callback removeCallback
- * @param {string} oid the ID of the specific user or group
- */
-
-/**
- * This callback is fired after "undo" was clicked so the consumer can update
- * the web interface
- * @callback undoCallback
- * @param {string} oid the ID of the specific user or group
- */
-
-/**
  * enabled the notification system. Required for undo UI.
  *
  * @param {object} notifier Usually OC.Notification
