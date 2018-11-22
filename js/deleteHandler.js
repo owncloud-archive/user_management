@@ -112,54 +112,13 @@ DeleteHandler.prototype.showNotification = function() {
 };
 
 /**
- * hides the Undo Notification
- */
-DeleteHandler.prototype.hideNotification = function() {
-	if(this.notifier !== false) {
-		$('#notification').removeData(this.notificationDataID);
-		this.notifier.hide();
-	}
-};
-
-/**
  * initializes the delete operation for a given object id
  *
  * @param {string} oid the object id
  */
 DeleteHandler.prototype.mark = function(oid) {
-	if(this.oidToDelete !== false) {
-		// passing true to avoid hiding the notification
-		// twice and causing the second notification
-		// to disappear immediately
-		this.deleteEntry(true);
-	}
 	this.oidToDelete = oid;
-	this.canceled = false;
-	this.markCallback(oid);
-	this.showNotification();
-	if (this._timeout) {
-		clearTimeout(this._timeout);
-		this._timeout = null;
-	}
-	if (DeleteHandler.TIMEOUT_MS > 0) {
-		this._timeout = window.setTimeout(
-				_.bind(this.deleteEntry, this),
-			   	DeleteHandler.TIMEOUT_MS
-		);
-	}
-};
-
-/**
- * cancels a delete operation
- */
-DeleteHandler.prototype.cancel = function() {
-	if (this._timeout) {
-		clearTimeout(this._timeout);
-		this._timeout = null;
-	}
-
-	this.canceled = true;
-	this.oidToDelete = false;
+	this.markCallback(decodeURIComponent(oid));
 };
 
 /**
@@ -173,18 +132,13 @@ DeleteHandler.prototype.cancel = function() {
  */
 DeleteHandler.prototype.deleteEntry = function(keepNotification) {
 	var deferred = $.Deferred();
-	if(this.canceled || this.oidToDelete === false) {
+	if(this.oidToDelete === false) {
 		return deferred.resolve().promise();
 	}
 
 	var dh = this;
 	if(!keepNotification && $('#notification').data(this.notificationDataID) === true) {
 		dh.hideNotification();
-	}
-
-	if (this._timeout) {
-		clearTimeout(this._timeout);
-		this._timeout = null;
 	}
 
 	var payload = {};
@@ -199,10 +153,9 @@ DeleteHandler.prototype.deleteEntry = function(keepNotification) {
 
 			//TODO: following line
 			dh.removeCallback(dh.oidToDelete);
-			dh.canceled = true;
 		},
 		error: function (jqXHR) {
-			OC.dialogs.alert(jqXHR.responseJSON.data.message, t('user_management', 'Unable to delete {objName}', {objName: dh.oidToDelete}));
+			OC.dialogs.alert(jqXHR.responseJSON.data.message, t('user_management', 'Unable to delete {objName}', {objName: decodeURIComponent(dh.oidToDelete)}));
 			dh.undoCallback(dh.oidToDelete);
 
 		}
