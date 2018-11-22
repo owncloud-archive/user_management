@@ -5,7 +5,7 @@ Feature: disable users
   So that I can remove access to unnecessary users
 
   Background:
-    Given these users have been created but not initialized:
+    Given these users have been created with default attributes but not initialized:
       | username |
       | user1    |
       | user2    |
@@ -24,7 +24,7 @@ Feature: disable users
   @skip @issue-24
   Scenario: subadmin disables a user
     Given group "grp1" has been created
-    And user "subadmin" has been created
+    And user "subadmin" has been created with default attributes
     And user "user1" has been added to group "grp1"
     And user "user2" has been added to group "grp1"
     And user "subadmin" has been made a subadmin of group "grp1"
