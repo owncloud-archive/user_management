@@ -14,6 +14,7 @@ OC.L10N.register(
     "Delete" : "ลบ",
     "never" : "ไม่ต้องเลย",
     "deleted {userName}" : "ลบผู้ใช้ {userName} เรียบร้อยแล้ว",
+    "Delete user" : "ลบผู้ใช้",
     "add group" : "เพิ่มกลุ่ม",
     "Invalid quota value \"{val}\"" : "ค่าอัญประกาศไม่ถูกต้อง \"{val}\"",
     "Error while setting quota." : "เกิดข้อผิดพลาดขณะกำหนดโควต้า",
