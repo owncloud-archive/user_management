@@ -1,4 +1,4 @@
-tests/unit/clover.xml
+tests/output/clover.xml
 tests/js/node_modules
 tests/acceptance/output
 build
