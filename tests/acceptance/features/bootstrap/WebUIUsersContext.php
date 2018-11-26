@@ -137,7 +137,6 @@ class WebUIUsersContext extends RawMinkContext implements Context {
 	 *
 	 * @param string $attemptTo
 	 * @param string $username
-	 * @param string $password
 	 * @param string $email
 	 * @param TableNode $groupsTable table of groups with a heading | group |
 	 *
@@ -205,19 +204,6 @@ class WebUIUsersContext extends RawMinkContext implements Context {
 	}
 
 	/**
-	 * @When /^the administrator (enables|disables) the setting "([^"]*)" in the User Management page using the webUI$/
-	 *
-	 * @param string $action
-	 * @param string $setting
-	 *
-	 * @return void
-	 */
-	public function enableOrDisableSettings($action, $setting) {
-		$value = $action === 'enables' ? true : false;
-		$this->usersPage->setSetting($setting, $value);
-	}
-
-	/**
 	 * @Then the group name :groupName should be listed on the webUI
 	 *
 	 * @param string $groupName
@@ -282,13 +268,13 @@ class WebUIUsersContext extends RawMinkContext implements Context {
 	}
 
 	/**
-	 * @When the administrator/user disables the user :username using the webUI
+	 * @When the administrator/user disables user :username using the webUI
 	 *
 	 * @param string $username
 	 *
 	 * @return void
 	 */
-	public function theAdminDisablesTheUserUsingTheWebui($username) {
+	public function theAdminDisablesUserUsingTheWebui($username) {
 		$this->usersPage->openSettingsMenu();
 		$this->usersPage->setSetting("Show enabled/disabled option");
 		$this->usersPage->disableUser($username);
@@ -298,13 +284,13 @@ class WebUIUsersContext extends RawMinkContext implements Context {
 	 * @When the disabled user :username tries to login using the password :password from the webUI
 	 *
 	 * @param string $username
-	 *
 	 * @param string $password
 	 *
 	 * @return void
 	 */
 	public function theDisabledUserTriesToLogin($username, $password) {
 		$this->webUIGeneralContext->theUserLogsOutOfTheWebUI();
+		$password = $this->featureContext->getActualPassword($password);
 		/**
 		 *
 		 * @var DisabledUserPage $disabledPage
@@ -340,11 +326,9 @@ class WebUIUsersContext extends RawMinkContext implements Context {
 	}
 
 	/**
-	 *
 	 * @When the deleted user :username tries to login using the password :password using the webUI
 	 *
 	 * @param string $username
-	 *
 	 * @param string $password
 	 *
 	 * @return void
@@ -352,6 +336,19 @@ class WebUIUsersContext extends RawMinkContext implements Context {
 	public function theDeletedUserTriesToLogin($username, $password) {
 		$this->webUIGeneralContext->theUserLogsOutOfTheWebUI();
 		$this->loginPage->loginAs($username, $password, 'LoginPage');
+	}
+
+	/**
+	 * @When /^the administrator (enables|disables) the setting "([^"]*)" in the User Management page using the webUI$/
+	 *
+	 * @param string $action
+	 * @param string $setting
+	 *
+	 * @return void
+	 */
+	public function enableOrDisableSettings($action, $setting) {
+		$value = $action === 'enables' ? true : false;
+		$this->usersPage->setSetting($setting, $value);
 	}
 
 	/**
@@ -382,7 +379,6 @@ class WebUIUsersContext extends RawMinkContext implements Context {
 	public function theAdministratorShouldBeAbleToSeeEmailOfTheseUsers(TableNode $table) {
 		foreach ($table as $row) {
 			$userEmail = $this->usersPage->getEmailOfUser($row['username']);
-
 			PHPUnit_Framework_Assert::assertEquals($row['email'], $userEmail);
 		}
 	}
@@ -399,7 +395,6 @@ class WebUIUsersContext extends RawMinkContext implements Context {
 	) {
 		foreach ($table as $row) {
 			$userStorageLocation = $this->usersPage->getStorageLocationOfUser($row['username']);
-
 			PHPUnit_Framework_Assert::assertContains($row['storage location'], $userStorageLocation);
 		}
 	}
