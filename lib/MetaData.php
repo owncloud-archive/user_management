@@ -53,7 +53,7 @@ class MetaData {
 	 * @param IUserSession $userSession
 	 */
 	public function __construct(
-			$user,
+			string $user,
 			$isAdmin,
 			\OCP\IGroupManager $groupManager,
 			IUserSession $userSession
