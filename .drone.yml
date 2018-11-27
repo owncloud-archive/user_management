@@ -230,8 +230,11 @@ matrix:
       TEST_SUITE: owncloud-coding-standard
 
     # phan
-    - TEST_SUITE: phan
+    - PHP_VERSION: 7.1
       OC_VERSION: daily-master-qa
+      TEST_SUITE: phan
+      DB_TYPE: sqlite
+      DB_NAME: owncloud
       NEED_SERVER: true
 
     - TEST_SUITE: javascript
