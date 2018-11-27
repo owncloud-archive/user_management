@@ -65,6 +65,54 @@ pipeline:
       matrix:
         TEST_SUITE: owncloud-coding-standard
 
+  phpstan:
+    # phpstan requires php7.1
+    image: owncloudci/php:7.1
+    pull: true
+    environment:
+      - COMPOSER_HOME=/var/www/owncloud/apps/user_management/.cache/composer
+    commands:
+      - make test-php-phpstan
+    when:
+      matrix:
+        TEST_SUITE: phpstan
+
+  phan-70:
+    # phan requires a recent php-ast extension
+    image: owncloudci/php:7.0
+    pull: true
+    environment:
+      - COMPOSER_HOME=/var/www/owncloud/apps/user_management/.cache/composer
+    commands:
+      - make test-php-phan
+    when:
+      matrix:
+        TEST_SUITE: phan
+
+  phan-71:
+    # phan requires a recent php-ast extension
+    image: owncloudci/php:7.1
+    pull: true
+    environment:
+      - COMPOSER_HOME=/var/www/owncloud/apps/user_management/.cache/composer
+    commands:
+      - make test-php-phan
+    when:
+      matrix:
+        TEST_SUITE: phan
+
+  phan-72:
+    # phan requires a recent php-ast extension
+    image: owncloudci/php:7.2
+    pull: true
+    environment:
+      - COMPOSER_HOME=/var/www/owncloud/apps/user_management/.cache/composer
+    commands:
+      - make test-php-phan
+    when:
+      matrix:
+        TEST_SUITE: phan
+
   phpunit-tests:
     image: owncloudci/php:${PHP_VERSION}
     pull: true
@@ -180,6 +228,11 @@ matrix:
 
     - PHP_VERSION: 7.1
       TEST_SUITE: owncloud-coding-standard
+
+    # phan
+    - TEST_SUITE: phan
+      OC_VERSION: daily-master-qa
+      NEED_SERVER: true
 
     - TEST_SUITE: javascript
       PHP_VERSION: 7.1
