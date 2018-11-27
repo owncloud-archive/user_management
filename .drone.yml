@@ -95,15 +95,6 @@ pipeline:
       matrix:
         TEST_SUITE: web-acceptance
 
-  phplint-tests:
-    image: owncloudci/php:${PHP_VERSION}
-    pull: true
-    commands:
-      - make test-php-lint
-    when:
-      matrix:
-        TEST_SUITE: lint
-
   js-tests:
     image: owncloudci/php:${PHP_VERSION}
     pull: true
@@ -118,7 +109,7 @@ pipeline:
     secrets: [codecov_token]
     pull: true
     paths:
-      - tests/unit/clover.xml
+      - tests/output/clover.xml
     files:
       - '*.xml'
     when:
@@ -186,22 +177,14 @@ matrix:
     - PHP_VERSION: 7.2
       TEST_SUITE: owncloud-coding-standard
 
+    - PHP_VERSION: 7.1
+      TEST_SUITE: owncloud-coding-standard
+
     - TEST_SUITE: javascript
       PHP_VERSION: 7.1
       OC_VERSION: daily-master-qa
       NEED_SERVER: true
       NEED_INSTALL_APP: true
-
-    #syntax lint check
-    - TEST_SUITE: lint
-      PHP_VERSION: 7.1
-      NEED_SERVER: false
-      NEED_INSTALL_APP: false
-
-    - TEST_SUITE: lint
-      PHP_VERSION: 5.6
-      NEED_SERVER: false
-      NEED_INSTALL_APP: false
 
     #unit tests
     - TEST_SUITE: phpunit

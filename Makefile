@@ -45,8 +45,8 @@ endif
 endif
 
 # bin file definitions
-PHPUNIT=php -d zend.enable_gc=0  vendor/bin/phpunit
-PHPUNITDBG=phpdbg -qrr -d memory_limit=4096M -d zend.enable_gc=0 "./vendor/bin/phpunit"
+PHPUNIT=php -d zend.enable_gc=0  "$(PWD)/../../lib/composer/bin/phpunit"
+PHPUNITDBG=phpdbg -qrr -d memory_limit=4096M -d zend.enable_gc=0 "$(PWD)/../../lib/composer/bin/phpunit"
 PHP_CS_FIXER=php -d zend.enable_gc=0 vendor-bin/owncloud-codestyle/vendor/bin/php-cs-fixer
 PHAN=php -d zend.enable_gc=0 vendor-bin/phan/vendor/bin/phan
 PHPSTAN=php -d zend.enable_gc=0 vendor-bin/phpstan/vendor/bin/phpstan
@@ -129,20 +129,15 @@ test-js:
 	cd tests/js && npm install --deps
 	cd tests/js && node_modules/karma/bin/karma start karma.config.js --single-run
 
-.PHONY: test-php-lint
-test-php-lint:             ## Run php lint
-test-php-lint: vendor/bin/phpunit
-	vendor/bin/parallel-lint  --exclude vendor .
-
 .PHONY: test-php-unit
 test-php-unit:             ## Run php unit tests
 test-php-unit: vendor/bin/phpunit
-	$(PHPUNIT) --configuration ./tests/unit/phpunit.xml --testsuite unit
+	$(PHPUNIT) --configuration ./phpunit.xml --testsuite unit
 
 .PHONY: test-php-unit-dbg
 test-php-unit-dbg:         ## Run php unit tests using phpdbg
 test-php-unit-dbg: vendor/bin/phpunit
-	$(PHPUNITDBG) --configuration ./tests/unit/phpunit.xml --testsuite unit
+	$(PHPUNITDBG) --configuration ./phpunit.xml --testsuite unit
 
 .PHONY: test-php-style
 test-php-style:            ## Run php-cs-fixer and check owncloud code-style
