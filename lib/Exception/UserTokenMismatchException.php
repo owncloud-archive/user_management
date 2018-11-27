@@ -23,7 +23,7 @@ namespace OCA\UserManagement\Exception;
 
 class UserTokenMismatchException extends UserTokenException {
 	public function __construct($message = "", $code = 0, \Exception $previous = null) {
-		$this->previousException = $this;
+		$this->previous = $this;
 		parent::__construct($message, $code, $previous);
 	}
 }

@@ -164,7 +164,7 @@ class UsersController extends Controller {
 
 	/**
 	 * @param IUser $user
-	 * @param array $userGroups
+	 * @param array|null $userGroups
 	 * @return array
 	 */
 	private function formatUserForIndex(IUser $user, array $userGroups = null) {
