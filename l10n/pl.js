@@ -105,6 +105,7 @@ OC.L10N.register(
     "Enabled" : "Włączone",
     "Quota" : "Udział",
     "Storage Location" : "Lokalizacja magazynu",
+    "User Backend" : "Moduł użytkownika",
     "Last Login" : "Ostatnio zalogowany",
     "change full name" : "Zmień pełna nazwę",
     "set new password" : "ustaw nowe hasło",
