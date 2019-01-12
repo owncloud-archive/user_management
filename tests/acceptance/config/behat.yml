@@ -19,6 +19,7 @@ default:
             adminPassword: admin
             regularUserPassword: 123456
             ocPath: apps/testing/api/v1/occ
+        - WebDavPropertiesContext:
         - WebUIGeneralContext:
         - WebUILoginContext:
         - WebUIUserContext:
@@ -31,6 +32,7 @@ default:
       contexts:
         - WebUIUsersContext:
         - FeatureContext: *common_feature_context_params
+        - WebDavPropertiesContext:
         - WebUIGeneralContext:
         - WebUILoginContext:
         - WebUIUserContext:
@@ -44,6 +46,7 @@ default:
       contexts:
         - WebUIUsersContext:
         - FeatureContext: *common_feature_context_params
+        - WebDavPropertiesContext:
         - WebUIGeneralContext:
         - WebUILoginContext:
         - WebUIUserContext:
