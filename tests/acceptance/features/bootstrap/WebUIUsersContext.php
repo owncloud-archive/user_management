@@ -496,7 +496,7 @@ class WebUIUsersContext extends RawMinkContext implements Context {
 	 * @When the administrator changes the display name of user :user to :displayName using the webUI
 	 *
 	 * @param string $user
-	 * @param string displayName
+	 * @param string $displayName
 	 *
 	 * @return void
 	 */
