@@ -114,7 +114,7 @@ class GroupList extends OwncloudPage {
 		}
 
 		if ($confirmButton === null) {
-			$xpathSelector = ($confirm) ? $this->deleteConfirmButtonXpath: $this->deleteNotConfirmButtonXpath;
+			$xpathSelector = ($confirm) ? $this->deleteConfirmButtonXpath : $this->deleteNotConfirmButtonXpath;
 			throw new ElementNotFoundException(
 				__METHOD__ .
 				" xpath $xpathSelector " .

@@ -514,7 +514,7 @@ class UsersPage extends OwncloudPage {
 	 *
 	 * @param string $name
 	 * @param Session $session
-	 * @param bool $confirm, true is to delete and false is not to delete
+	 * @param bool $confirm true is to delete and false is not to delete
 	 *
 	 * @return void
 	 */
@@ -585,7 +585,7 @@ class UsersPage extends OwncloudPage {
 		$confirmBtn->click();
 	}
 
-	/*
+	/**
 	 * @param Session $session
 	 * @param string $username
 	 * @param string $displayName
@@ -621,7 +621,7 @@ class UsersPage extends OwncloudPage {
 		}
 	}
 
-	/*
+	/**
 	 * @param Session $session
 	 * @param string $user
 	 * @param string $password
@@ -657,10 +657,10 @@ class UsersPage extends OwncloudPage {
 		}
 	}
 
-	/*
+	/**
 	 * @param Session $session
 	 * @param string $user
-	 * @param string $password
+	 * @param string $group
 	 *
 	 * @return void
 	 */
