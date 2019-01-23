@@ -73,7 +73,7 @@ OC.L10N.register(
     "Show storage location" : "Amosar a localización do almacenamento",
     "Show last log in" : "Amosar a última conexión",
     "Show user backend" : "Amosar a infraestrutura do usuario",
-    "Set password for new users" : "Establecer o contrasinal para os novos usuarios",
+    "Set password for new users" : "Estabelecer o contrasinal para os novos usuarios",
     "Show email address" : "Amosar o enderezo de correo",
     "Hey there,<br><br>just letting you know that you now have an %s account.<br><br>Your username: %s<br>Please set the password by accessing it: <a href=\"%s\">Here</a><br><br>" : "Hey there,<br><br>só facerlle saber que agora dispón dunha conta %s.<br><br>O seu nome de usuario: %s<br>Estabeleza un contrasinal accedendo a ela: <a href=\"%s\">Dende aquí</a><br><br>",
     "Cheers!" : "Saúdos!",
