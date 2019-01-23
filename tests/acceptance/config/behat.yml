@@ -1,16 +1,16 @@
 default:
   autoload:
-    '': %paths.base%/../features/bootstrap
+    '': '%paths.base%/../features/bootstrap'
   extensions:
     SensioLabs\Behat\PageObjectExtension: ~
     jarnaiz\JUnitFormatter\JUnitFormatterExtension:
       filename: report.xml
-      outputDir: %paths.base%/../output/
+      outputDir: '%paths.base%/../output/'
 
   suites:
     webUIManageQuota:
       paths:
-        - %paths.base%/../features/webUIManageQuota
+        - '%paths.base%/../features/webUIManageQuota'
       contexts:
         - WebUIUsersContext:
         - FeatureContext: &common_feature_context_params
@@ -27,7 +27,7 @@ default:
 
     webUIManageUsersGroups:
       paths:
-        - %paths.base%/../features/webUIManageUsersGroups
+        - '%paths.base%/../features/webUIManageUsersGroups'
       contexts:
         - WebUIUsersContext:
         - FeatureContext: *common_feature_context_params
@@ -40,7 +40,7 @@ default:
 
     webUISettingsMenu:
       paths:
-        - %paths.base%/../features/webUISettingsMenu
+        - '%paths.base%/../features/webUISettingsMenu'
       contexts:
         - WebUIUsersContext:
         - FeatureContext: *common_feature_context_params

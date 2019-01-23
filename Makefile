@@ -27,6 +27,7 @@ dist_dir=$(build_dir)/dist
 # dependency folders (leave empty if not required)
 composer_deps=vendor/
 composer_dev_deps=lib/composer/phpunit
+acceptance_test_deps=vendor-bin/behat/vendor
 nodejs_deps=
 bower_deps=
 
@@ -51,6 +52,7 @@ PHP_CS_FIXER=php -d zend.enable_gc=0 vendor-bin/owncloud-codestyle/vendor/bin/ph
 PHP_CODESNIFFER=vendor-bin/php_codesniffer/vendor/bin/phpcs
 PHAN=php -d zend.enable_gc=0 vendor-bin/phan/vendor/bin/phan
 PHPSTAN=php -d zend.enable_gc=0 vendor-bin/phpstan/vendor/bin/phpstan
+BEHAT_BIN=vendor-bin/behat/vendor/bin/behat
 
 .DEFAULT_GOAL := help
 
@@ -117,6 +119,7 @@ clean-build:
 .PHONY: clean-deps
 clean-deps:
 	rm -Rf $(nodejs_deps) $(bower_deps)
+	rm -Rf vendor-bin/**/vendor vendor-bin/**/composer.lock
 
 .PHONY: clean
 clean: clean-deps clean-dist clean-build
@@ -163,8 +166,8 @@ test-php-phpstan: vendor-bin/phpstan/vendor
 
 .PHONY: test-acceptance-webui
 test-acceptance-webui:     ## Run webUI acceptance tests
-test-acceptance-webui: vendor/bin/phpunit
-	../../tests/acceptance/run.sh --remote --type webUI
+test-acceptance-webui: $(acceptance_test_deps)
+	BEHAT_BIN=$(BEHAT_BIN) ../../tests/acceptance/run.sh --remote --type webUI
 
 #
 # Dependency management
@@ -205,3 +208,9 @@ vendor-bin/phpstan/vendor: vendor/bamarni/composer-bin-plugin vendor-bin/phpstan
 
 vendor-bin/phpstan/composer.lock: vendor-bin/phpstan/composer.json
 	@echo phpstan composer.lock is not up to date.
+
+vendor-bin/behat/vendor: vendor/bamarni/composer-bin-plugin vendor-bin/behat/composer.lock
+	composer bin behat install --no-progress
+
+vendor-bin/behat/composer.lock: vendor-bin/behat/composer.json
+	@echo behat composer.lock is not up to date.
