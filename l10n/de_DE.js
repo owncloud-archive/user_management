@@ -1,7 +1,7 @@
 OC.L10N.register(
     "user_management",
     {
-    "Admins can't remove themself from the admin group" : "Administratoren können sich nicht selbst aus der admin-Gruppe löschen",
+    "Admins can't remove themself from the admin group" : "Administratoren können sich nicht selbst aus der Admin-Gruppe löschen",
     "Authentication error" : "Authentifizierungsfehler",
     "Unknown user" : "Unbekannter Benutzer",
     "Unable to delete {objName}" : "Löschen von {objName} nicht möglich",
@@ -82,7 +82,7 @@ OC.L10N.register(
     "Resend activation link" : "Aktivierungslink erneut versenden.",
     "New password" : "Neues Passwort",
     "New Password" : "Neues Passwort",
-    "Please set your password" : "Bitte setze dein Passwort",
+    "Please set your password" : "Bitte setzen Sie Ihr Passwort",
     "Activation link was sent to an email address, if one was configured." : "Der Aktivierungs Link wurde an eine E-Mail-Adresse versandt, falls eine angelegt konfiguriert wurde. ",
     "Username" : "Benutzername",
     "Password" : "Passwort",
