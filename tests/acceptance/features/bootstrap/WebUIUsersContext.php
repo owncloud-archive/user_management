@@ -275,7 +275,7 @@ class WebUIUsersContext extends RawMinkContext implements Context {
 	 * @return void
 	 */
 	public function theAdminDisablesUserUsingTheWebui($username) {
-		$this->usersPage->openSettingsMenu();
+		$this->usersPage->openAppSettingsMenu();
 		$this->usersPage->setSetting("Show enabled/disabled option");
 		$this->usersPage->disableUser($username);
 	}
@@ -549,7 +549,7 @@ class WebUIUsersContext extends RawMinkContext implements Context {
 	 * @return void
 	 */
 	public function theAdministratorChangesTheEmailOfUserToUsingTheWebui($username, $email) {
-		$this->usersPage->openSettingsMenu();
+		$this->usersPage->openAppSettingsMenu();
 		$this->usersPage->setSetting('Show email address');
 		$this->usersPage->changeUserEmail($this->getSession(), $username, $email);
 	}

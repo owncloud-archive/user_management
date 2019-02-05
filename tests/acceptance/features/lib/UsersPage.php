@@ -244,7 +244,7 @@ class UsersPage extends OwncloudPage {
 	 * @throws ElementNotFoundException
 	 * @return void
 	 */
-	public function openSettingsMenu() {
+	public function openAppSettingsMenu() {
 		$settingsBtn = $this->find("xpath", $this->settingsBtnXpath);
 		if ($settingsBtn === null) {
 			throw new ElementNotFoundException(
@@ -292,7 +292,7 @@ class UsersPage extends OwncloudPage {
 		}
 
 		if (!$settingContentIsVisible) {
-			$this->openSettingsMenu();
+			$this->openAppSettingsMenu();
 		}
 
 		$xpathLocator = \sprintf($this->settingByTextXpath, $setting);
