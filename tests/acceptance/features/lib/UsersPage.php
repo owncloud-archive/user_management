@@ -478,6 +478,7 @@ class UsersPage extends OwncloudPage {
 			$selectOption->click();
 		}
 		$this->waitForAjaxCallsToStartAndFinish($session);
+		// Maybe have to wait here, so that any notifications will be seen?
 	}
 
 	/**
