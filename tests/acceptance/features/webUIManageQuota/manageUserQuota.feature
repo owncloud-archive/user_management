@@ -35,16 +35,38 @@ Feature: manage user quota
     Then the quota of user "user1" should be set to "0 B" on the webUI
 
   @issue-100
-  Scenario Outline: change quota to an invalid value
-    When the administrator changes the quota of user "user1" to "<wished_quota>" using the webUI
-    Then a notification should be displayed on the webUI with the text 'Invalid quota value "<wished_quota>"'
-    And the quota of user "user1" should be set to "<wished_quota>" on the webUI
+  Scenario: change quota to an invalid value
+    When the administrator changes the quota of user "user1" to "stupidtext" using the webUI
+    Then a notification should be displayed on the webUI with the text 'Invalid quota value "stupidtext"'
+    And the quota of user "user1" should be set to "stupidtext" on the webUI
     #And the quota of user "user1" should be set to "Default" on the webUI
-    Examples:
-      | wished_quota |
-      | stupidtext   |
-      | 34,54GB      |
-      | 30/40GB      |
-      | 30/40        |
-      | 3+56 B       |
-      | -1 B         |
+
+  Scenario: change quota to an invalid value
+    When the administrator changes the quota of user "user1" to "34,54GB" using the webUI
+    Then a notification should be displayed on the webUI with the text 'Invalid quota value "34,54GB"'
+    And the quota of user "user1" should be set to "34,54GB" on the webUI
+    #And the quota of user "user1" should be set to "Default" on the webUI
+
+  Scenario: change quota to an invalid value
+    When the administrator changes the quota of user "user1" to "30/40GB" using the webUI
+    Then a notification should be displayed on the webUI with the text 'Invalid quota value "30/40GB"'
+    And the quota of user "user1" should be set to "30/40GB" on the webUI
+    #And the quota of user "user1" should be set to "Default" on the webUI
+
+  Scenario: change quota to an invalid value
+    When the administrator changes the quota of user "user1" to "30/40" using the webUI
+    Then a notification should be displayed on the webUI with the text 'Invalid quota value "30/40"'
+    And the quota of user "user1" should be set to "30/40" on the webUI
+    #And the quota of user "user1" should be set to "Default" on the webUI
+
+  Scenario: change quota to an invalid value
+    When the administrator changes the quota of user "user1" to "3+56 B" using the webUI
+    Then a notification should be displayed on the webUI with the text 'Invalid quota value "3+56 B"'
+    And the quota of user "user1" should be set to "3+56 B" on the webUI
+    #And the quota of user "user1" should be set to "Default" on the webUI
+
+  Scenario: change quota to an invalid value
+    When the administrator changes the quota of user "user1" to "-1 B" using the webUI
+    Then a notification should be displayed on the webUI with the text 'Invalid quota value "-1 B"'
+    And the quota of user "user1" should be set to "-1 B" on the webUI
+    #And the quota of user "user1" should be set to "Default" on the webUI
