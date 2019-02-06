@@ -20,12 +20,6 @@ Feature: manage user quota
       | start_quota | wished_quota | expected_quota |
       | Unlimited   | 5 GB         | 5 GB           |
       | 1 GB        | 5 GB         | 5 GB           |
-      | 5 GB        | Unlimited    | Unlimited      |
-      | 1 GB        | Unlimited    | Unlimited      |
-      | Unlimited   | 5.5 GB       | 5.5 GB         |
-      | Unlimited   | 5B           | 5 B            |
-      | Unlimited   | 55kB         | 55 KB          |
-      | Unlimited   | 45Kb         | 45 KB          |
 
   @skipOnOcV10.0.3
   Scenario: change quota to a valid value that do not work on 10.0.3
