@@ -93,7 +93,7 @@ class WebUIUsersContext extends RawMinkContext implements Context {
 	) {
 		$this->usersPage->setQuotaOfUserTo($username, $quota, $this->getSession());
 		// see if sleeping helps to be able to see any notification
-		\sleep(5);
+		\sleep(1);
 	}
 
 	/**
