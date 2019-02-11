@@ -65,20 +65,15 @@ Feature: add users
       | username |   quota   |
       | user1    |   Default |
       | user2    |   Default |
-    And the administrator changes the quota of user "user1" to "Unlimited" using the webUI
-    And the administrator changes the quota of user "user2" to "5 GB" using the webUI
-    And the administrator logs out of the webUI
-    And user "user1" logs in using the webUI
-    And the user logs out of the webUI
-    And user "user2" logs in using the webUI
-    And the user logs out of the webUI
-    And user admin logs in using the webUI
-    And the administrator browses to the users page
+
+  Scenario: administrator should be able to see updated quota of user when enabled show quota field
+    Given the administrator has changed the quota of user "user1" to "Unlimited"
+    And the administrator has changed the quota of user "user2" to "5 GB"
+    When the administrator enables the setting "Show quota field" in the User Management page using the webUI
     Then the administrator should be able to see the quota of these users in the User Management page:
       | username |   quota     |
       | user1    |   Unlimited |
       | user2    |   5 GB      |
-
 
   Scenario: administrator should not be able to see quota of user
     When the administrator disables the setting "Show quota field" in the User Management page using the webUI
@@ -86,19 +81,3 @@ Feature: add users
       | username |
       | user1    |
       | user2    |
-    And the administrator enables the setting "Show quota field" in the User Management page using the webUI
-    And the administrator changes the quota of user "user1" to "Unlimited" using the webUI
-    And the administrator changes the quota of user "user2" to "5 GB" using the webUI
-    And the administrator disables the setting "Show quota field" in the User Management page using the webUI
-    And the administrator logs out of the webUI
-    And user "user1" logs in using the webUI
-    And the user logs out of the webUI
-    And user "user2" logs in using the webUI
-    And the user logs out of the webUI
-    And user admin logs in using the webUI
-    And the administrator browses to the users page
-    Then the administrator should not be able to see the quota of these users in the User Management page:
-      | username |
-      | user1    |
-      | user2    |
-

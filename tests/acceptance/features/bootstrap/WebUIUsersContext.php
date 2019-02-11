@@ -392,8 +392,8 @@ class WebUIUsersContext extends RawMinkContext implements Context {
 	 */
 	public function theAdministratorShouldBeAbleToSeeQuotaOfTheseUsers(TableNode $table) {
 		foreach ($table as $row) {
-			$userQuota = $this->usersPage->getQuotaOfUser($row['username']);
-			PHPUnit_Framework_Assert::assertEquals($row['quota'], $userQuota);
+			$visible = $this->usersPage->isQuotaColumnOfUserVisible($row['username']);
+			PHPUnit_Framework_Assert::assertEquals(true, $visible);
 		}
 	}
 
@@ -406,8 +406,8 @@ class WebUIUsersContext extends RawMinkContext implements Context {
 	 */
 	public function theAdministratorShouldNotBeAbleToSeeQuotaOfTheseUsers(TableNode $table) {
 		foreach ($table as $row) {
-			$userQuota = $this->usersPage->getQuotaOfUser($row['username']);
-			PHPUnit_Framework_Assert::assertEquals('', $userQuota);
+			$visible = $this->usersPage->isQuotaColumnOfUserVisible($row['username']);
+			PHPUnit_Framework_Assert::assertEquals(false, $visible);
 		}
 	}
 
