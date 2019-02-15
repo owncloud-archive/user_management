@@ -62,13 +62,27 @@ Feature: add users
     When the administrator creates a user with the name "<username>" and the email "guiusr1@owncloud" without a password using the webUI
     And the administrator logs out of the webUI
     And the user follows the password set link received by "guiusr1@owncloud" using the webUI
-    And the user sets the password to "%regular%" using the webUI
+    And the user sets the password to "%regular%" and confirms same password using the webUI
     Then the email address "guiusr1@owncloud" should have received an email with the body containing
       """
       Password changed successfully
       """
     When the user logs in with username "<username>" and password "%regular%" using the webUI
     Then the user should be redirected to a webUI page with the title "Files - %productname%"
+    Examples:
+      | username | comment               |
+      | guiusr1  | simple user-name      |
+      | a@-_.'b  | complicated user-name |
+
+  Scenario Outline: user sets his own password but retypes it wrongly after being created with an Email address only
+    When the administrator creates a user with the name "<username>" and the email "guiusr1@owncloud" without a password using the webUI
+    And the administrator logs out of the webUI
+    And the user follows the password set link received by "guiusr1@owncloud" using the webUI
+    And the user has sets password to "%regular%" and confirms with "foo" using the webUI
+    Then user should see password mismatch message displayed on the webUI
+      """
+      Passwords do not match
+      """
     Examples:
       | username | comment               |
       | guiusr1  | simple user-name      |
@@ -103,7 +117,7 @@ Feature: add users
     When the administrator creates a user with the name "guiusr1" and the email "guiusr1@owncloud" without a password using the webUI
     And the administrator logs out of the webUI
     And the user follows the password set link received by "guiusr1@owncloud" using the webUI
-    And the user sets the password to "newpassword" using the webUI
+    And the user sets the password to "newpassword" and confirms same password using the webUI
     And the user follows the password set link received by "guiusr1@owncloud" in Email number 2 using the webUI
     Then the user should be redirected to the general error webUI page with the title "%productname%"
     And an error should be displayed on the general error webUI page saying "The token provided is invalid."
@@ -114,7 +128,7 @@ Feature: add users
     And the administrator creates a user with the name "guiusr1" and the email "correct@owncloud" without a password using the webUI
     And the administrator logs out of the webUI
     And the user follows the password set link received by "correct@owncloud" using the webUI
-    And the user sets the password to "newpassword" using the webUI
+    And the user sets the password to "newpassword" and confirms same password using the webUI
     And the user logs in with username "guiusr1" and password "newpassword" using the webUI
     Then the user should be redirected to a webUI page with the title "Files - %productname%"
 
@@ -134,7 +148,7 @@ Feature: add users
     And the administrator logs out of the webUI
     And the user follows the password set link received by "mistake@owncloud" using the webUI
     And the user follows the password set link received by "correct@owncloud" using the webUI
-    And the user sets the password to "%regular%" using the webUI
+    And the user sets the password to "%regular%" and confirms same password using the webUI
     And the user logs in with username "guiusr1" and password "%regular%" using the webUI
     Then the user should be redirected to a webUI page with the title "Files - %productname%"
 
@@ -142,7 +156,7 @@ Feature: add users
     When the administrator creates a user with the name "user1" and the email "guiusr1@owncloud" without a password using the webUI
     And the administrator logs out of the webUI
     And the user follows the password set link received by "guiusr1@owncloud" using the webUI
-    And the user sets the password to "%regular%" using the webUI
+    And the user sets the password to "%regular%" and confirms same password using the webUI
     Then the email address "guiusr1@owncloud" should have received an email with the body containing
       """
       Password changed successfully
@@ -168,7 +182,7 @@ Feature: add users
     When the administrator creates a user with the name "brand-new-user" and the email "bnu@owncloud" without a password using the webUI
     And the administrator logs out of the webUI
     And the user follows the password set link received by "bnu@owncloud" using the webUI
-    And the user sets the password to "<password>" using the webUI
+    And the user sets the password to "<password>" and confirms same password using the webUI
     And the user logs in with username "brand-new-user" and password "<password>" using the webUI
     Then user "brand-new-user" should exist
     And the user should be redirected to a webUI page with the title "Files - %productname%"
@@ -184,5 +198,5 @@ Feature: add users
     When the administrator creates a user with the name "brand-new-user" and the email "bnu@owncloud" without a password using the webUI
     And the administrator logs out of the webUI
     And the user follows the password set link received by "bnu@owncloud" using the webUI
-    And the user sets the password to " " using the webUI
+    And the user sets the password to " " and confirms same password using the webUI
     Then the user should be redirected to a webUI page with the title "%productname%"
