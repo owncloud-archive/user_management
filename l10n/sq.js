@@ -75,6 +75,8 @@ OC.L10N.register(
     "Show user backend" : "Shfaq programin klient të përdoruesit",
     "Set password for new users" : "Caktoni fjalëkalim për përdorues të rinj",
     "Show email address" : "Shfaq adresë email",
+    "Show password field" : "Shfaq fushë fjalëkalimesh",
+    "Show quota field" : "Shfaq fushë koutash",
     "Hey there,<br><br>just letting you know that you now have an %s account.<br><br>Your username: %s<br>Please set the password by accessing it: <a href=\"%s\">Here</a><br><br>" : "Njatjeta,<br><br>sa për t’ju bërë të ditur se tani keni një llogari %s.<br><br>Emri juaj i përdoruesit: %s<br>Ju lutemi, caktoni fjalëkalimin duke shkuar: <a href=\"%s\">këtu</a><br><br>",
     "Cheers!" : "Gëzuar!",
     "Hey there,\n\njust letting you know that you now have an %s account.\n\nYour username: %s\nAccess it: %s\n\n" : "Njatjeta,\n\nthjesht po ju bëjmë të ditur që tani keni një llogari %s.\n\nEmri juaj i përdoruesit: %s\nHyni në të te: %s\n\n",

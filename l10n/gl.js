@@ -75,6 +75,8 @@ OC.L10N.register(
     "Show user backend" : "Amosar a infraestrutura do usuario",
     "Set password for new users" : "Estabelecer o contrasinal para os novos usuarios",
     "Show email address" : "Amosar o enderezo de correo",
+    "Show password field" : "Amosar o campo do contrasinal",
+    "Show quota field" : "Amosar o campo de cota",
     "Hey there,<br><br>just letting you know that you now have an %s account.<br><br>Your username: %s<br>Please set the password by accessing it: <a href=\"%s\">Here</a><br><br>" : "Hey there,<br><br>só facerlle saber que agora dispón dunha conta %s.<br><br>O seu nome de usuario: %s<br>Estabeleza un contrasinal accedendo a ela: <a href=\"%s\">Dende aquí</a><br><br>",
     "Cheers!" : "Saúdos!",
     "Hey there,\n\njust letting you know that you now have an %s account.\n\nYour username: %s\nAccess it: %s\n\n" : "Ola,\n\nSó facerlle saber que dispón da conta %s.\n\nO seu nome de usuario: %s\nPara acceder a ela: %s\n",
