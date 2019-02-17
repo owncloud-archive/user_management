@@ -84,6 +84,7 @@ OC.L10N.register(
     "Resend activation link" : "Volver enviar a ligazón de activación",
     "New password" : "Novo contrasinal",
     "New Password" : "Novo contrasinal",
+    "Confirm Password" : "Confirme o contrasinal",
     "Please set your password" : "Estabeleza o seu contrasinal",
     "Activation link was sent to an email address, if one was configured." : "A ligazón de activación foi enviada ao enderezo de correo, se estaba configurado.",
     "Username" : "Nome de usuario",
