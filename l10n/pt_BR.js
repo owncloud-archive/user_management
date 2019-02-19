@@ -84,6 +84,7 @@ OC.L10N.register(
     "Resend activation link" : "Reenviar link de ativação",
     "New password" : "Nova senha",
     "New Password" : "Nova Senha",
+    "Confirm Password" : "Confirmar Senha",
     "Please set your password" : "Por favor, defina sua senha",
     "Activation link was sent to an email address, if one was configured." : "Link de ativação foi enviado para um endereço de e-mail, se um foi configurado.",
     "Username" : "Nome do Usuário",
