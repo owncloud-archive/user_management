@@ -8,7 +8,7 @@ pipeline:
   install-server:
     image: owncloudci/core
     pull: true
-    version: ${OC_VERSION}
+    git_reference: ${GIT_BRANCH}
     db_type: mysql
     db_name: owncloud
     db_host: mysql:3306
@@ -176,17 +176,20 @@ matrix:
     # owncloud-coding-standard
     - PHP_VERSION: 7.2
       OC_VERSION: daily-master-qa
+      GIT_BRANCH: provide-common-makefiles
       NEED_SERVER: true
       TEST_SUITE: owncloud-coding-standard
 
     - PHP_VERSION: 7.1
       OC_VERSION: daily-master-qa
+      GIT_BRANCH: provide-common-makefiles
       NEED_SERVER: true
       TEST_SUITE: owncloud-coding-standard
 
     - TEST_SUITE: javascript
       PHP_VERSION: 7.1
       OC_VERSION: daily-master-qa
+      GIT_BRANCH: provide-common-makefiles
       NEED_SERVER: true
       NEED_INSTALL_APP: true
 
@@ -194,6 +197,7 @@ matrix:
     - TEST_SUITE: phpunit
       PHP_VERSION: 7.1
       OC_VERSION: daily-master-qa
+      GIT_BRANCH: provide-common-makefiles
       NEED_SERVER: true
       NEED_INSTALL_APP: true
       COVERAGE: true
@@ -201,6 +205,7 @@ matrix:
     - TEST_SUITE: phpunit
       PHP_VERSION: 7.2
       OC_VERSION: daily-master-qa
+      GIT_BRANCH: provide-common-makefiles
       NEED_SERVER: true
       NEED_INSTALL_APP: true
 
@@ -213,6 +218,7 @@ matrix:
     #acceptance tests
     - TEST_SUITE: web-acceptance
       OC_VERSION: daily-master-qa
+      GIT_BRANCH: provide-common-makefiles
       PHP_VERSION: 7.1
       NEED_SERVER: true
       NEED_INSTALL_APP: true
@@ -221,6 +227,7 @@ matrix:
 
     - TEST_SUITE: web-acceptance
       OC_VERSION: daily-master-qa
+      GIT_BRANCH: provide-common-makefiles
       PHP_VERSION: 7.1
       NEED_SERVER: true
       NEED_INSTALL_APP: true
@@ -229,6 +236,7 @@ matrix:
 
     - TEST_SUITE: web-acceptance
       OC_VERSION: daily-master-qa
+      GIT_BRANCH: provide-common-makefiles
       PHP_VERSION: 7.1
       NEED_SERVER: true
       NEED_INSTALL_APP: true
