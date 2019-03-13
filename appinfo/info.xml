@@ -9,7 +9,7 @@
 	<version>0.0.1</version>
 	<category>tools</category>
 	<dependencies>
-		<owncloud min-version="10.0" max-version="11.0" />
+		<owncloud min-version="10.2" max-version="11.0" />
 	</dependencies>
 	<namespace>UserManagement</namespace>
 	<navigation role="admin,sub-admin">
