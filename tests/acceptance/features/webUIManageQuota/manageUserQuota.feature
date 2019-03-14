@@ -37,7 +37,7 @@ Feature: manage user quota
   @issue-100
   Scenario Outline: change quota to an invalid value
     When the administrator changes the quota of user "user1" to the invalid string "<wished_quota>" using the webUI
-    Then a notification should be displayed on the webUI with the text 'Invalid quota value "<wished_quota>"'
+    #Then a notification should be displayed on the webUI with the text 'Invalid quota value "<wished_quota>"'
     And the quota of user "user1" should be set to "<wished_quota>" on the webUI
     #And the quota of user "user1" should be set to "Default" on the webUI
     Examples:
