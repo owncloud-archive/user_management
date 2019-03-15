@@ -8,7 +8,7 @@ Feature: manage user quota
     Given these users have been created with default attributes but not initialized:
       | username |
       | user1    |
-    And user admin has logged in using the webUI
+    And the administrator has logged in using the webUI
     And the administrator has browsed to the users page
 
   Scenario Outline: change quota to a valid value

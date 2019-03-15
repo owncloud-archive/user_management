@@ -9,7 +9,7 @@ Feature: add users
       | username |
       | user1    |
       | user2    |
-    And user admin has logged in using the webUI
+    And the administrator has logged in using the webUI
     And the administrator has browsed to the users page
 
   Scenario: administrator should be able to see email of a user
