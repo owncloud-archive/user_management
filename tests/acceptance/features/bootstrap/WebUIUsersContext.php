@@ -69,6 +69,17 @@ class WebUIUsersContext extends RawMinkContext implements Context {
 	}
 
 	/**
+	 * @When sleep :seconds in the user management test
+	 *
+	 * @param string $seconds
+	 *
+	 * @return void
+	 */
+	public function sleepInTheUserManagementTest($seconds) {
+		\sleep($seconds);
+	}
+
+	/**
 	 * @When the user/administrator browses to the users page
 	 * @Given the user/administrator has browsed to the users page
 	 *
