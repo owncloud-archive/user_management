@@ -225,6 +225,78 @@ matrix:
       BEHAT_SUITE: webUISettingsMenu
       USE_EMAIL: true
 
+    - TEST_SUITE: web-acceptance
+      OC_VERSION: daily-master-qa
+      PHP_VERSION: 7.1
+      NEED_SERVER: true
+      NEED_INSTALL_APP: true
+      BEHAT_SUITE: webUIManageQuota
+      USE_EMAIL: true
+
+    - TEST_SUITE: web-acceptance
+      OC_VERSION: daily-master-qa
+      PHP_VERSION: 7.1
+      NEED_SERVER: true
+      NEED_INSTALL_APP: true
+      BEHAT_SUITE: webUIManageQuota
+      USE_EMAIL: true
+
+    - TEST_SUITE: web-acceptance
+      OC_VERSION: daily-master-qa
+      PHP_VERSION: 7.1
+      NEED_SERVER: true
+      NEED_INSTALL_APP: true
+      BEHAT_SUITE: webUIManageQuota
+      USE_EMAIL: true
+
+    - TEST_SUITE: web-acceptance
+      OC_VERSION: daily-master-qa
+      PHP_VERSION: 7.1
+      NEED_SERVER: true
+      NEED_INSTALL_APP: true
+      BEHAT_SUITE: webUIManageQuota
+      USE_EMAIL: true
+
+    - TEST_SUITE: web-acceptance
+      OC_VERSION: daily-master-qa
+      PHP_VERSION: 7.1
+      NEED_SERVER: true
+      NEED_INSTALL_APP: true
+      BEHAT_SUITE: webUIManageQuota
+      USE_EMAIL: true
+
+    - TEST_SUITE: web-acceptance
+      OC_VERSION: daily-master-qa
+      PHP_VERSION: 7.1
+      NEED_SERVER: true
+      NEED_INSTALL_APP: true
+      BEHAT_SUITE: webUIManageQuota
+      USE_EMAIL: true
+
+    - TEST_SUITE: web-acceptance
+      OC_VERSION: daily-master-qa
+      PHP_VERSION: 7.1
+      NEED_SERVER: true
+      NEED_INSTALL_APP: true
+      BEHAT_SUITE: webUIManageQuota
+      USE_EMAIL: true
+
+    - TEST_SUITE: web-acceptance
+      OC_VERSION: daily-master-qa
+      PHP_VERSION: 7.1
+      NEED_SERVER: true
+      NEED_INSTALL_APP: true
+      BEHAT_SUITE: webUIManageQuota
+      USE_EMAIL: true
+
+    - TEST_SUITE: web-acceptance
+      OC_VERSION: daily-master-qa
+      PHP_VERSION: 7.1
+      NEED_SERVER: true
+      NEED_INSTALL_APP: true
+      BEHAT_SUITE: webUIManageQuota
+      USE_EMAIL: true
+
 #   - TEST_SUITE: web-acceptance
 #     OC_VERSION: daily-stable10-qa
 #     PHP_VERSION: 7.1
