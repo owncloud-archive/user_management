@@ -861,5 +861,7 @@ class UsersPage extends OwncloudPage {
 				__METHOD__ . " timeout waiting for user list to load on users page"
 			);
 		}
+
+		$this->waitForOutstandingAjaxCalls($session);
 	}
 }
