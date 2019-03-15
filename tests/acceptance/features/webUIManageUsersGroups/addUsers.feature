@@ -5,7 +5,7 @@ Feature: add users
   So that unauthorised access is impossible
 
   Background:
-    Given user admin has logged in using the webUI
+    Given the administrator has logged in using the webUI
     And the administrator has browsed to the users page
 
   Scenario: use the webUI to create a simple user
@@ -117,7 +117,7 @@ Feature: add users
     When the administrator creates a user with the name "guiusr1" and the email "guiusr1@owncloud" without a password using the webUI
     And the administrator logs out of the webUI
     And the user follows the password set link received by "guiusr1@owncloud" using the webUI
-    And the user sets the password to "newpassword" and confirms with the same password using the webUI
+    And the user sets the password to "%regular%" and confirms with the same password using the webUI
     And the user follows the password set link received by "guiusr1@owncloud" in Email number 2 using the webUI
     Then the user should be redirected to the general error webUI page with the title "%productname%"
     And an error should be displayed on the general error webUI page saying "The token provided is invalid."
@@ -128,8 +128,8 @@ Feature: add users
     And the administrator creates a user with the name "guiusr1" and the email "correct@owncloud" without a password using the webUI
     And the administrator logs out of the webUI
     And the user follows the password set link received by "correct@owncloud" using the webUI
-    And the user sets the password to "newpassword" and confirms with the same password using the webUI
-    And the user logs in with username "guiusr1" and password "newpassword" using the webUI
+    And the user sets the password to "%regular%" and confirms with the same password using the webUI
+    And the user logs in with username "guiusr1" and password "%regular%" using the webUI
     Then the user should be redirected to a webUI page with the title "Files - %productname%"
 
   Scenario: recreating a user with same name after deletion makes the first token invalid

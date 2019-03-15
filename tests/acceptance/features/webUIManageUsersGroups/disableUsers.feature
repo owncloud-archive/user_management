@@ -12,7 +12,7 @@ Feature: disable users
 
   @issue-24
   Scenario: disable a user
-    Given user admin has logged in using the webUI
+    Given the administrator has logged in using the webUI
     And the administrator has browsed to the users page
     When the administrator disables user "user1" using the webUI
     Then user "user1" should be enabled
@@ -35,7 +35,7 @@ Feature: disable users
     When the user disables user "user1" using the webUI
     Then user "user1" should be enabled
     #Then user "user1" should be disabled
-    #When the disabled user "user1" tries to login using the password "%regular%" from the webUI
+    #When the disabled user "user1" tries to login using the password "%alt1%" from the webUI
     #Then the user should be redirected to a webUI page with the title "%productname%"
     #When the user has browsed to the login page
     #And user "user2" logs in using the webUI
