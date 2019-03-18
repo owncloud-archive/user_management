@@ -91,12 +91,7 @@ pipeline:
       - BEHAT_SUITE=${BEHAT_SUITE}
       - MAILHOG_HOST=email
     commands:
-      - cd /var/www/owncloud
-      - su-exec www-data cat .htaccess
-      - su-exec www-data ./occ integrity:check-core
-      - cd /var/www/owncloud/apps/user_management
       - make test-acceptance-webui
-      - su-exec www-data ./occ integrity:check-core
     when:
       matrix:
         TEST_SUITE: web-acceptance
