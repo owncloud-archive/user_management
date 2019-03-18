@@ -92,6 +92,7 @@ pipeline:
     commands:
       - cd /var/www/owncloud
       - su-exec www-data ./occ integrity:check-core
+      - cd /var/www/owncloud/apps/user_management
       - make test-acceptance-webui
       - su-exec www-data ./occ integrity:check-core
     when:
@@ -176,32 +177,238 @@ services:
 
 matrix:
   include:
-    # owncloud-coding-standard
-    - PHP_VERSION: 7.2
-      TEST_SUITE: owncloud-coding-standard
 
-    - PHP_VERSION: 7.1
-      TEST_SUITE: owncloud-coding-standard
-
-    - TEST_SUITE: javascript
+    #acceptance tests
+    - TEST_SUITE: web-acceptance
+      OC_VERSION: daily-master-qa
       PHP_VERSION: 7.1
-      OC_VERSION: daily-master-qa
       NEED_SERVER: true
       NEED_INSTALL_APP: true
+      BEHAT_SUITE: webUIManageQuota
+      USE_EMAIL: true
 
-    #unit tests
-    - TEST_SUITE: phpunit
+    - TEST_SUITE: web-acceptance
+      OC_VERSION: daily-master-qa
       PHP_VERSION: 7.1
-      OC_VERSION: daily-master-qa
       NEED_SERVER: true
       NEED_INSTALL_APP: true
-      COVERAGE: true
+      BEHAT_SUITE: webUIManageUsersGroups
+      USE_EMAIL: true
 
-    - TEST_SUITE: phpunit
-      PHP_VERSION: 7.2
+    - TEST_SUITE: web-acceptance
       OC_VERSION: daily-master-qa
+      PHP_VERSION: 7.1
       NEED_SERVER: true
       NEED_INSTALL_APP: true
+      BEHAT_SUITE: webUISettingsMenu
+      USE_EMAIL: true
+
+    #acceptance tests
+    - TEST_SUITE: web-acceptance
+      OC_VERSION: daily-master-qa
+      PHP_VERSION: 7.1
+      NEED_SERVER: true
+      NEED_INSTALL_APP: true
+      BEHAT_SUITE: webUIManageQuota
+      USE_EMAIL: true
+
+    - TEST_SUITE: web-acceptance
+      OC_VERSION: daily-master-qa
+      PHP_VERSION: 7.1
+      NEED_SERVER: true
+      NEED_INSTALL_APP: true
+      BEHAT_SUITE: webUIManageUsersGroups
+      USE_EMAIL: true
+
+    - TEST_SUITE: web-acceptance
+      OC_VERSION: daily-master-qa
+      PHP_VERSION: 7.1
+      NEED_SERVER: true
+      NEED_INSTALL_APP: true
+      BEHAT_SUITE: webUISettingsMenu
+      USE_EMAIL: true
+
+    #acceptance tests
+    - TEST_SUITE: web-acceptance
+      OC_VERSION: daily-master-qa
+      PHP_VERSION: 7.1
+      NEED_SERVER: true
+      NEED_INSTALL_APP: true
+      BEHAT_SUITE: webUIManageQuota
+      USE_EMAIL: true
+
+    - TEST_SUITE: web-acceptance
+      OC_VERSION: daily-master-qa
+      PHP_VERSION: 7.1
+      NEED_SERVER: true
+      NEED_INSTALL_APP: true
+      BEHAT_SUITE: webUIManageUsersGroups
+      USE_EMAIL: true
+
+    - TEST_SUITE: web-acceptance
+      OC_VERSION: daily-master-qa
+      PHP_VERSION: 7.1
+      NEED_SERVER: true
+      NEED_INSTALL_APP: true
+      BEHAT_SUITE: webUISettingsMenu
+      USE_EMAIL: true
+
+
+    #acceptance tests
+    - TEST_SUITE: web-acceptance
+      OC_VERSION: daily-master-qa
+      PHP_VERSION: 7.1
+      NEED_SERVER: true
+      NEED_INSTALL_APP: true
+      BEHAT_SUITE: webUIManageQuota
+      USE_EMAIL: true
+
+    - TEST_SUITE: web-acceptance
+      OC_VERSION: daily-master-qa
+      PHP_VERSION: 7.1
+      NEED_SERVER: true
+      NEED_INSTALL_APP: true
+      BEHAT_SUITE: webUIManageUsersGroups
+      USE_EMAIL: true
+
+    - TEST_SUITE: web-acceptance
+      OC_VERSION: daily-master-qa
+      PHP_VERSION: 7.1
+      NEED_SERVER: true
+      NEED_INSTALL_APP: true
+      BEHAT_SUITE: webUISettingsMenu
+      USE_EMAIL: true
+
+
+    #acceptance tests
+    - TEST_SUITE: web-acceptance
+      OC_VERSION: daily-master-qa
+      PHP_VERSION: 7.1
+      NEED_SERVER: true
+      NEED_INSTALL_APP: true
+      BEHAT_SUITE: webUIManageQuota
+      USE_EMAIL: true
+
+    - TEST_SUITE: web-acceptance
+      OC_VERSION: daily-master-qa
+      PHP_VERSION: 7.1
+      NEED_SERVER: true
+      NEED_INSTALL_APP: true
+      BEHAT_SUITE: webUIManageUsersGroups
+      USE_EMAIL: true
+
+    - TEST_SUITE: web-acceptance
+      OC_VERSION: daily-master-qa
+      PHP_VERSION: 7.1
+      NEED_SERVER: true
+      NEED_INSTALL_APP: true
+      BEHAT_SUITE: webUISettingsMenu
+      USE_EMAIL: true
+
+
+    #acceptance tests
+    - TEST_SUITE: web-acceptance
+      OC_VERSION: daily-master-qa
+      PHP_VERSION: 7.1
+      NEED_SERVER: true
+      NEED_INSTALL_APP: true
+      BEHAT_SUITE: webUIManageQuota
+      USE_EMAIL: true
+
+    - TEST_SUITE: web-acceptance
+      OC_VERSION: daily-master-qa
+      PHP_VERSION: 7.1
+      NEED_SERVER: true
+      NEED_INSTALL_APP: true
+      BEHAT_SUITE: webUIManageUsersGroups
+      USE_EMAIL: true
+
+    - TEST_SUITE: web-acceptance
+      OC_VERSION: daily-master-qa
+      PHP_VERSION: 7.1
+      NEED_SERVER: true
+      NEED_INSTALL_APP: true
+      BEHAT_SUITE: webUISettingsMenu
+      USE_EMAIL: true
+
+
+    #acceptance tests
+    - TEST_SUITE: web-acceptance
+      OC_VERSION: daily-master-qa
+      PHP_VERSION: 7.1
+      NEED_SERVER: true
+      NEED_INSTALL_APP: true
+      BEHAT_SUITE: webUIManageQuota
+      USE_EMAIL: true
+
+    - TEST_SUITE: web-acceptance
+      OC_VERSION: daily-master-qa
+      PHP_VERSION: 7.1
+      NEED_SERVER: true
+      NEED_INSTALL_APP: true
+      BEHAT_SUITE: webUIManageUsersGroups
+      USE_EMAIL: true
+
+    - TEST_SUITE: web-acceptance
+      OC_VERSION: daily-master-qa
+      PHP_VERSION: 7.1
+      NEED_SERVER: true
+      NEED_INSTALL_APP: true
+      BEHAT_SUITE: webUISettingsMenu
+      USE_EMAIL: true
+
+
+    #acceptance tests
+    - TEST_SUITE: web-acceptance
+      OC_VERSION: daily-master-qa
+      PHP_VERSION: 7.1
+      NEED_SERVER: true
+      NEED_INSTALL_APP: true
+      BEHAT_SUITE: webUIManageQuota
+      USE_EMAIL: true
+
+    - TEST_SUITE: web-acceptance
+      OC_VERSION: daily-master-qa
+      PHP_VERSION: 7.1
+      NEED_SERVER: true
+      NEED_INSTALL_APP: true
+      BEHAT_SUITE: webUIManageUsersGroups
+      USE_EMAIL: true
+
+    - TEST_SUITE: web-acceptance
+      OC_VERSION: daily-master-qa
+      PHP_VERSION: 7.1
+      NEED_SERVER: true
+      NEED_INSTALL_APP: true
+      BEHAT_SUITE: webUISettingsMenu
+      USE_EMAIL: true
+
+
+    #acceptance tests
+    - TEST_SUITE: web-acceptance
+      OC_VERSION: daily-master-qa
+      PHP_VERSION: 7.1
+      NEED_SERVER: true
+      NEED_INSTALL_APP: true
+      BEHAT_SUITE: webUIManageQuota
+      USE_EMAIL: true
+
+    - TEST_SUITE: web-acceptance
+      OC_VERSION: daily-master-qa
+      PHP_VERSION: 7.1
+      NEED_SERVER: true
+      NEED_INSTALL_APP: true
+      BEHAT_SUITE: webUIManageUsersGroups
+      USE_EMAIL: true
+
+    - TEST_SUITE: web-acceptance
+      OC_VERSION: daily-master-qa
+      PHP_VERSION: 7.1
+      NEED_SERVER: true
+      NEED_INSTALL_APP: true
+      BEHAT_SUITE: webUISettingsMenu
+      USE_EMAIL: true
+
 
     #acceptance tests
     - TEST_SUITE: web-acceptance
