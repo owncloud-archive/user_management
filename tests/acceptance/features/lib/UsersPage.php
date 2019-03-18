@@ -862,11 +862,11 @@ class UsersPage extends OwncloudPage {
 			);
 		}
 
-		$this->waitForOutstandingAjaxCalls($session);
+		//		$this->waitForOutstandingAjaxCalls($session);
 
 		// We have tried long enough, and cannot yet find what is the extra thing
 		// that we have to wait for until the page is properly loaded.
 		// ToDo: sort out the real reason that we need to sleep here.
-		\sleep(1);
+		//      \sleep(1);
 	}
 }
