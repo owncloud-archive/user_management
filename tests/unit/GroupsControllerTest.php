@@ -30,11 +30,11 @@ class GroupsControllerTest extends TestCase {
 
 	/** @var GroupsController */
 	private $groupsController;
-	/** @var IGroupManager | \PHPUnit_Framework_MockObject_MockObject*/
+	/** @var IGroupManager | \PHPUnit\Framework\MockObject\MockObject*/
 	private $groupManager;
-	/** @var IUserSession | \PHPUnit_Framework_MockObject_MockObject */
+	/** @var IUserSession | \PHPUnit\Framework\MockObject\MockObject */
 	private $userSession;
-	/** @var IL10N | \PHPUnit_Framework_MockObject_MockObject */
+	/** @var IL10N | \PHPUnit\Framework\MockObject\MockObject */
 	private $l10N;
 
 	protected function setUp() {
