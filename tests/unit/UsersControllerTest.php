@@ -50,35 +50,35 @@ use OC\Group\Manager;
  */
 class UsersControllerTest extends TestCase {
 
-	/** @var IGroupManager | \PHPUnit_Framework_MockObject_MockObject*/
+	/** @var IGroupManager | \PHPUnit\Framework\MockObject\MockObject*/
 	private $groupManager;
-	/** @var IUserSession | \PHPUnit_Framework_MockObject_MockObject */
+	/** @var IUserSession | \PHPUnit\Framework\MockObject\MockObject */
 	private $userSession;
-	/** @var IL10N | \PHPUnit_Framework_MockObject_MockObject */
+	/** @var IL10N | \PHPUnit\Framework\MockObject\MockObject */
 	private $l10N;
-	/** @var IAvatarManager | \PHPUnit_Framework_MockObject_MockObject */
+	/** @var IAvatarManager | \PHPUnit\Framework\MockObject\MockObject */
 	private $avatarManager;
-	/** @var IConfig | \PHPUnit_Framework_MockObject_MockObject */
+	/** @var IConfig | \PHPUnit\Framework\MockObject\MockObject */
 	private $config;
-	/** @var IUserManager | \PHPUnit_Framework_MockObject_MockObject */
+	/** @var IUserManager | \PHPUnit\Framework\MockObject\MockObject */
 	private $userManager;
-	/** @var ISecureRandom | \PHPUnit_Framework_MockObject_MockObject */
+	/** @var ISecureRandom | \PHPUnit\Framework\MockObject\MockObject */
 	private $secureRandom;
-	/** @var ILogger | \PHPUnit_Framework_MockObject_MockObject */
+	/** @var ILogger | \PHPUnit\Framework\MockObject\MockObject */
 	private $logger;
-	/** @var Defaults | \PHPUnit_Framework_MockObject_MockObject */
+	/** @var Defaults | \PHPUnit\Framework\MockObject\MockObject */
 	private $defaults;
-	/** @var ITimeFactory | \PHPUnit_Framework_MockObject_MockObject */
+	/** @var ITimeFactory | \PHPUnit\Framework\MockObject\MockObject */
 	private $timeFactory;
-	/** @var IMailer | \PHPUnit_Framework_MockObject_MockObject */
+	/** @var IMailer | \PHPUnit\Framework\MockObject\MockObject */
 	private $mailer;
-	/** @var IURLGenerator | \PHPUnit_Framework_MockObject_MockObject */
+	/** @var IURLGenerator | \PHPUnit\Framework\MockObject\MockObject */
 	private $urlGenerator;
-	/** @var IAppManager | \PHPUnit_Framework_MockObject_MockObject */
+	/** @var IAppManager | \PHPUnit\Framework\MockObject\MockObject */
 	private $appManager;
-	/** @var IRequest | \PHPUnit_Framework_MockObject_MockObject */
+	/** @var IRequest | \PHPUnit\Framework\MockObject\MockObject */
 	private $request;
-	/** @var  EventDispatcher | \PHPUnit_Framework_MockObject_MockObject */
+	/** @var  EventDispatcher | \PHPUnit\Framework\MockObject\MockObject */
 	private $eventDispatcher;
 
 	protected function setUp() {

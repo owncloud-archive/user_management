@@ -23,17 +23,17 @@ use OCP\Mail\IMailer;
 use Test\TestCase;
 
 class ChangePasswordControllerTest extends TestCase {
-	/** @var  IRequest | \PHPUnit_Framework_MockObject_MockObject */
+	/** @var  IRequest | \PHPUnit\Framework\MockObject\MockObject */
 	private $request;
-	/** @var  IL10N | \PHPUnit_Framework_MockObject_MockObject */
+	/** @var  IL10N | \PHPUnit\Framework\MockObject\MockObject */
 	private $l10n;
-	/** @var  IUserSession | \PHPUnit_Framework_MockObject_MockObject */
+	/** @var  IUserSession | \PHPUnit\Framework\MockObject\MockObject */
 	private $userSession;
-	/** @var  IUserManager | \PHPUnit_Framework_MockObject_MockObject */
+	/** @var  IUserManager | \PHPUnit\Framework\MockObject\MockObject */
 	private $userManager;
-	/** @var  IGroupManager | \PHPUnit_Framework_MockObject_MockObject */
+	/** @var  IGroupManager | \PHPUnit\Framework\MockObject\MockObject */
 	private $groupManager;
-	/** @var  IMailer | \PHPUnit_Framework_MockObject_MockObject */
+	/** @var  IMailer | \PHPUnit\Framework\MockObject\MockObject */
 	private $mailer;
 	/** @var  ChangePasswordController */
 	private $controller;

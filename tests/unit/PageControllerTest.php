@@ -28,18 +28,19 @@ use OCP\IRequest;
 use OCP\ISubAdminManager;
 use OCP\IUser;
 use OCP\IUserSession;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class PageControllerTest extends \PHPUnit_Framework_TestCase {
+class PageControllerTest extends TestCase {
 	public function testIndex() {
 
 		/** @var IRequest $request */
 		$request = $this->createMock(IRequest::class);
-		/** @var IGroupManager | \PHPUnit_Framework_MockObject_MockObject $groupManager */
+		/** @var IGroupManager | \PHPUnit\Framework\MockObject\MockObject $groupManager */
 		$groupManager = $this->createMock(IGroupManager::class);
 		/** @var IConfig $config */
 		$config = $this->createMock(IConfig::class);
-		/** @var IUserSession | \PHPUnit_Framework_MockObject_MockObject $userSession */
+		/** @var IUserSession | \PHPUnit\Framework\MockObject\MockObject $userSession */
 		$userSession = $this->createMock(IUserSession::class);
 		/** @var IAppManager $appManager */
 		$appManager = $this->createMock(IAppManager::class);

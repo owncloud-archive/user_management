@@ -28,7 +28,7 @@ use OCP\IUserSession;
 use OC\Group\Manager;
 
 class MetaDataTest extends \Test\TestCase {
-	/** @var \OC\Group\Manager | \PHPUnit_Framework_MockObject_MockObject*/
+	/** @var \OC\Group\Manager | \PHPUnit\Framework\MockObject\MockObject*/
 	private $groupManager;
 	/** @var \OCP\IUserSession */
 	private $userSession;
