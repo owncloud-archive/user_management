@@ -11,7 +11,6 @@
 namespace OCA\UserManagement\Test\Unit;
 
 use OCA\UserManagement\Controller\UsersController;
-use OCA\UserManagement\Exception\UserTokenException;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Http\RedirectResponse;

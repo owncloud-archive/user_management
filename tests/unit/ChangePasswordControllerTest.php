@@ -8,10 +8,8 @@
 
 namespace OCA\UserManagement\Test\Unit;
 
-use OC\L10N\L10NString;
 use OC\Mail\Message;
 use OCA\UserManagement\Controller\ChangePasswordController;
-use OCP\IConfig;
 use OCP\IGroupManager;
 use OCP\IL10N;
 use OCP\IRequest;
