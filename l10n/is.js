@@ -72,6 +72,7 @@ OC.L10N.register(
     "Hey there,\n\njust letting you know that you now have an %s account.\n\nYour username: %s\nAccess it: %s\n\n" : "Hæ þú,\n\nbara að láta þig vita að þú átt núna %s aðgang.\n\nNotandanafnið þitt: %s\nTengstu honum: %s\n\n",
     "New password" : "Nýtt lykilorð",
     "New Password" : "Nýtt lykilorð",
+    "Confirm Password" : "Staðfestu lykilorðið",
     "Please set your password" : "Stilltu lykilorðið þitt",
     "Username" : "Notandanafn",
     "Password" : "Lykilorð",
