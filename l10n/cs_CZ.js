@@ -67,6 +67,7 @@ OC.L10N.register(
     "Hey there,\n\njust letting you know that you now have an %s account.\n\nYour username: %s\nAccess it: %s\n\n" : "Ahoj,\n\ntoto je oznámení o nově vytvořeném %s účtu.\n\nUživatelské jméno: %s\nPřihlásit se dá zde: %s\n",
     "New password" : "Nové heslo",
     "New Password" : "Nové heslo",
+    "Confirm Password" : "Potvrdit heslo",
     "Username" : "Uživatelské jméno",
     "Password" : "Heslo",
     "E-Mail" : "Email",
