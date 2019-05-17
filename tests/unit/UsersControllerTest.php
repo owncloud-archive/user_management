@@ -2310,6 +2310,9 @@ class UsersControllerTest extends TestCase {
 			->method('setSubject')
 			->willReturn($message);
 		$message->expects($this->once())
+			->method('setHtmlBody')
+			->willReturn($message);
+		$message->expects($this->once())
 			->method('setPlainBody')
 			->willReturn($message);
 		$message->expects($this->once())
