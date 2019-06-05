@@ -193,6 +193,14 @@ class WebUIUsersContext extends RawMinkContext implements Context {
 	}
 
 	/**
+	 * @When the administrator deletes group :groupName using the webUI
+	 */
+	public function theAdministratorDeletesGroupUsingTheWebui($groupName)
+	{
+		$this->theAdminDeletesTheGroupUsingTheWebUI($groupName);
+	}
+
+	/**
 	 * @When the administrator deletes these groups and confirms the deletion using the webUI:
 	 * expects a table of groups with the heading "groupname"
 	 *
