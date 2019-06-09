@@ -55,7 +55,7 @@ OC.L10N.register(
     "Unable to delete user." : "ไม่สามารถลบผู้ใช้",
     "Forbidden" : "เขตหวงห้าม",
     "Invalid user" : "ผู้ใช้ไม่ถูกต้อง",
-    "Unable to change mail address" : "ไม่สามารถที่จะเปลี่ยนที่อยู่อีเมล",
+    "Unable to change mail address" : "ไม่สามารถเปลี่ยนที่อยู่อีเมล",
     "Email has been changed successfully." : "เปลี่ยนอีเมลเรียบร้อยแล้ว",
     "An email has been sent to this address for confirmation. Until the email is verified this address will not be set." : "อีเมลได้ถูกส่งไปยังที่อยู่นี้เพื่อยืนยัน หากยังไม่ยืนยันที่อยู่นี้จะไม่ได้รับการตั้งค่า",
     "No email was sent because you already sent one recently. Please try again later." : "ไม่มีอีเมลที่ถูกส่งเนื่องจากคุณได้ส่งอีเมลไปแล้วก่อนหน้านี้ กรุณาลองใหม่อีกครั้งในภายหลัง",
