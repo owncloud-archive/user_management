@@ -8,9 +8,9 @@ default:
       outputDir: '%paths.base%/../output/'
 
   suites:
-    webUIManageQuota:
+    webUIAddUsers:
       paths:
-        - '%paths.base%/../features/webUIManageQuota'
+        - '%paths.base%/../features/webUIAddUsers'
       contexts:
         - WebUIUsersContext:
         - FeatureContext: &common_feature_context_params
@@ -19,6 +19,19 @@ default:
             adminPassword: admin
             regularUserPassword: 123456
             ocPath: apps/testing/api/v1/occ
+        - WebUIGeneralContext:
+        - WebUILoginContext:
+        - WebUIUserContext:
+        - WebUISharingContext:
+        - WebUIFilesContext:
+        - EmailContext:
+
+    webUIManageQuota:
+      paths:
+        - '%paths.base%/../features/webUIManageQuota'
+      contexts:
+        - WebUIUsersContext:
+        - FeatureContext: *common_feature_context_params
         - WebUIGeneralContext:
         - WebUILoginContext:
         - WebUIUserContext:
