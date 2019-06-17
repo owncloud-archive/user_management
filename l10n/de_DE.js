@@ -75,6 +75,8 @@ OC.L10N.register(
     "Show user backend" : "Benutzer-Backend anzeigen",
     "Set password for new users" : "Setze Passwort für neue Benutzer",
     "Show email address" : "E-Mail Adresse anzeigen",
+    "Show password field" : "Passwortfeld anzeigen",
+    "Show quota field" : "Kontingent-Feld anzeigen",
     "Hey there,<br><br>just letting you know that you now have an %s account.<br><br>Your username: %s<br>Please set the password by accessing it: <a href=\"%s\">Here</a><br><br>" : "Hallo,<br><br>hier nur kurz die Mitteilung, dass Sie jetzt ein %s-Konto haben.<br><br>Ihr Benutzername: %s<br>Erstellen Sie jetzt ein Passwort indem Sie darauf zugreifen: <a href=\"%s\">Hier</a><br><br>",
     "Cheers!" : "Wir wünschen Ihnen noch einen schönen Tag!",
     "Hey there,\n\njust letting you know that you now have an %s account.\n\nYour username: %s\nAccess it: %s\n\n" : "Hallo,\n\nhier nur kurz die Mitteilung, dass Sie jetzt ein %s-Konto haben.\n\nIhr Benutzername: %s\nGreifen Sie darauf zu: %s\n\n",
