@@ -18,6 +18,18 @@ pipeline:
       matrix:
         NEED_SERVER: true
 
+  install-testrunner:
+    image: owncloudci/php:${PHP_VERSION}
+    pull: true
+    commands:
+      - git clone -b stable10 --depth=1 https://github.com/owncloud/core.git /var/www/owncloud/testrunner
+      - cd /var/www/owncloud/testrunner
+      - make install-composer-deps
+      - make vendor-bin-deps
+    when:
+      matrix:
+        NEED_TARBALL: true
+
   install-app:
     image: owncloudci/php:${PHP_VERSION}
     pull: true
@@ -29,7 +41,7 @@ pipeline:
       - php occ a:l
       - php occ config:system:set trusted_domains 1 --value=server
       - php occ config:system:set trusted_domains 2 --value=federated
-      - php occ log:manage --level 0
+      - php occ log:manage --level 2
       - php occ config:system:set --value true --type boolean integrity.check.disabled
     when:
       matrix:
@@ -40,8 +52,11 @@ pipeline:
     pull: true
     commands:
       - chown www-data /var/www/owncloud -R
-      - chmod 777 /var/www/owncloud/tests/acceptance/filesForUpload -R
-      - chmod +x /var/www/owncloud/tests/acceptance/run.sh
+      - if [ "${NEED_TARBALL}" = "true" ];
+        then chmod 777 /var/www/owncloud/testrunner/tests/acceptance/filesForUpload -R;
+        chmod +x /var/www/owncloud/testrunner/tests/acceptance/run.sh;
+        else chmod 777 /var/www/owncloud/tests/acceptance/filesForUpload -R;
+        chmod +x /var/www/owncloud/tests/acceptance/run.sh; fi
     when:
       matrix:
         NEED_SERVER: true
@@ -91,6 +106,7 @@ pipeline:
       - BEHAT_SUITE=${BEHAT_SUITE}
       - MAILHOG_HOST=email
     commands:
+      - if [ "${NEED_TARBALL}" = "true" ]; then cd /var/www/owncloud/testrunner; fi
       - make test-acceptance-webui
     when:
       matrix:
@@ -233,6 +249,43 @@ matrix:
       NEED_INSTALL_APP: true
       BEHAT_SUITE: webUISettingsMenu
       USE_EMAIL: true
+
+    # Owncloud Tarball
+    - TEST_SUITE: web-acceptance
+      OC_VERSION: 10.2.1
+      PHP_VERSION: 7.1
+      NEED_SERVER: true
+      NEED_INSTALL_APP: true
+      BEHAT_SUITE: webUIAddUsers
+      USE_EMAIL: true
+      NEED_TARBALL: true
+
+    - TEST_SUITE: web-acceptance
+      OC_VERSION: 10.2.1
+      PHP_VERSION: 7.1
+      NEED_SERVER: true
+      NEED_INSTALL_APP: true
+      BEHAT_SUITE: webUIManageQuota
+      USE_EMAIL: true
+      NEED_TARBALL: true
+
+    - TEST_SUITE: web-acceptance
+      OC_VERSION: 10.2.1
+      PHP_VERSION: 7.1
+      NEED_SERVER: true
+      NEED_INSTALL_APP: true
+      BEHAT_SUITE: webUIManageUsersGroups
+      USE_EMAIL: true
+      NEED_TARBALL: true
+
+    - TEST_SUITE: web-acceptance
+      OC_VERSION: 10.2.1
+      PHP_VERSION: 7.1
+      NEED_SERVER: true
+      NEED_INSTALL_APP: true
+      BEHAT_SUITE: webUISettingsMenu
+      USE_EMAIL: true
+      NEED_TARBALL: true
 
 #   - TEST_SUITE: web-acceptance
 #     OC_VERSION: daily-stable10-qa
