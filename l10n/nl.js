@@ -57,6 +57,7 @@ OC.L10N.register(
     "Use the following link to confirm your changes to the email address: {link}" : "Gebruik de volgende link om de wijziging van uw e-mailadres te bevestigen: {link}",
     "Email address changed to {mailAddress} successfully." : "E-mailadres succesvol gewijzigd naar {mailAddress}.",
     "Users" : "Gebruikers",
+    "Settings" : "Instellingen",
     "Show enabled/disabled option" : "Tonen ingeschakeld/uitgeschakeld optie",
     "Show storage location" : "Toon opslaglocatie",
     "Show last log in" : "Toon laatste inlog",

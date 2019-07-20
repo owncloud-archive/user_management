@@ -66,6 +66,7 @@ OC.L10N.register(
     "Use the following link to confirm your changes to the email address: {link}" : "Bruk følgende lenke for å bekrefte din endring av epost-adressen: {link}",
     "Email address changed to {mailAddress} successfully." : "E-post ble endret til {mailAddress}.",
     "Users" : "Brukere",
+    "Settings" : "Innstillinger",
     "Show enabled/disabled option" : "Vis valg for aktiv/inaktiv",
     "Show storage location" : "Vis lagringssted",
     "Show last log in" : "Vis siste innlogging",

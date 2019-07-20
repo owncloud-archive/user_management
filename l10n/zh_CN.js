@@ -69,6 +69,7 @@ OC.L10N.register(
     "Use the following link to confirm your changes to the email address: {link}" : "使用以下链接确认您对电子邮件地址的更改： {link}",
     "Email address changed to {mailAddress} successfully." : "电子邮件地址已成功更改为 {mailAddress} 。",
     "Users" : "用户",
+    "Settings" : "设置",
     "Show enabled/disabled option" : "显示 启用/禁用 选项",
     "Show storage location" : "显示存储位置",
     "Show last log in" : "显示最后登录",

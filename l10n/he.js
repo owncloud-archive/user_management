@@ -69,6 +69,7 @@ OC.L10N.register(
     "Use the following link to confirm your changes to the email address: {link}" : "יש להשתמש בקישור זה בכדי לאמת השינוי לכתובת הדואר האלקטרוני: {link}",
     "Email address changed to {mailAddress} successfully." : "כתובת הדואר האלקטרוני הוחלפה ל- {mailAddress} בהצלחה.",
     "Users" : "משתמשים",
+    "Settings" : "הגדרות",
     "Show enabled/disabled option" : "הצגת אפשרות הפעלה / ניטרול",
     "Show storage location" : "הצגת מיקום אחסון",
     "Show last log in" : "הצגת כניסה אחרונה",

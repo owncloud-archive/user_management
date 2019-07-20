@@ -67,6 +67,7 @@
     "Use the following link to confirm your changes to the email address: {link}" : "Usa il seguente link per confermare i cambi all'indirizzo email: {link}",
     "Email address changed to {mailAddress} successfully." : "Indirzzo email cambiato in {mailAddess} con successo.",
     "Users" : "Utenti",
+    "Settings" : "Impostazioni",
     "Show enabled/disabled option" : "Mostra opzioni abilitate/disabilitate",
     "Show storage location" : "Mostra posizione di archiviazione",
     "Show last log in" : "Mostra ultimo accesso",

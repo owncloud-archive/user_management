@@ -52,6 +52,7 @@
     "Use the following link to confirm your changes to the email address: {link}" : "Käytä oheistä linkkiä vahvistaaksesi muutoksesi sähköpostiosoitteseen: {link}",
     "Email address changed to {mailAddress} successfully." : "Uusi sähköpostiosoite {mailAddress} vaihdettiin onnistuneesti.",
     "Users" : "Käyttäjät",
+    "Settings" : "Asetukset",
     "Show enabled/disabled option" : "Näytä käytössä/ei käytössä vaihtoehto",
     "Show storage location" : "Näytä tallennustilan sijainti",
     "Show last log in" : "Näytä viimeisin sisäänkirjautuminen",

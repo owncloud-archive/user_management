@@ -56,6 +56,7 @@
     "Use the following link to confirm your changes to the email address: {link}" : "다음 링크를 눌러서 이메일 주소 변경을 확인하십시오: {link}",
     "Email address changed to {mailAddress} successfully." : "이메일 주소가 {mailAddress}(으)로 변경되었습니다.",
     "Users" : "사용자",
+    "Settings" : "설정",
     "Show enabled/disabled option" : "활성/비활성 옵션 보이기",
     "Show storage location" : "저장소 위치 보이기",
     "Show last log in" : "마지막 로그인 시간 보이기",

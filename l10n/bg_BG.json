@@ -53,6 +53,7 @@
     "Couldn't send email address change notification mail. Please contact your administrator." : "Съобщението за потвърждение на промяна на имейл адреса не може да бъде изпратено. Моля, свържете се с администратора.",
     "Unable to enable/disable user." : "Потребителят не може да се активира/деактивира.",
     "Users" : "Потребители",
+    "Settings" : "Настройки",
     "Show enabled/disabled option" : "Показване на опцията за активиране/деактивиране",
     "Show storage location" : "Покажи място за запис",
     "Show last log in" : "Покажи последно вписване",

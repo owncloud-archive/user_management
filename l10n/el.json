@@ -67,6 +67,7 @@
     "Use the following link to confirm your changes to the email address: {link}" : "Χρησιμοποιήστε τον ακόλουθο σύνδεσμο για να επιβεβαιώσετε τις αλλαγές στην διεύθυνση ηλεκτρονικής αλληλογραφίας: {link}",
     "Email address changed to {mailAddress} successfully." : "Η διεύθυνση ηλεκτρονικής αλληλογραφίας άλλαξε επιτυχώς σε {mailAddress}.",
     "Users" : "Χρήστες",
+    "Settings" : "Ρυθμίσεις",
     "Show enabled/disabled option" : "Εμφάνιση επιλογής ενεργοποίησης/απενεργοποίησης",
     "Show storage location" : "Εμφάνιση τοποθεσίας αποθήκευσης",
     "Show last log in" : "Εμφάνιση τελευταίας εισόδου",

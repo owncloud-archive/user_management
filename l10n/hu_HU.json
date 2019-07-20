@@ -57,6 +57,7 @@
     "Use the following link to confirm your changes to the email address: {link}" : "A következő linken erősítse meg az email cím módosítását: {link}",
     "Email address changed to {mailAddress} successfully." : "Emailcím {mailAddress}-re sikeresen módosítva ",
     "Users" : "Felhasználók",
+    "Settings" : "Beállítások",
     "Show enabled/disabled option" : "Az engedélyezett / letiltott lehetőség megjelenítése",
     "Show storage location" : "Háttértároló helyének mutatása",
     "Show last log in" : "Utolsó bejelentkezés megjelenítése",

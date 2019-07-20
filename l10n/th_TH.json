@@ -67,6 +67,7 @@
     "Use the following link to confirm your changes to the email address: {link}" : "ใช้ลิงก์ต่อไปนี้เพื่อยืนยันการเปลี่ยนแปลงของคุณตามที่อยู่อีเมล: {link}",
     "Email address changed to {mailAddress} successfully." : "เปลี่ยนที่อยู่อีเมลเป็น {mailAddress} เรียบร้อยแล้ว",
     "Users" : "ผู้ใช้งาน",
+    "Settings" : "ตั้งค่า",
     "Show enabled/disabled option" : "แสดงตัวเลือก เปิด/ปิด",
     "Show storage location" : "แสดงสถานที่จัดเก็บข้อมูล",
     "Show last log in" : "แสดงการเข้าสู่ระบบล่าสุด",

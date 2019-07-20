@@ -69,6 +69,7 @@ OC.L10N.register(
     "Use the following link to confirm your changes to the email address: {link}" : "Користете го следниов линк за да ја потврдите промената на Email адресата: {link}",
     "Email address changed to {mailAddress} successfully." : "Email адресата е успешно променета во {mailAddress} .",
     "Users" : "Корисници",
+    "Settings" : "Подесувања",
     "Show enabled/disabled option" : "Прикажи опција за овозможи/оневозможи ",
     "Show storage location" : "Прикажи простор за складирање",
     "Show last log in" : "Прикажи последна најава",

@@ -69,6 +69,7 @@ OC.L10N.register(
     "Use the following link to confirm your changes to the email address: {link}" : "Použijte tento odkaz pro potvrzení změn na emailové adrese: {link}",
     "Email address changed to {mailAddress} successfully." : "Emailová adresa {mailAddress} úspěšně změněna.",
     "Users" : "Uživatelé",
+    "Settings" : "Nastavení",
     "Show enabled/disabled option" : "Zobrazení možnosti pro povolení/zakázání",
     "Show storage location" : "Cesta k datům",
     "Show last log in" : "Poslední přihlášení",

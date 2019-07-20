@@ -69,6 +69,7 @@ OC.L10N.register(
     "Use the following link to confirm your changes to the email address: {link}" : "Utilisez ce lien pour confirmer votre changement d'adresse de courriel : {link} ",
     "Email address changed to {mailAddress} successfully." : "L'adresse de courriel a été changée avec succès en :  {mailAddress}",
     "Users" : "Utilisateurs",
+    "Settings" : "Paramètres",
     "Show enabled/disabled option" : "Afficher l'option Activé/Désactivé",
     "Show storage location" : "Afficher l'emplacement du stockage",
     "Show last log in" : "Montrer la dernière connexion",

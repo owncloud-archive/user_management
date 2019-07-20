@@ -69,6 +69,7 @@ OC.L10N.register(
     "Use the following link to confirm your changes to the email address: {link}" : "Që të ripohoni ndryshimet te adresa juaj email, përdorni lidhjen vijuese: {link}",
     "Email address changed to {mailAddress} successfully." : "Adresa email u ndryshua me sukses në {mailAddress}.",
     "Users" : "PÃ«rdorues",
+    "Settings" : "Rregullime",
     "Show enabled/disabled option" : "Shfaq mundësinë e aktivizuar/çaktivizuar",
     "Show storage location" : "Shfaq vendndodhje depozite",
     "Show last log in" : "Shfaq hyrjen e fundit",

@@ -62,6 +62,7 @@ OC.L10N.register(
     "Use the following link to confirm your changes to the email address: {link}" : "Notaðu eftirfarandi veftengil til að staðfesta breytingar á tölvupóstfangi: {link}",
     "Email address changed to {mailAddress} successfully." : "Tókst að breyta tölvupóstfangi í {mailAddress}.",
     "Users" : "Notendur",
+    "Settings" : "Stillingar",
     "Show enabled/disabled option" : "Birta valkost fyrir virkt/óvirkt",
     "Show storage location" : "Birta staðsetningu gagnageymslu",
     "Show last log in" : "Birta síðustu innskráningu",

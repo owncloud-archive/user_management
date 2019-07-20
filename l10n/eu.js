@@ -58,6 +58,7 @@ OC.L10N.register(
     "Use the following link to confirm your changes to the email address: {link}" : "Erabili ondoko lotura helbide elektronikoari egindako aldaketak baieztatzeko: {link}",
     "Email address changed to {mailAddress} successfully." : "Helbide elektronikoa {mailAddress} helbidera behar bezala aldatu da.",
     "Users" : "Erabiltzaileak",
+    "Settings" : "Ezarpenak",
     "Show storage location" : "Erakutsi biltegiaren kokapena",
     "Show last log in" : "Erakutsi azkeneko saio hasiera",
     "Show user backend" : "Bistaratu erabiltzaile motorra",

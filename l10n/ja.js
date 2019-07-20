@@ -59,6 +59,7 @@ OC.L10N.register(
     "Use the following link to confirm your changes to the email address: {link}" : "以下のリンクを利用してemailアドレスの変更を承認してください : {link}",
     "Email address changed to {mailAddress} successfully." : "emailアドレスの {mailAddress} への変更に成功しました。",
     "Users" : "ユーザー",
+    "Settings" : "設定",
     "Show enabled/disabled option" : "有効/無効オプションを表示",
     "Show storage location" : "データの保存場所を表示",
     "Show last log in" : "最終ログインを表示",
