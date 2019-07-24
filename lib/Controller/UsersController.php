@@ -32,6 +32,7 @@
 namespace OCA\UserManagement\Controller;
 
 use OC\AppFramework\Http;
+use OC\User\Service\CreateUserService;
 use OC\User\User;
 use OCA\UserManagement\Exception\InvalidUserTokenException;
 use OCA\UserManagement\Exception\UserTokenException;
@@ -56,6 +57,9 @@ use OCP\IUserSession;
 use OCP\Mail\IMailer;
 use OCP\IAvatarManager;
 use OCP\Security\ISecureRandom;
+use OCP\User\Exceptions\CannotCreateUserException;
+use OCP\User\Exceptions\InvalidEmailException;
+use OCP\User\Exceptions\UserAlreadyExistsException;
 use OCP\Util;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -69,6 +73,8 @@ class UsersController extends Controller {
 	private $l10n;
 	/** @var IUserSession */
 	private $userSession;
+	/** @var CreateUserService */
+	private $createUserService;
 	/** @var bool */
 	private $isAdmin;
 	/** @var IUserManager */
@@ -125,6 +131,7 @@ class UsersController extends Controller {
 								IUserManager $userManager,
 								IGroupManager $groupManager,
 								IUserSession $userSession,
+								CreateUserService $createUserService,
 								IConfig $config,
 								ISecureRandom $secureRandom,
 								IL10N $l10n,
@@ -140,6 +147,7 @@ class UsersController extends Controller {
 		$this->userManager = $userManager;
 		$this->groupManager = $groupManager;
 		$this->userSession = $userSession;
+		$this->createUserService = $createUserService;
 		$this->config = $config;
 		$this->l10n = $l10n;
 		$this->secureRandom = $secureRandom;
@@ -354,40 +362,6 @@ class UsersController extends Controller {
 	}
 
 	/**
-	 * @param string $userId
-	 * @param string $email
-	 */
-	private function generateTokenAndSendMail($userId, $email) {
-		$token = $this->secureRandom->generate(21,
-			ISecureRandom::CHAR_DIGITS,
-			ISecureRandom::CHAR_LOWER, ISecureRandom::CHAR_UPPER);
-		$this->config->setUserValue($userId, 'owncloud',
-			'lostpassword', $this->timeFactory->getTime() . ':' . $token);
-
-		// data for the mail template
-		$mailData = [
-			'username' => $userId,
-			'url' => $this->urlGenerator->linkToRouteAbsolute('user_management.Users.setPasswordForm', ['userId' => $userId, 'token' => $token])
-		];
-
-		$mail = new TemplateResponse('user_management', 'new_user/email-html', $mailData, 'blank');
-		$mailContent = $mail->render();
-
-		$mail = new TemplateResponse('user_management', 'new_user/email-plain_text', $mailData, 'blank');
-		$plainTextMailContent = $mail->render();
-
-		$subject = $this->l10n->t('Your %s account was created', [$this->defaults->getName()]);
-
-		$message = $this->mailer->createMessage();
-		$message->setTo([$email => $userId]);
-		$message->setSubject($subject);
-		$message->setHtmlBody($mailContent);
-		$message->setPlainBody($plainTextMailContent);
-		$message->setFrom([$this->fromMailAddress => $this->defaults->getName()]);
-		$this->mailer->send($message);
-	}
-
-	/**
 	 * @NoAdminRequired
 	 *
 	 * @param string $username
@@ -397,342 +371,57 @@ class UsersController extends Controller {
 	 * @return DataResponse
 	 */
 	public function create($username, $password, array $groups= [], $email='') {
-		if ($email !== '' && !$this->mailer->validateMailAddress($email)) {
-			return new DataResponse(
-				[
-					'message' => (string)$this->l10n->t('Invalid mail address')
-				],
-				Http::STATUS_UNPROCESSABLE_ENTITY
-			);
-		}
-
-		$currentUser = $this->userSession->getUser();
-
-		if (!$this->isAdmin) {
-			if (!empty($groups)) {
-				foreach ($groups as $key => $group) {
-					$groupObject = $this->groupManager->get($group);
-					if ($groupObject === null) {
-						unset($groups[$key]);
-						continue;
-					}
-
-					if (!$this->groupManager->getSubAdmin()->isSubAdminofGroup($currentUser, $groupObject)) {
-						unset($groups[$key]);
-					}
-				}
-			}
-
-			if (empty($groups)) {
-				$groups = $this->groupManager->getSubAdmin()->getSubAdminsGroups($currentUser);
-				// New class returns IGroup[] so convert back
-				$gids = [];
-				foreach ($groups as $group) {
-					$gids[] = $group->getGID();
-				}
-				$groups = $gids;
-			}
-		}
-
-		if ($this->userManager->userExists($username)) {
-			return new DataResponse(
-				[
-					'message' => (string)$this->l10n->t('A user with that name already exists.')
-				],
-				Http::STATUS_CONFLICT
-			);
-		}
-
 		try {
-			if (($password === '') && ($email !== '')) {
-				/**
-				 * Generate a random password as we are going to have this
-				 * use one time. The new user has to reset it using the link
-				 * from email.
-				 */
-				$event = new GenericEvent();
-				$this->eventDispatcher->dispatch('OCP\User::createPassword', $event);
-				if ($event->hasArgument('password')) {
-					$password = $event->getArgument('password');
-				} else {
-					$password = $this->secureRandom->generate(20);
-				}
-			}
-			$user = $this->userManager->createUser($username, $password);
-		} catch (\Exception $exception) {
-			$message = $exception->getMessage();
-			if (!$message) {
-				$message = $this->l10n->t('Unable to create user.');
-			}
-			return new DataResponse(
-				[
-					'message' => (string) $message,
-				],
-				Http::STATUS_FORBIDDEN
-			);
-		}
-
-		if ($user instanceof User) {
-			if ($groups !== null) {
-				foreach ($groups as $groupName) {
-					$group = $this->groupManager->get($groupName);
-
-					if (empty($group)) {
-						$group = $this->groupManager->createGroup($groupName);
+			$user = $this->createUserService->createUser(['username' => $username, 'password' => $password, 'email' => $email]);
+			$preFailedGroups = [];
+			$currentUser = $this->userSession->getUser();
+			if ($currentUser !== null) {
+				if (!$this->groupManager->isAdmin($currentUser->getUID())) {
+					/**
+					 * If the user is not an admin, then we restrict groups which
+					 * are part of the subadmin, other groups should be removed.
+					 */
+					foreach ($groups as $key => $group) {
+						$groupObject = $this->groupManager->get($group);
+						if (!$this->groupManager->getSubAdmin()->isSubAdminofGroup($currentUser, $groupObject)) {
+							$preFailedGroups[] = $groups[$key];
+							unset($groups[$key]);
+						}
 					}
-					$group->addUser($user);
 				}
 			}
-			/**
-			 * Send new user mail only if a mail is set
-			 */
-			if ($email !== '') {
-				$user->setEMailAddress($email);
-				try {
-					$this->generateTokenAndSendMail($username, $email);
-				} catch (\Exception $e) {
-					$this->log->error("Can't send new user mail to $email: " . $e->getMessage(), ['app' => 'settings']);
-				}
+			$failedGroups = $this->createUserService->addUserToGroups($user, $groups);
+			$failedGroups = \array_merge($failedGroups, $preFailedGroups);
+			if (\count($failedGroups) > 0) {
+				$this->log->error("The user " . $username . " was not added to the groups" . \implode(',', $failedGroups) . ".", ['app' => 'settings']);
 			}
-			// fetch users groups
 			$userGroups = $this->groupManager->getUserGroupIds($user);
-
 			return new DataResponse(
 				$this->formatUserForIndex($user, $userGroups),
 				Http::STATUS_CREATED
 			);
-		}
-
-		return new DataResponse(
-			[
-				'message' => (string)$this->l10n->t('Unable to create user.')
-			],
-			Http::STATUS_FORBIDDEN
-		);
-	}
-
-	/**
-	 * Set password for user using link
-	 *
-	 * @PublicPage
-	 * @NoCSRFRequired
-	 * @NoAdminRequired
-	 * @NoSubadminRequired
-	 *
-	 * @param string $token
-	 * @param string $userId
-	 * @return TemplateResponse
-	 */
-	public function setPasswordForm($token, $userId) {
-		try {
-			$this->checkPasswordSetToken($token, $userId);
-		} catch (UserTokenException $e) {
-			if ($e instanceof UserTokenExpiredException) {
-				return new TemplateResponse(
-					'user_management', 'new_user/resendtokenbymail',
-					[
-						'link' => $this->urlGenerator->linkToRouteAbsolute('user_management.Users.resendToken', ['userId' => $userId])
-					], 'guest'
-				);
-			}
-			$this->log->logException($e, ['app' => 'user_management']);
-			return new TemplateResponse(
-				'core', 'error',
+		} catch (CannotCreateUserException $e) {
+			return new DataResponse(
 				[
-					"errors" => [["error" => $e->getMessage()]]
-				], 'guest'
-			);
-		}
-
-		return new TemplateResponse(
-			'user_management', 'new_user/setpassword',
-			[
-				'link' => $this->urlGenerator->linkToRouteAbsolute('user_management.Users.setPassword', ['userId' => $userId, 'token' => $token])
-			], 'guest'
-		);
-	}
-
-	/**
-	 * @param string $token
-	 * @param string $userId
-	 * @return null
-	 * @throws InvalidUserTokenException
-	 * @throws UserTokenExpiredException
-	 * @throws UserTokenMismatchException
-	 */
-	private function checkPasswordSetToken($token, $userId) {
-		$user = $this->userManager->get($userId);
-
-		$splittedToken = \explode(':', $this->config->getUserValue($userId, 'owncloud', 'lostpassword', null));
-		if (\count($splittedToken) !== 2) {
-			$this->config->deleteUserValue($userId, 'owncloud', 'lostpassword');
-			throw new InvalidUserTokenException($this->l10n->t('The token provided is invalid.'));
-		}
-
-		//The value 43200 = 60*60*12 = 1/2 day
-		if ($splittedToken[0] < ($this->timeFactory->getTime() - (int)$this->config->getAppValue('user_management', 'token_expire_time', '43200')) ||
-			$user->getLastLogin() > $splittedToken[0]) {
-			$this->config->deleteUserValue($userId, 'owncloud', 'lostpassword');
-			throw new UserTokenExpiredException($this->l10n->t('The token provided had expired.'));
-		}
-
-		if (!\hash_equals($splittedToken[1], $token)) {
-			throw new UserTokenMismatchException($this->l10n->t('The token provided is invalid.'));
-		}
-	}
-
-	/**
-	 * @PublicPage
-	 * @NoCSRFRequired
-	 * @NoAdminRequired
-	 * @NoSubadminRequired
-	 *
-	 * @param $userId
-	 * @return TemplateResponse
-	 */
-	public function resendToken($userId) {
-		$user = $this->userManager->get($userId);
-
-		if ($user === null) {
-			$this->log->error('User: ' . $userId . ' does not exist', ['app' => 'user_management']);
-			return new TemplateResponse(
-				'core', 'error',
-				[
-					"errors" => [["error" => $this->l10n->t('Failed to create activation link. Please contact your administrator.')]]
+					'message' => (string)$this->l10n->t($e->getMessage())
 				],
-				'guest'
+				Http::STATUS_FORBIDDEN
 			);
-		}
-
-		if ($user->getEMailAddress() === null) {
-			$this->log->error('Email address not set for: ' . $userId, ['app' => 'user_management']);
-			return new TemplateResponse(
-				'core', 'error',
+		} catch (InvalidEmailException $e) {
+			return new DataResponse(
 				[
-					"errors" => [["error" => $this->l10n->t('Failed to create activation link. Please contact your administrator.', [$userId])]]
+					'message' => (string)$this->l10n->t($e->getMessage())
+
 				],
-				'guest'
+				Http::STATUS_UNPROCESSABLE_ENTITY
 			);
-		}
-
-		try {
-			$this->generateTokenAndSendMail($user->getUID(), $user->getEMailAddress());
-		} catch (\Exception $e) {
-			$this->log->error("Can't send new user mail to " . $user->getEMailAddress() . ": " . $e->getMessage(), ['app' => 'user_management']);
-			return new TemplateResponse(
-				'core', 'error',
+		} catch (UserAlreadyExistsException $e) {
+			return new DataResponse(
 				[
-					"errors" => [[
-						"error" => $this->l10n->t('Can\'t send email to the user. Contact your administrator.')]]
-				], 'guest'
+					'message' => (string)$this->l10n->t($e->getMessage())
+				],
+				Http::STATUS_CONFLICT
 			);
-		}
-
-		return new TemplateResponse(
-			'user_management', 'new_user/tokensendnotify', [], 'guest'
-		);
-	}
-
-	/**
-	 * @PublicPage
-	 * @NoAdminRequired
-	 * @NoSubadminRequired
-	 * @NoCSRFRequired
-	 *
-	 * @param $token
-	 * @param $userId
-	 * @param $password
-	 * @return JSONResponse
-	 */
-	public function setPassword($token, $userId, $password) {
-		$user = $this->userManager->get($userId);
-
-		if ($user === null) {
-			$this->log->error('User: ' . $userId . ' does not exist.', ['app' => 'user_management']);
-			return new JSONResponse(
-				[
-					'status' => 'error',
-					'message' => $this->l10n->t('Failed to set password. Please contact the administrator.', [$userId]),
-					'type' => 'usererror'
-				], Http::STATUS_NOT_FOUND
-			);
-		}
-
-		try {
-			$this->checkPasswordSetToken($token, $userId);
-
-			try {
-				if (!$user->setPassword($password)) {
-					$this->log->error('The password can not be set for user: ' . $userId);
-					return new JSONResponse(
-						[
-							'status' => 'error',
-							'message' => $this->l10n->t('Failed to set password. Please contact your administrator.', [$userId]),
-							'type' => 'passwordsetfailed'
-						], Http::STATUS_FORBIDDEN
-					);
-				}
-			} catch (\Exception $e) {
-				$this->log->error('The password can not be set for user: '. $userId);
-				return new JSONResponse(
-					[
-						'status' => 'error',
-						'message' => $e->getMessage(),
-						'type' => 'passwordsetfailed'
-					], Http::STATUS_FORBIDDEN
-				);
-			}
-
-			\OC_Hook::emit('\OC\Core\LostPassword\Controller\LostController', 'post_passwordReset', ['uid' => $userId, 'password' => $password]);
-			\OC_User::unsetMagicInCookie();
-		} catch (UserTokenException $e) {
-			$this->log->logException($e, ['app' => 'user_management']);
-			return new JSONResponse(
-				[
-					'status' => 'error',
-					'message' => $e->getMessage(),
-					'type' => 'tokenfailure'
-				], Http::STATUS_UNAUTHORIZED
-			);
-		}
-
-		try {
-			$this->sendNotificationMail($userId);
-		} catch (\Exception $e) {
-			$this->log->logException($e, ['app' => 'user_management']);
-			return new JSONResponse(
-				[
-					'status' => 'error',
-					'message' => $this->l10n->t('Failed to send email. Please contact your administrator.'),
-					'type' => 'emailsendfailed'
-				], Http::STATUS_INTERNAL_SERVER_ERROR
-			);
-		}
-
-		return new JSONResponse(['status' => 'success']);
-	}
-
-	/**
-	 * @param $userId
-	 * @throws \Exception
-	 */
-	protected function sendNotificationMail($userId) {
-		$user = $this->userManager->get($userId);
-		$email = $user->getEMailAddress();
-
-		if ($email !== '') {
-			$tmpl = new \OC_Template('core', 'lostpassword/notify');
-			$msg = $tmpl->fetchPage();
-			$tmplAlt = new \OC_Template('core', 'lostpassword/altnotify');
-			$msgAlt = $tmplAlt->fetchPage();
-
-			$message = $this->mailer->createMessage();
-			$message->setTo([$email => $userId]);
-			$message->setSubject($this->l10n->t('%s password changed successfully', [$this->defaults->getName()]));
-			$message->setPlainBody($msgAlt);
-			$message->setHtmlBody($msg);
-			$message->setFrom([$this->fromMailAddress => $this->defaults->getName()]);
-			$this->mailer->send($message);
 		}
 	}
 
