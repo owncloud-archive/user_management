@@ -22,7 +22,7 @@ pipeline:
     image: owncloudci/php:${PHP_VERSION}
     pull: true
     commands:
-      - git clone -b stable10 --depth=1 https://github.com/owncloud/core.git /var/www/owncloud/testrunner
+      - git clone -b master --depth=1 https://github.com/owncloud/core.git /var/www/owncloud/testrunner
       - cd /var/www/owncloud/testrunner
       - make install-composer-deps
       - make vendor-bin-deps
@@ -286,35 +286,3 @@ matrix:
       BEHAT_SUITE: webUISettingsMenu
       USE_EMAIL: true
       NEED_TARBALL: true
-
-#   - TEST_SUITE: web-acceptance
-#     OC_VERSION: daily-stable10-qa
-#     PHP_VERSION: 7.1
-#     NEED_SERVER: true
-#     NEED_INSTALL_APP: true
-#     BEHAT_SUITE: webUIAddUsers
-#     USE_EMAIL: true
-#
-#   - TEST_SUITE: web-acceptance
-#     OC_VERSION: daily-stable10-qa
-#     PHP_VERSION: 7.1
-#     NEED_SERVER: true
-#     NEED_INSTALL_APP: true
-#     BEHAT_SUITE: webUIManageQuota
-#     USE_EMAIL: true
-#
-#   - TEST_SUITE: web-acceptance
-#     OC_VERSION: daily-stable10-qa
-#     PHP_VERSION: 7.1
-#     NEED_SERVER: true
-#     NEED_INSTALL_APP: true
-#     BEHAT_SUITE: webUIManageUsersGroups
-#     USE_EMAIL: true
-#
-#   - TEST_SUITE: web-acceptance
-#     OC_VERSION: daily-stable10-qa
-#     PHP_VERSION: 7.1
-#     NEED_SERVER: true
-#     NEED_INSTALL_APP: true
-#     BEHAT_SUITE: webUISettingsMenu
-#     USE_EMAIL: true
