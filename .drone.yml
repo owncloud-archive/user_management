@@ -8,6 +8,7 @@ pipeline:
   install-server:
     image: owncloudci/core
     pull: true
+    exclude: "apps/user_management"
     version: ${OC_VERSION}
     db_type: mysql
     db_name: owncloud
