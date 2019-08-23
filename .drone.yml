@@ -218,6 +218,12 @@ matrix:
       NEED_SERVER: true
       NEED_INSTALL_APP: true
 
+    - TEST_SUITE: phpunit
+      PHP_VERSION: 7.3
+      OC_VERSION: daily-master-qa
+      NEED_SERVER: true
+      NEED_INSTALL_APP: true
+
     #acceptance tests
     - TEST_SUITE: web-acceptance
       OC_VERSION: daily-master-qa
