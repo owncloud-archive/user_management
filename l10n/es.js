@@ -1,7 +1,7 @@
 OC.L10N.register(
     "user_management",
     {
-    "Admins can't remove themself from the admin group" : "Los administradores no se pueden eliminar a ellos mismos del grupo de administrador",
+    "Admins can't remove themself from the admin group" : "Los administradores no se pueden eliminarse a ellos mismos del grupo de administrador",
     "Authentication error" : "Error de autenticación",
     "Unknown user" : "Usuario desconocido",
     "Unable to delete {objName}" : "No es posible eliminar {objName}",

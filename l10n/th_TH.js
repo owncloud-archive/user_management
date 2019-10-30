@@ -106,7 +106,7 @@ OC.L10N.register(
     "Full Name" : "ชื่อเต็ม",
     "Email" : "อีเมล",
     "Group Admin for" : "กลุ่มของผู้ดูแล",
-    "Enabled" : "แอพฯที่เปิดการใช้งานแล้ว",
+    "Enabled" : "แอปฯที่เปิดการใช้งานแล้ว",
     "Quota" : "โควต้า",
     "Storage Location" : "สถานที่จัดเก็บข้อมูล",
     "User Backend" : "ผู้ใช้แบ็กเอนด์",
