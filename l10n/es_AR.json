@@ -23,6 +23,7 @@
     "A valid password must be provided" : "Debe ingresar una contraseña válida",
     "A valid email must be provided" : "Debes colocar un e-mail válido",
     "No user supplied" : "No se ha indicado el usuario",
+    "Please provide an admin recovery password; otherwise, all user data will be lost." : "Por favor brinde una contraseña para recuperación del administrador; de otro modo, toda la información de usuario se perderá.",
     "Wrong admin recovery password. Please check the password and try again." : "Contraseña de recuperación administrativa incorrecta. Por favor, chequee la clave e intente de nuevo",
     "Unable to change password" : "Imposible cambiar la contraseña",
     "Couldn't send reset email. Please contact your administrator." : "No se puede enviar el correo para reestablecer. Por favor contacte al administrador.",
